@@ -9,8 +9,7 @@ import acm.graphics.GOval;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
 
-// Hello my name is Kevin Nguyen. 
-//This project is for comp 195
+// Second Commit by Eesa Khan
 
 public class ScreenDisplayPane extends GraphicsProgram {
 	
