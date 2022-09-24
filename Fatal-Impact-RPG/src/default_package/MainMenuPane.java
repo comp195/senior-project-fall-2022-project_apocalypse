@@ -8,7 +8,7 @@ import acm.graphics.GLabel;
 import acm.graphics.GObject;
 
 public class MainMenuPane extends GraphicsPane {
-	
+	//Main menu Pane
 	private static final int BUTTON_SIZE = 100;
 	private static final int FONT_SIZE = 50;
 	
