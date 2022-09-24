@@ -1,9 +1,12 @@
 package default_package;
 
 import java.awt.Color;
+
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 
+import default_package.GButton;
+import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
 
@@ -19,31 +22,39 @@ public class MainMenuPane extends GraphicsPane {
 	private GButton music;
 	private GButton howToPlay;
 	private String musicButtonText;
+	private GImage mainMenu; 
+	private final int WIDTH = 200;
+	private final int HEIGHT = 88;
 
 	public MainMenuPane(MainApplication app) {
 		super();
 		program = app;
 		
 		game = new GLabel("Fatal Impact");
+		mainMenu = new GImage("main menu.png", 0, 0);
+		mainMenu.setSize(800,640);
 		game.setFont(new Font("Merriweather", Font.BOLD, FONT_SIZE));
 		game.setColor(Color.RED);
 		game.setLocation(program.getWidth() / 2 - game.getWidth() / 2, program.getHeight() / 5);
 		
-		double xCenter = program.getWidth() / 2 - BUTTON_SIZE / 2;
+		// double xCenter = program.getWidth() / 2 - BUTTON_SIZE / 2;
+		double X = app.getWidth()/2 - WIDTH/2 -7;
 		
-		play = new GButton("Play", xCenter, program.getHeight() * 2 / 5 - BUTTON_SIZE / 2, BUTTON_SIZE, BUTTON_SIZE);
+		
+		play = new GButton("Play", X, 290, WIDTH, HEIGHT);
 		play.setFillColor(Color.GREEN);
 		
-		howToPlay = new GButton("How to Play", xCenter, program.getHeight() * 3 / 5 - BUTTON_SIZE / 2, BUTTON_SIZE, BUTTON_SIZE);
+		howToPlay = new GButton("How to play", X, 395, WIDTH, HEIGHT);
 		howToPlay.setFillColor(Color.GREEN);
 		
 		musicButtonText = "Audio ON";
-		music = new GButton(musicButtonText, xCenter, program.getHeight() * 4 / 5 - BUTTON_SIZE / 2, BUTTON_SIZE, BUTTON_SIZE);
+		music = new GButton("Audio", X, 500, WIDTH, HEIGHT);
 		music.setFillColor(Color.GREEN);
 	}
 
 	@Override
 	public void showContents() {
+		program.add(mainMenu);
 		program.add(game);
 		program.add(play);
 		program.add(howToPlay);
@@ -55,6 +66,7 @@ public class MainMenuPane extends GraphicsPane {
 		program.remove(play);
 		program.remove(howToPlay);
 		program.remove(music);
+		program.remove(mainMenu);
 	}
 
 	@Override
