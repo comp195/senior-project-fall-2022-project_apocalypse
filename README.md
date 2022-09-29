@@ -1,6 +1,3 @@
-# senior-project-fall-2022-project_apocalypse
-senior-project-fall-2022-project_apocalypse created by GitHub Classroom
-
 # Project Apocalypse 
 **Eesa Khan: e_khan2@u.pacific.edu**
 **Kevin Nguyen: k_nguyen159@u.pacific.edu**
