@@ -10,7 +10,7 @@ public class MainApplication extends GraphicsApplication {
 	private HowToPlayPane howToPlay;
 	private PlayerSelectionPane chooseCharacter;
 	private MainMenuPane menu;
-	//private DisplayPane display; //IMPLEMENT LATER
+	private ScreenDisplayPane display; //IMPLEMENT LATER
 	private GameOverPane gameEnd;
 	private boolean closeRangeCharacter;
 	private boolean audioOn;
@@ -26,7 +26,7 @@ public class MainApplication extends GraphicsApplication {
 		howToPlay = new HowToPlayPane(this);
 		chooseCharacter = new PlayerSelectionPane(this);
 		menu = new MainMenuPane(this);
-		//display = new DisplayPane(this); //IMPLEMENT LATER
+		display = new ScreenDisplayPane(this); //IMPLEMENT LATER
 		gameEnd = new GameOverPane(this);
 		audioOn = true; // audio is on by default
 		setupInteractions();
@@ -46,11 +46,9 @@ public class MainApplication extends GraphicsApplication {
 		else if (n == 1){ // n == 1
 			switchToScreen(howToPlay);
 		}
-		/*
 		else if (n == 2) {
 			switchToScreen(display);
 		}
-		*/
 		else if (n == 3) {
 			switchToScreen(gameEnd);
 		}

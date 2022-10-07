@@ -1,6 +1,11 @@
 package default_package;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.Timer;
 
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
@@ -8,72 +13,70 @@ import acm.graphics.GLine;
 import acm.graphics.GOval;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
+//import edu.pacific.comp55.starter.MainApplication;
 
 // Second Commit by Eesa Khan
 
-public class ScreenDisplayPane extends GraphicsProgram {
+public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
-	private static final int HEIGHT_CHEST = 200;
-	private static final int WIDTH_CHEST = 200;
-	private static final int START_Y_CHEST = 265;
-	private static final int START_X_CHEST = 265;
-	private static final int HEIGHT = 300;
-	private static final int WIDTH = 300;
-	private static final int START_Y = 215;
-	private static final int START_X = 215;
-	public static final int PROGRAM_HEIGHT = 600;
-	public static final int PROGRAM_WIDTH = 800;
 	
-	public ScreenDisplayPane() {
-		// TODO Auto-generated constructor stub
+	private MainApplication program;
+	private Timer timer;
+	private ArrayList<GImage> background;
+	private ArrayList<GImage> playerHealth;
+	private int currentRoom; // to display current room
+	private static final int BACKGROUND_TILE_SIZE = 50;
+	
+	public ScreenDisplayPane(MainApplication app) {
+		super();
+		program = app;
+		timer = new Timer(0, this); // create timer object
+		initializeGame();
 	}
 	
-	public void run() {
+	private void initializeGame() {
+		currentRoom = 1; // starting room number
+		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
 		
-		/** This is a Robot drawing **/
-		//STEP 1: Create a rectangle for robot body
-		GRect rect = new GRect(START_X, START_Y, WIDTH, HEIGHT);
-		add(rect);
 		
-		//STEP 2: Create oval (inside rectangle) for chest.
-		GOval oval = new GOval(START_X_CHEST, START_Y_CHEST, WIDTH_CHEST, HEIGHT_CHEST);
-		oval.setFillColor(Color.RED);
-		oval.setFilled(true);
-		add(oval);
-		
-		//STEP 3: Create robot rectangle legs.
-		GRect leg1 = new GRect(215, 515, 100, 70);
-		leg1.setFillColor(Color.ORANGE);
-		leg1.setFilled(true);
-		add(leg1);
-		
-		GRect leg2 = new GRect(415, 515, 100, 70);
-		leg2.setFillColor(Color.ORANGE);
-		leg2.setFilled(true);
-		add(leg2);
-		
-		//STEP 4: Add robot head picture.
-		GImage head = new GImage("robot.png", 250, 88);
-		add(head);
-		
-		//STEP 5: Add a line with  an arrow to point at robot.
-		GLine arrowLine = new GLine(70, 70, 200, 200);
-		add(arrowLine);
-		
-		GLine arrowPoint = new GLine(200, 200, 200, 180);
-		add(arrowPoint);
-		
-		GLine arrowPoint2 = new GLine(200, 200, 180, 200);
-		add(arrowPoint2);
-		
-		//STEP 5: Add a label stating my name.
-		GLabel myName = new GLabel("Eesa Khan", 20, 60);
-		myName.setColor(Color.blue);
-		myName.setFont("Arial-Bold-24");
-		add(myName);
 		
 	}
+	
+	public void setBackground(String File) {
+		//background = new ArrayList<GImage>();
+		//background.add(new GImage(File,BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE ));
+		//for (GImage b: background) { //Add all tiles to the screen.
+		//	program.add(b);
+		//}
+		
+		
+		
+		//program.add(backgroundImage)
+	}
+
 	public static void main(String[] args) {
-		new ScreenDisplayPane().start();
+		//new ScreenDisplayPane().start();
+	}
+
+	@Override
+	public void showContents() {
+		program.add(new GImage("city-map.jpg",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE ));
+		program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
+		//setBackground("city-map.jpg");
+		// TODO Auto-generated method stub
+		
+		
+	}
+
+	@Override
+	public void hideContents() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
