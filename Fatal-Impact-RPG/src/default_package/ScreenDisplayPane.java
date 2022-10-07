@@ -26,11 +26,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private ArrayList<GImage> playerHealth;
 	private int currentRoom; // to display current room
 	private static final int BACKGROUND_TILE_SIZE = 50;
+	private GImage map; 
 	
 	public ScreenDisplayPane(MainApplication app) {
 		super();
 		program = app;
 		timer = new Timer(0, this); // create timer object
+		map = new GImage("city-map.jpg", 0, 0);
+		map.setSize(800, 640); 
+		
 		initializeGame();
 	}
 	
@@ -60,10 +64,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 
 	@Override
 	public void showContents() {
-		program.add(new GImage("city-map.jpg",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE ));
+		program.add(map); 
 		program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
 		//setBackground("city-map.jpg");
 		// TODO Auto-generated method stub
+		
 		
 		
 	}
@@ -71,6 +76,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	@Override
 	public void hideContents() {
 		// TODO Auto-generated method stub
+		program.remove(map);
 		
 	}
 
