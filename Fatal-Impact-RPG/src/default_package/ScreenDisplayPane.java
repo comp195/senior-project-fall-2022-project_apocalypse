@@ -195,7 +195,29 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}
 	*/
 	
-
+	public double inRange(double x, double min, double max) { // return value between minimum and maximum
+        if (x > min && x < max) {
+            return x;
+        } else if (x <= min){
+            return min + 1;
+        } else { // x >= max
+            return max - 1;
+        }
+    }
+	
+	private void setInBounds(Entity character) { // set character sprite in bounds on the screen
+        GImage sprite = character.getSprite();
+        double x = sprite.getX();
+        double y = sprite.getY();
+        double min = 0;
+        double xMax = program.getWidth() - 1.75 * sprite.getWidth();
+        double yMax = program.getHeight() - 2.25 * sprite.getHeight();
+        /* if (character instanceof Enemy) { // check if character is an enemy
+            yMax = program.getHeight() - 3 * sprite.getHeight();
+        } */
+        sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax)); // set location of sprite in bounds
+    }
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		GImage playerSprite = player.getSprite();
@@ -228,7 +250,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 				
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
-	
+	    setInBounds(player); 
+		
 	}
 	
 	@Override 
