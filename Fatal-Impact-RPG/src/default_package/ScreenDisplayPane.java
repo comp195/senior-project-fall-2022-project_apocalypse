@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
@@ -21,12 +22,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
 	private static final int HEART_SIZE = 50;
 	private static final int PLAYER_STARTING_HEALTH = 10;
+	private static final int PLAYER_STARTING_SPEED = 7;
+	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 	
 	private MainApplication program;
 	private Timer timer;
 	private ArrayList<GImage> background;
 	private ArrayList<GImage> playerHealth;
-	private int currentRoom; // to display current room
+	private int currentMap; // to display current room
 	private static final int BACKGROUND_TILE_SIZE = 50;
 	private GImage map; 
 	
@@ -40,6 +43,61 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	ArrayList <GImage> playerHearts = new ArrayList <GImage>();
 	private Font customFont;
 	
+	
+	
+	public ScreenDisplayPane(MainApplication app) {
+		super();
+		program = app;
+		timer = new Timer(0, this); // create timer object
+		initializeGame();
+	}
+	
+	private void initializeGame() {
+		
+		currentMap = 1; // starting room number
+		map = new GImage("city-map.jpg", 0, 0);
+		map.setSize(800, 640); 
+		
+		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
+		GImage playerSprite = new GImage ("FI-short-ranged.PNG");
+		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
+		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
+		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
+		
+	}
+	
+	public void setBackground(String File) {
+		background = new ArrayList<GImage>();
+		background.add(new GImage(File, 800, 640));
+		//background.add(new GImage(File,BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE ));
+		//for (GImage b: background) { //Add all tiles to the screen.
+		//	program.add(b);
+		//}
+		
+		
+		
+		//program.add(backgroundImage)
+	}
+	
+	public void createMap(int mapNum) {
+		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
+		// TODO Auto-generated method stub
+		//program.removeAll();
+		setBackground(newMap.getImageName()); //Set background map
+		
+		program.add(player.getSprite()); //Add player sprite to screen.
+		player.getSprite().sendToFront(); //send player sprite to front.
+		
+		
+		/* For adding all maps to the screen
+		for (GImage currentMap: background) { //Add all tiles to the screen.
+			program.add(currentMap);
+		}
+		*/ 
+		
+		updateHealth();
+		
+	}
 	public void updateHealth() {
 		while (playerHealth.size() > 0) { // remove all player hearts from screen
 			program.remove(playerHealth.get(0));
@@ -91,36 +149,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		*/
 	}
-	
-	public ScreenDisplayPane(MainApplication app) {
-		super();
-		program = app;
-		timer = new Timer(0, this); // create timer object
-		map = new GImage("city-map.jpg", 0, 0);
-		map.setSize(800, 640); 
-		initializeGame();
-	}
-	
-	private void initializeGame() {
-		currentRoom = 1; // starting room number
-		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
-		GImage playerSprite = new GImage ("Fi-short-ranged.PNG");
-		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
-		
-		
-	}
-	
-	public void setBackground(String File) {
-		//background = new ArrayList<GImage>();
-		//background.add(new GImage(File,BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE ));
-		//for (GImage b: background) { //Add all tiles to the screen.
-		//	program.add(b);
-		//}
-		
-		
-		
-		//program.add(backgroundImage)
-	}
 
 	public static void main(String[] args) {
 		//new ScreenDisplayPane().start();
@@ -167,13 +195,39 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	*/
 	
 
+	@Override
+	public void keyPressed(KeyEvent e) {
+		GImage playerSprite = player.getSprite();
+		int keyCode = e.getKeyCode();
+		if (keyCode == 87) { // w
+			player.setMoveY(-1);
+		} else if (keyCode == 65) { // a
+			player.setMoveX(-1);
+		} else if (keyCode == 83) { // s
+			player.setMoveY(1);
+		} else if (keyCode == 68) { // d
+			player.setMoveX(1);
+		}
+		//playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
+		// for normalizing diagonal movement
+		if (Math.abs(player.getMoveX()) == 1 && Math.abs(player.getMoveY()) == 1) { // check if diagonal movement is happening
+			player.setMoveX(player.getMoveX() * SQRT_TWO_DIVIDED_BY_TWO);
+			player.setMoveY(player.getMoveY() * SQRT_TWO_DIVIDED_BY_TWO);
+		}
+				
+		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 	
+	}
 
 	@Override
 	public void showContents() {
-		program.add(map); 
+		program.add(map);
+		createMap(currentMap); // currentMap is initially at 1
+		 
+		
 		//program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
-		updateHealth();
+		
+		
 		//setBackground("city-map.jpg");
 		// TODO Auto-generated method stub
 		//program.player.getInventory();
@@ -183,14 +237,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 	}
 
+	
+
 	@Override
 	public void hideContents() {
 		// TODO Auto-generated method stub
-		program.remove(map);
+		//program.remove(map);
 		//program.remove(Inventory.INVENTORY_IMG);
 		//program.removeGUI();
 		//program.remove(healthPoints);
-		//program.removeAll();
+		program.removeAll();
 		
 	}
 
