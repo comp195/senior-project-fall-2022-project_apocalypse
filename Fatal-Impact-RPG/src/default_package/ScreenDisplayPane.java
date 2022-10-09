@@ -218,6 +218,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 	
 	}
+	
+	@Override 
+	public void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode == 87 || keyCode == 83) { // w or s -> reset vertical movement when released
+			player.setMoveY(0);
+		} else if (keyCode == 65 || keyCode == 68) { // a or d -> reset horizontal movement when released
+			player.setMoveX(0);
+		}
+	}
 
 	@Override
 	public void showContents() {
