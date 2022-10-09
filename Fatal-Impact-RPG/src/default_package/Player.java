@@ -1,159 +1,256 @@
 package default_package;
+import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList; // for arraylist
 
-
-import java.util.ArrayList;
-import default_package.MainApplication;
-//import Item.*;
 import acm.graphics.GImage;
+import acm.graphics.GRect;
+import acm.program.GraphicsProgram;
+//import Item.*;
 
-public class Player {
-	//public GImage sprite = getImage();
-	private ArrayList<GImage> spriteUp, spriteDown, spriteLeft, spriteRight;
-	private int x = 0, y = 0, dx = 0, dy = 0, stepsTaken = 0;
-	private int HP=3;
-	private boolean upPressed = false, downPressed = false, leftPressed = false, rightPressed = false;
-	// private Inventory inventory;
-	private String playerDirection;
-	public enum dir   {UP,DOWN,LEFT,RIGHT}
-	MainApplication program;
+public class Player extends Entity {
+	private static final int ITEM_SIZE = 25;
+	private static final int HEART_SIZE = 50;
 	
-	public Player(int x, int y, MainApplication program)   {
-		//super(x, y);
-		// inventory = new Inventory(program);
-		addImages();
-		this.program = program;
+	//private Weapon weapon;
+	//private ArrayList<Item> inventory;
+	private boolean dashAvailable;
+	private int dashCooldown;
+	private boolean attackAvailable;
+	private boolean bulletTraveling;
+	private int bulletDistance;
+	private GImage bulletSprite;
+	private int attackDisplayCount;
+	
+	public Player(GImage sprite, int health) {
+		super(sprite, health);
+		//inventory = new ArrayList<Item>();
+		dashAvailable = true;
+		attackAvailable = false;
+		bulletTraveling = false;
+		bulletDistance = 0;
+		//bulletSprite = new GImage(ImageFolder.get() + "lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
+		//bulletSprite.setVisible(false); 
+		dashCooldown = 500; // set to 500 by default
+		super.setAttackCooldown(200); // set to 200 by default
 	}
 	
-	public int getHP()	{return HP;}
+	/*
+	public ArrayList<GImage> displayInventory() {
+		ArrayList<GImage> inventoryDisplay = new ArrayList<GImage>(); 
+		for (int x = 0; x < inventory.size(); x++) { //add items based on player inventory
+			inventoryDisplay.add(inventory.get(x).getSprite()); 
+		}
+		return inventoryDisplay;
+	}
+	*/
 	
-	public void setHP(int HP) {this.HP = HP;}
+	public ArrayList<GImage> displayHealth() {
+		ArrayList<GImage> playerHealth = new ArrayList<GImage>(); 
+		for (int x = 0; x < getHealth(); x++) { //add hearts based on player health
+			// if health > 10, place the next row of hearts right beneath original row of hearts
+			playerHealth.add(new GImage("HP.png", x % 10 * HEART_SIZE, 5 * (x / 10)));
+		}
+		return playerHealth;
+	}
 	
-	public int getX()   {return x;}
+	/*
+	public void printInventory() { //print player inventory
+		if (inventory.size() > 0) {
+			System.out.println("Items in player inventory: ");
+			for (int x = 0; x < inventory.size(); x++) {
+				System.out.println(inventory.get(x).getItemType());
+			}
+		}
+		else {
+			System.out.println("No items in inventory");
+		}
+	}
+	*/
 	
-	public int getY()   {return y;}
+	/*
+	public void removeFromInventory(int ind) {
+		inventory.remove(ind);
+	}
 	
-	public int getDX()   {return dx;}
+	public void addToInventory(Item item) {
+		inventory.add(item);
+	}
+	*/
 	
-	public int getDY()   {return dy;}
+	/*
+	public Item nearestItem(ArrayList<Item> items) {
+		double lowestDistance = distanceToItem(items.get(0));
+		Item i = items.get(0);
+		for (int x = 0 ; x < items.size(); x++) {
+			if (distanceToItem(items.get(x)) < lowestDistance) {
+				lowestDistance = distanceToItem(items.get(x));
+				i = items.get(x);
+			}
+		}	
+		return i;
+	}
+	
+	public double distanceToItem(Item i) {
+		double x = Math.abs(i.getSprite().getX()- super.getSprite().getX()); // find difference in x coordinates
+		double y = Math.abs(i.getSprite().getY() - super.getSprite().getY()); // find difference in y coordinates
+		return Math.sqrt(x * x + y * y);
 		
-	public void setX(int a)   { x=x+a;}
-	
-	public String getDirection()   {return playerDirection;}
-		
-	// public Inventory getInventory() {return inventory;}
-	
-	public void addImages() {
-		spriteUp = new ArrayList<GImage>(2);
-		spriteDown = new ArrayList<GImage>(2);
-		spriteLeft = new ArrayList<GImage>(2);
-		spriteRight = new ArrayList<GImage>(2);
-			
-		/* for (int i = 1; i <= 2; ++i)   {
-			spriteUp.add(new GImage("res/player/PCU" + i + ".png"));
-			spriteDown.add(new GImage("res/player/PCD" + i + ".png"));
-			spriteLeft.add(new GImage("res/player/PCL" + i + ".png"));
-			spriteRight.add(new GImage("res/player/PCR" + i + ".png"));
-		} */
 	}
-	
-	private boolean keyUp(KeyEvent e)   {
-		if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP)   {return true;}
-		else {return false;}	
-	}
-	
-	private boolean keyDown(KeyEvent e)   {
-		if (e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN)   {return true;}
-		else {return false;}	
-	}
-	
-	private boolean keyLeft(KeyEvent e)   {
-		if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT)   {return true;}
-		else {return false;}
-	}
-	
-	private boolean keyRight(KeyEvent e)   {
-		if (e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)   {return true;}
-		else {return false;}
-	}
-	
-	public void keyPressed(KeyEvent e) {
-		
-		if (keyUp(e) || keyDown(e) || keyLeft(e) || keyRight(e))   {
-			if (keyUp(e)) {upPressed = true;}
-			if (keyDown(e)) {downPressed = true;}
-			if (keyLeft(e)) {leftPressed = true;}
-			if (keyRight(e)) {rightPressed = true;}
+	*/
 
-			if (upPressed) {
-				if(leftPressed || rightPressed)   {dy = -2;}
-				else {dy = -4;}
-				move(Player.dir.UP);
-				playerDirection = "Up";
+	public Boolean canInteract(double x, double y) {
+		double xDiff = Math.abs(x - super.getSprite().getX()); // find difference in x coordinates
+		double yDiff = Math.abs(y - super.getSprite().getY()); // find difference in y coordinates
+		return xDiff <= 50 && yDiff <= 50; //returns true if x,y coordinates are within 50 in x direction and y direction
+	}
+	
+	/*
+	public Boolean hasKey() {
+		for (Item i: inventory) {
+			if (i.getItemType() == "key") {
+				return true;
 			}
-			if (downPressed) {
-				if(leftPressed || rightPressed)   {dy = 2;}
-				else   {dy = 4;}
-				move(Player.dir.DOWN);
-				playerDirection = "Down";
-			}
-			if (leftPressed) {
-				if(upPressed || downPressed)   {dx = -2;}
-				else   {dx = -4;}
-				move(Player.dir.LEFT);
-				playerDirection = "Left";
-			}
-			if (rightPressed) {
-				if(upPressed || downPressed)   {dx = 2;}
-				else   {dx = 4;}
-				move(Player.dir.RIGHT);
-				playerDirection = "Right";
-			}
-		/*	x = (int) sprite.getX();
-			y = (int) sprite.getY(); */
+		}
+		return false;
+	}
+	
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+		// if default range for close range has not been set, set weapon range
+		if (weapon.getItemType() == "close range weapon" && weapon.getRange() == 200) { 
+			weapon.setRange(25);
 		}
 	}
 	
-	public void keyReleased(KeyEvent e) {
-		if (keyUp(e)) {upPressed = false;}
-		if (keyDown(e)) {downPressed = false;}
-		if (keyLeft(e)) {leftPressed = false;}
-		if (keyRight(e)) {rightPressed = false;}
-		
-		if (upPressed)   {dy = -4;}
-		else if (downPressed)   {dy = 4;}
-		else   {dy = 0;}
-		
-		if (leftPressed)   {dx = -4;}
-		else if (rightPressed)   {dx = 4;}
-		else   {dx = 0;}
+	public Weapon getWeapon() {
+		return weapon;
+	}
+	*/
+	
+	/*
+	public void displayInventoryBox(GRect inventoryBox) {
+		int offsetFromHealth = 15;
+		if (inventory.size() > 0) {
+			for (int x = 0; x < inventory.size(); x++) {
+				Item i = inventory.get(x);
+				i.getSprite().setLocation(HEART_SIZE * Math.min(getHealth(), 10) + offsetFromHealth + x % 10 * ITEM_SIZE, ITEM_SIZE * (x / 10));
+			}
+			int inventoryBoxNum = 1; // increase height of box
+			if (inventory.size() % 10 == 0) {
+				inventoryBoxNum = 0; // when inventory size divisible by 10, do not increase height of box
+			}
+			// set size of inventory box based on number of items in inventory
+			inventoryBox.setSize(ITEM_SIZE * Math.min(inventory.size(), 10), ITEM_SIZE * (inventoryBoxNum + inventory.size() / 10));
+			// set location of inventory box
+			inventoryBox.setLocation(offsetFromHealth + HEART_SIZE * Math.min(getHealth(), 10), 0); 
+			inventoryBox.setVisible(true); // show inventory box
+			inventoryBox.setFillColor(Color.white);
+			inventoryBox.setFilled(true);
+		}
+		else {
+			inventoryBox.setVisible(false); // make inventory box invisible
+		}
 	}
 	
-	/* public void grabItem(Item item)   {
-		getInventory().addItem(item);
-	} */
-		
-	private void move(dir direction)   {
-		int legTracker;
-		if (stepsTaken == 8)   {stepsTaken = 0;}
-		if (stepsTaken < 4)   {legTracker = 0;}
-		else   {legTracker = 1;}
-		/* if(direction == dir.UP)   {loadImage(spriteUp.get(legTracker).getImage());}
-		if(direction == dir.DOWN)   {loadImage(spriteDown.get(legTracker).getImage());}
-		if(direction == dir.LEFT)   {loadImage(spriteLeft.get(legTracker).getImage());}
-		if(direction == dir.RIGHT)   {loadImage(spriteRight.get(legTracker).getImage());}
-		if(sprite.getBounds().getX() + dx < 0) {dx = 0;}
-		else if(sprite.getBounds().getX() + sprite.getWidth() + dx > 800) {dx = 0;}
-		if(sprite.getBounds().getY() + dy < 0) {dy = 0;}
-		else if(sprite.getBounds().getY() + sprite.getHeight() + dy > 640) {dy = 0;}
-		
-		sprite.move(dx, dy);
-		this.x = (int) (sprite.getX() + dx);
-		this.y = (int) (sprite.getY() + dy); */
-		stepsTaken = stepsTaken + 1;
+	public int searchItemIndex(Player player, int removeIndex, String itemType) {
+		for (int x = 0; x < player.getInventory().size(); x++) {
+			if (player.getInventory().get(x).getItemType() == itemType) { //Check if itemType is in the inventory.
+				removeIndex = x;
+			}
+		}
+		return removeIndex;
+	}
+	
+	public ArrayList<Item> getInventory() {
+		return inventory;
 	}
 
-	
+	public void setInventory(ArrayList<Item> inventory) {
+		this.inventory = inventory;
+	}
+	*/
 
+	public boolean isDashAvailable() {
+		return dashAvailable;
+	}
+
+	public void setDashAvailable(boolean dashAvailable) {
+		this.dashAvailable = dashAvailable;
+	}
+
+	public boolean isAttackAvailable() {
+		return attackAvailable;
+	}
+
+	public void setAttackAvailable(boolean attackAvailable) {
+		this.attackAvailable = attackAvailable;
+	}
+
+	public boolean isBulletTraveling() {
+		return bulletTraveling;
+	}
+
+	public void setBulletTraveling(boolean bulletTraveling) {
+		this.bulletTraveling = bulletTraveling;
+	}
+
+	public int getBulletDistance() {
+		return bulletDistance;
+	}
+
+	public void setBulletDistance(int bulletDistance) {
+		this.bulletDistance = bulletDistance;
+	}
+
+	public GImage getBulletSprite() {
+		return bulletSprite;
+	}
+
+	public void setBulletSprite(GImage bulletSprite) {
+		this.bulletSprite = bulletSprite;
+	}
+
+	public int getDashCooldown() {
+		return dashCooldown;
+	}
+
+	public void setDashCooldown(int dashCooldown) {
+		this.dashCooldown = dashCooldown;
+	}
+	
+	/*
+	public GImage moveBullet(GImage bulletSpirte) {
+		bulletSprite = getBulletSprite();
+		setBulletDistance(getBulletDistance() + 1);
+		bulletSprite.movePolar(1, getWeapon().getAngle());
+		return bulletSprite;
+	}
+	*/
+	
+	public void playerInvincibility() {
+		setInvincibilityCounter(getInvincibilityCounter() + 1); //player is invincible for a time.
+		if (getInvincibilityCounter() > 500) { //player is not invincible.
+			setDamaged(false);
+			setInvincibilityCounter(0); 
+		}
+	}
+	
+	public void randomizeXLocation(double maxX, double y) { // randomizes x location
+		getSprite().setLocation((maxX - 1.75 * getSprite().getWidth()) * Math.random(), y - 2.25 * getSprite().getHeight());
+	}
+	
+	public void setAttackDisplayCount (int timerCount) {
+		attackDisplayCount = timerCount;
+	}
+	
+	public int getAttackDisplayCount () {
+		return attackDisplayCount;
+	}
+	
+	public static void main(String[] args) {
+		
+	}
 }
 

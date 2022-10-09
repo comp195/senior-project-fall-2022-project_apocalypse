@@ -40,15 +40,16 @@ public class MainApplication extends GraphicsApplication {
 	private int count;
 	
 	
-	public Player player = new Player(0, 0, this);
+	//public Player player = new Player(0, 0, this);
 	//private ArrayList<Item> items = new ArrayList <Item>();
 	
+	/*
 	// Player health GUI
 	private GParagraph healthPoints; 
 	private static final int heartRootX = 75, heartRootY = 610, heartWidth = 30;
 	ArrayList <GImage> playerHearts = new ArrayList <GImage>();
 	private Font customFont;
-	
+	*/
 	
 
 	public void init() {
@@ -76,6 +77,7 @@ public class MainApplication extends GraphicsApplication {
 	 * updatePlayerHeartsGUI(int hp)
 	 */
 	
+	/*
 	public void setGUI() {
 		healthPoints = new GParagraph("HP:", 45, 625);
 		healthPoints.setColor(Color.white); 
@@ -83,7 +85,7 @@ public class MainApplication extends GraphicsApplication {
 	}
 	public void addGUI() {
 		this.add(healthPoints);
-		updatePlayerHeartsGUI(this.player.getHP());
+		//updatePlayerHeartsGUI(this.player.getHP());
 	}
 	public void removeGUI() {
 		this.remove(healthPoints);
@@ -113,7 +115,7 @@ public class MainApplication extends GraphicsApplication {
 			}
 		}
 	}
-	
+	*/
 	
 	/* public void grab(Item item)   {
 		this.player.grabItem(item);
