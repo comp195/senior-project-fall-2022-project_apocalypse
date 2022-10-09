@@ -32,6 +32,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int currentMap; // to display current room
 	private static final int BACKGROUND_TILE_SIZE = 50;
 	private GImage map; 
+	private GImage inventory = new GImage("HotBar.png", 300, 535);
 	
 	//main game objects
 	private Player player;
@@ -233,7 +234,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void showContents() {
 		program.add(map);
 		createMap(currentMap); // currentMap is initially at 1
-		 
+		program.add(inventory); 
 		
 		//program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
 		
