@@ -257,6 +257,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		
 		//Reset player speed to normal speed if player stops sprinting
+		//This is important so that the player can stop running fast.
 		player.setSpeed(PLAYER_STARTING_SPEED);
 	}
 
@@ -265,7 +266,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		program.add(map);
 		createMap(currentMap); // currentMap is initially at 1
 		program.add(inventory); 
-		
+	
 		//program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
 		
 		
