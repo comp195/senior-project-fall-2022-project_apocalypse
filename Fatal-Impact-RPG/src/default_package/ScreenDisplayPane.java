@@ -221,7 +221,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		GImage playerSprite = player.getSprite();
-		player.setSpeed(PLAYER_STARTING_SPEED);
+		
 		int keyCode = e.getKeyCode();
 		if (keyCode == 87) { // w
 			player.setMoveY(-1);
@@ -231,15 +231,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			player.setMoveY(1);
 		} else if (keyCode == 68) { // d
 			player.setMoveX(1);
-		}
-		if (keyCode == 87 && keyCode == 16) { // w
-			player.setMoveY(-2);
-		} else if (keyCode == 65 && keyCode == 16) { // a
-			player.setMoveX(-2);
-		} else if (keyCode == 83 && keyCode == 16) { // s
-			player.setMoveY(2);
-		} else if (keyCode == 68 && keyCode == 16) { // d
-			player.setMoveX(2);
+		}else if (keyCode == 16) { // shift
+			player.setSpeed(PLAYER_STARTING_SPEED*2); //Make player very fast if sprinting
 		}
 		  
 		//playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
@@ -262,6 +255,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		} else if (keyCode == 65 || keyCode == 68) { // a or d -> reset horizontal movement when released
 			player.setMoveX(0);
 		}
+		
+		//Reset player speed to normal speed if player stops sprinting
+		player.setSpeed(PLAYER_STARTING_SPEED);
 	}
 
 	@Override
