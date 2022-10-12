@@ -210,8 +210,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
         double x = sprite.getX();
         double y = sprite.getY();
         double min = 0;
-        double xMax = program.getWidth() - 1.75 * sprite.getWidth();
-        double yMax = program.getHeight() - 2.25 * sprite.getHeight();
+        double xMax = program.getWidth() - 82; // before it was - 1.75 * sprite.getWidth()
+        double yMax = program.getHeight() - 150; // before it was - 2.25 * sprite.getHeight()
         /* if (character instanceof Enemy) { // check if character is an enemy
             yMax = program.getHeight() - 3 * sprite.getHeight();
         } */
