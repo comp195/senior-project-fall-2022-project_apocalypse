@@ -35,7 +35,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private static final int BACKGROUND_TILE_SIZE = 50;
 	private GImage map; 
 	private GImage inventory;
-	private GImage food;
+	private int inventoryDisplayIndex;
+	private int inventoryIndex;
+	private int inventorySizeCount;
+	private int populatingItemsIndex;
 	
 	//main game objects
 	private Player player;
@@ -70,13 +73,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
 		
 		
-		//items = new ArrayList<Item>(); // initialize items in items arrayList. 
-		
 		inventory = new GImage("HotBar.png", 300, 535);
-		food = new GImage("waterBottle.jpg", 300, 100);
+		inventoryDisplayIndex = 0;
+		inventoryIndex = 0;
+		inventorySizeCount = 0;
+		//food = new GImage("waterBottle.jpg", 300, 100);
 		
 		
-		food.setSize(50, 50);
+		
 		timer.restart(); // reset timer
 	}
 	
@@ -102,6 +106,34 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		program.add(player.getSprite()); //Add player sprite to screen.
 		player.getSprite().sendToFront(); //send player sprite to front.
 		
+		items = new ArrayList<Item>(); // initialize items in items arrayList. 
+		
+		Item water = new Item(new GImage("waterBottle.jpg", 300, 100), "water");
+		populatingItems(water);
+		
+		//items.add(water);
+		//items.get(0).getSprite().setSize(50, 50);
+		//program.add(items.get(0).getSprite());
+		
+		
+		Item water2 = new Item(new GImage("waterBottle.jpg", 400, 200), "water");
+		populatingItems(water2);
+		
+		//items.add(water2);
+		//items.get(1).getSprite().setSize(50, 50);
+		//program.add(items.get(1).getSprite());
+		
+		Item water3 = new Item(new GImage("waterBottle.jpg", 500, 300), "water");
+		populatingItems(water3);
+		
+		Item water4 = new Item(new GImage("waterBottle.jpg", 600, 100), "water");
+		populatingItems(water4);
+		
+		Item water5 = new Item(new GImage("waterBottle.jpg", 550, 100), "water");
+		populatingItems(water5);
+		
+		Item water6 = new Item(new GImage("waterBottle.jpg", 600, 300), "water");
+		populatingItems(water6);
 		
 		/* For adding all maps to the screen
 		for (GImage currentMap: background) { //Add all tiles to the screen.
@@ -112,6 +144,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		updateHealth();
 		
 	}
+	
+	public void populatingItems(Item item) {
+		items.add(item);
+		items.get(populatingItemsIndex).getSprite().setSize(30, 30);
+		program.add(items.get(populatingItemsIndex).getSprite());
+		populatingItemsIndex++;
+	}
+	
 	public void updateHealth() {
 		while (playerHealth.size() > 0) { // remove all player hearts from screen
 			program.remove(playerHealth.get(0));
@@ -255,6 +295,39 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			timer.stop();
 			player.setSpeed(PLAYER_STARTING_SPEED*2); //Make player very fast if sprinting
 			timer.start();
+		}else if (keyCode == 69) { // e
+			//Player should pick up an item if it's an item.
+			Item nearestItem = player.nearestItem(items); //check for item nearest to player
+			//If player can interact with closest item and presses "e"
+			if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
+				if (inventorySizeCount < 5) {
+					player.addToInventory(nearestItem); // add item to player inventory
+					//Move item to inventory location
+					player.getInventory().get(inventoryIndex).getSprite().setLocation(inventory.getX() + inventoryDisplayIndex, inventory.getY() + 33);
+					player.getInventory().get(inventoryIndex).getSprite().sendToFront();
+				}
+				inventoryDisplayIndex += 32;
+				inventoryIndex++;
+				inventorySizeCount++;
+				//TO DO: Need to create boundary around player inventory so that items can't be added again
+			}
+		} else if (keyCode == 82) { // r
+			int removeIndex = -1;
+			if (player.getInventory().size() > 0) {
+				removeIndex = player.searchItemIndex(player, removeIndex, "water");
+				if (removeIndex >= 0) { //check if the player has the heart to remove
+					//player.getInventory().get(removeIndex).getSprite().setLocation(0, 0);
+					program.remove(player.getInventory().get(removeIndex).getSprite());
+					player.removeFromInventory(removeIndex); //Remove the heart from the inventory.
+					
+					System.out.println("water consumed");
+					player.SetThirst(player.GetThirst() + 50);
+					
+					inventorySizeCount--;
+					inventoryIndex--;
+					inventoryDisplayIndex -= 32;
+				}
+			}
 		}
 		  
 		//playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
@@ -288,7 +361,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		program.add(map);
 		createMap(currentMap); // currentMap is initially at 1
 		program.add(inventory);
-		program.add(food);
+		
+		
 	
 		//program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
 		
@@ -323,8 +397,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		if (timerCount % 100 == 0) {
 			player.SetHunger(player.GetHunger() - 1);
 			player.SetThirst(player.GetThirst() - 1);
-			System.out.print(player.GetHunger());
-			System.out.print(player.GetThirst());
+			System.out.println("Hunger: " + player.GetHunger());
+			System.out.println("Thirst: " + player.GetThirst());
 		}
 		
 		//When hunger and thirst run out, game over.

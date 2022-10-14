@@ -13,7 +13,7 @@ public class Player extends Entity {
 	private static final int HEART_SIZE = 50;
 	
 	//private Weapon weapon;
-	//private ArrayList<Item> inventory;
+	private ArrayList<Item> inventory;
 	private boolean dashAvailable;
 	private int dashCooldown;
 	private boolean attackAvailable;
@@ -26,7 +26,7 @@ public class Player extends Entity {
 	
 	public Player(GImage sprite, int health) {
 		super(sprite, health);
-		//inventory = new ArrayList<Item>();
+		inventory = new ArrayList<Item>();
 		dashAvailable = true;
 		attackAvailable = false;
 		bulletTraveling = false;
@@ -51,6 +51,27 @@ public class Player extends Entity {
 			}
 		}	
 		return i;
+	}
+	
+	public void addToInventory(Item item) {
+		inventory.add(item);
+	}
+	
+	public void removeFromInventory(int ind) {
+		inventory.remove(ind);
+	}
+	
+	public int searchItemIndex(Player player, int removeIndex, String itemType) {
+		for (int x = 0; x < player.getInventory().size(); x++) {
+			if (player.getInventory().get(x).getItemType() == itemType) { //Check if itemType is in the inventory.
+				removeIndex = x;
+			}
+		}
+		return removeIndex;
+	}
+	
+	public ArrayList<Item> getInventory() {
+		return inventory;
 	}
 	
 	public double distanceToItem(Item i) {
