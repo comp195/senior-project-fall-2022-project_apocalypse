@@ -7,7 +7,6 @@ import java.util.ArrayList; // for arraylist
 import acm.graphics.GImage;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
-//import Item.*;
 
 public class Player extends Entity {
 	private static final int ITEM_SIZE = 25;
@@ -22,6 +21,8 @@ public class Player extends Entity {
 	private int bulletDistance;
 	private GImage bulletSprite;
 	private int attackDisplayCount;
+	private int hunger;
+	private int thirst;
 	
 	public Player(GImage sprite, int health) {
 		super(sprite, health);
@@ -34,7 +35,48 @@ public class Player extends Entity {
 		//bulletSprite.setVisible(false); 
 		dashCooldown = 500; // set to 500 by default
 		super.setAttackCooldown(200); // set to 200 by default
+		
+		SetHunger(100);
+		SetThirst(100);
+		
 	}
+	
+	public Item nearestItem(ArrayList<Item> items) {
+		double lowestDistance = distanceToItem(items.get(0));
+		Item i = items.get(0);
+		for (int x = 0 ; x < items.size(); x++) {
+			if (distanceToItem(items.get(x)) < lowestDistance) {
+				lowestDistance = distanceToItem(items.get(x));
+				i = items.get(x);
+			}
+		}	
+		return i;
+	}
+	
+	public double distanceToItem(Item i) {
+		double x = Math.abs(i.getSprite().getX()- super.getSprite().getX()); // find difference in x coordinates
+		double y = Math.abs(i.getSprite().getY() - super.getSprite().getY()); // find difference in y coordinates
+		return Math.sqrt(x * x + y * y);
+		
+	}
+	
+	public void SetThirst(int thirst) {
+		this.thirst = thirst;
+	}
+	
+	public int GetThirst() {
+		return thirst;
+	}
+	
+	public void SetHunger(int h) {
+		hunger = h;
+	}
+	
+	public int GetHunger() {
+		return hunger;
+	}
+	
+	
 	
 	/*
 	public ArrayList<GImage> displayInventory() {

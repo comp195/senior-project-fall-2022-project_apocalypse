@@ -27,12 +27,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
 	private MainApplication program;
 	private Timer timer;
+	private int timerCount; // to keep track of timer
 	private ArrayList<GImage> background;
 	private ArrayList<GImage> playerHealth;
+	private ArrayList<Item> items; // items to display on the level.
 	private int currentMap; // to display current room
 	private static final int BACKGROUND_TILE_SIZE = 50;
 	private GImage map; 
-	private GImage inventory = new GImage("HotBar.png", 300, 535);
+	private GImage inventory;
+	private GImage food;
 	
 	//main game objects
 	private Player player;
@@ -55,6 +58,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
 	private void initializeGame() {
 		
+		
 		currentMap = 1; // starting room number
 		map = new GImage("city-map.jpg", 0, 0);
 		map.setSize(800, 640); 
@@ -65,6 +69,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
 		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
 		
+		
+		//items = new ArrayList<Item>(); // initialize items in items arrayList. 
+		
+		inventory = new GImage("HotBar.png", 300, 535);
+		food = new GImage("waterBottle.jpg", 300, 100);
+		
+		
+		food.setSize(50, 50);
+		timer.restart(); // reset timer
 	}
 	
 	public void setBackground(String File) {
@@ -218,6 +231,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
         sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax)); // set location of sprite in bounds
     }
 	
+	public void gameOver() {
+		System.out.println("Player is dead. Game Over.");
+		program.removeAll(); // remove all objects from screen
+		//initializeGame(); // reset all game values (player win is set to false)
+		program.switchTo(3); // switch to game end screen
+	}
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		GImage playerSprite = player.getSprite();
@@ -232,7 +252,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		} else if (keyCode == 68) { // d
 			player.setMoveX(1);
 		}else if (keyCode == 16) { // shift
+			timer.stop();
 			player.setSpeed(PLAYER_STARTING_SPEED*2); //Make player very fast if sprinting
+			timer.start();
 		}
 		  
 		//playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
@@ -265,7 +287,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void showContents() {
 		program.add(map);
 		createMap(currentMap); // currentMap is initially at 1
-		program.add(inventory); 
+		program.add(inventory);
+		program.add(food);
 	
 		//program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
 		
@@ -294,7 +317,22 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		timerCount++;
+		
+		//Slowly reduce hunger and thirst
+		if (timerCount % 100 == 0) {
+			player.SetHunger(player.GetHunger() - 1);
+			player.SetThirst(player.GetThirst() - 1);
+			System.out.print(player.GetHunger());
+			System.out.print(player.GetThirst());
+		}
+		
+		//When hunger and thirst run out, game over.
+		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
+			gameOver();
+		}
+		
+		
 		
 	}
 }
