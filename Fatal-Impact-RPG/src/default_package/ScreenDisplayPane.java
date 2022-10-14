@@ -98,6 +98,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}
 	
 	public void createMap(int mapNum) {
+		timer.start();
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		// TODO Auto-generated method stub
 		//program.removeAll();
@@ -274,7 +275,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void gameOver() {
 		System.out.println("Player is dead. Game Over.");
 		program.removeAll(); // remove all objects from screen
-		//initializeGame(); // reset all game values (player win is set to false)
+		initializeGame(); // reset all game values
+		timer.stop();
+		populatingItemsIndex = 0;
 		program.switchTo(3); // switch to game end screen
 	}
 	
