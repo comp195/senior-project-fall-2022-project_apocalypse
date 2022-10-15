@@ -14,6 +14,7 @@ import javax.swing.Timer;
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GLine;
+import acm.graphics.GObject;
 import acm.graphics.GOval;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
@@ -48,6 +49,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	//main game objects
 	private Player player;
 	
+	
+	//pause and resume
+	private GImage pauseImg;
+	public GButton pauseButton;
+	public boolean paused = false;
+	public GButton resume = new GButton("", 296, 180, 208, 95);
+	public GButton quit = new GButton("", 296, 420, 208, 95);
+	private GImage quitImg = new GImage("Quit.png",296, 420);
+	private GImage resumeImg = new GImage("Resume.png",296,180);
 
 	
 	private GParagraph healthPoints; 
@@ -208,6 +218,40 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 	}
 	
+	/* Pause and Resume
+	 * ----------------
+	 * pauseMenu(GObject obj)
+	 * pause()
+	 * resume()
+	 */
+	public void pauseMenu(GObject obj) {
+		if (obj == this.pauseButton) {
+			//this.monsterTimer.stop();
+			
+			this.pause();
+		}
+		if (obj == this.resume) {
+			this.resume();
+			//this.monsterTimer.setInitialDelay(0);
+			//this.monsterTimer.restart();
+		}	
+		if (obj == this.quit) {System.exit(0);}
+	}
+	public void pause() {
+		program.add(resumeImg);
+		program.add(quitImg);
+		program.add(resume);
+		program.add(quit);
+		paused = true;
+	}
+	public void resume() {
+		program.remove(resumeImg);
+		program.remove(resume);
+		program.remove(quit);
+		program.remove(quitImg);
+		paused = false;
+	}
+	
 	public void populatingItems(Item item) {
 		items.add(item);
 		items.get(populatingItemsIndex).getSprite().setSize(30, 30);
@@ -324,6 +368,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					inventoryDisplayIndex -= 32;
 				}
 			}
+		} else if (keyCode == KeyEvent.VK_ESCAPE) {
+			pause();
 		}
 		  
 		//playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite

@@ -39,6 +39,7 @@ public class MainApplication extends GraphicsApplication {
 	private boolean playerWin;
 	private int count;
 	
+		
 	
 	//public Player player = new Player(0, 0, this);
 	//private ArrayList<Item> items = new ArrayList <Item>();
@@ -123,9 +124,6 @@ public class MainApplication extends GraphicsApplication {
 		this.remove(item.getImage());
 		this.add(item.getInvSprite());
 	} */
-	
-	
-	
 	
 
 	public void switchToMenu() {
