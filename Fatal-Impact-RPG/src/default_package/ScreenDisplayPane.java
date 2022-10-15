@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
@@ -17,13 +18,14 @@ import acm.graphics.GOval;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
 
-
 public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
 	private static final int HEART_SIZE = 50;
 	private static final int PLAYER_STARTING_HEALTH = 10;
 	private static final int PLAYER_STARTING_SPEED = 7;
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
+	private static final int INTERACT_INTERVAL = 50;
+	private static final int HUNGER_AND_THIRST_INTERVAL = 100;
 	
 	private MainApplication program;
 	private Timer timer;
@@ -31,8 +33,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private ArrayList<GImage> background;
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<Item> items; // items to display on the level.
+	private ArrayList<Zombie> zombies;
+	private ArrayList<Integer> removeZombieIndex; // to keep track of enemy indexes to remove
 	private int currentMap; // to display current room
 	private static final int BACKGROUND_TILE_SIZE = 50;
+	private GImage attackArea; // to display player attack
 	private GImage map; 
 	private GImage inventory;
 	private int inventoryDisplayIndex;
@@ -59,6 +64,26 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		initializeGame();
 	}
 	
+	private void setInBounds(Entity character) { // set character sprite in bounds on the screen
+        GImage sprite = character.getSprite();
+        double x = sprite.getX();
+        double y = sprite.getY();
+        double min = 0;
+        double xMax = program.getWidth() - 82; // before it was - 1.75 * sprite.getWidth()
+        double yMax = program.getHeight() - 150; // before it was - 2.25 * sprite.getHeight()
+        /* if (character instanceof Enemy) { // check if character is an enemy
+            yMax = program.getHeight() - 3 * sprite.getHeight();
+        } */
+        sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax)); // set location of sprite in bounds
+    }
+	
+	private double angle(GImage enemySprite, GImage playerSprite) { // return angle between player and enemy
+		double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
+		double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
+		double angle = 180 * Math.atan2(-y, x) / Math.PI; // calculate angle from player to enemy
+		return angle;
+	}
+	
 	private void initializeGame() {
 		
 		
@@ -69,6 +94,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
 		GImage playerSprite = new GImage ("FI-short-ranged.PNG");
 		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
+		zombies = new ArrayList<Zombie>(); // initialize enemy array list
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
 		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
 		
@@ -101,7 +127,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void createMap(int mapNum) {
 		timer.start(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
-		// TODO Auto-generated method stub
+		GImage zombieImage = new GImage("zombie.png", 500, 100);
+		zombieImage.setSize(60, 100);
+		Zombie zombie = new Zombie(zombieImage, 5, "zombie");
+		zombie.setSpeed(10);
+		zombies.add(zombie);
+		for (Zombie z: zombies) { // loop for all enemies
+			program.add(z.getSprite()); //Add enemy sprite to screen.
+			
+		}
 		//program.removeAll();
 		setBackground(newMap.getImageName()); //Set background map
 		
@@ -191,18 +225,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
         }
     }
 	
-	private void setInBounds(Entity character) { // set character sprite in bounds on the screen
-        GImage sprite = character.getSprite();
-        double x = sprite.getX();
-        double y = sprite.getY();
-        double min = 0;
-        double xMax = program.getWidth() - 82; // before it was - 1.75 * sprite.getWidth()
-        double yMax = program.getHeight() - 150; // before it was - 2.25 * sprite.getHeight()
-        /* if (character instanceof Enemy) { // check if character is an enemy
-            yMax = program.getHeight() - 3 * sprite.getHeight();
-        } */
-        sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax)); // set location of sprite in bounds
-    }
+	
 	
 	public void gameOver() {
 		System.out.println("Player is dead. Game Over.");
@@ -212,6 +235,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		populatingItemsIndex = 0;
 		program.switchTo(3); // switch to game end screen
 	}
+	
+	
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -309,7 +334,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		//This is important so that the player can stop running fast.
 		player.setSpeed(PLAYER_STARTING_SPEED);
 	}
-
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		GImage playerSprite = player.getSprite();
+		if (player.isAttackAvailable()) {
+			if (program.isCloseRangeCharacter()) {
+				//setUpAttackArea(e, playerSprite);
+			}
+		}
+	}
+	
 	@Override
 	public void showContents() {
 		program.add(map);
@@ -345,10 +380,21 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		GImage playerSprite = player.getSprite();
 		timerCount++;
+		for (int z = 0; z < zombies.size(); z++) { // loop through all enemies
+			Zombie zombie = zombies.get(z);
+			GImage zombieSprite = zombie.getSprite();
+			if (zombie.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
+				if (timerCount % INTERACT_INTERVAL == 0) {
+					zombieSprite.movePolar(zombie.getSpeed(), angle(zombieSprite, playerSprite) + 180); // close range zombie moves towards player
+				}
+			}
+			setInBounds(zombie); // set long range enemy in bounds
+		}
 		
 		//Slowly reduce hunger and thirst
-		if (timerCount % 100 == 0) {
+		if (timerCount % HUNGER_AND_THIRST_INTERVAL == 0) {
 			player.SetHunger(player.GetHunger() - 1);
 			player.SetThirst(player.GetThirst() - 1);
 			System.out.println("Hunger: " + player.GetHunger());
