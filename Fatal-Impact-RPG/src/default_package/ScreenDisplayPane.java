@@ -209,7 +209,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		program.removeAll(); // remove all objects from screen
 		initializeGame(); // reset all game values
 		timer.stop();
-		
+		populatingItemsIndex = 0;
 		program.switchTo(3); // switch to game end screen
 	}
 	
