@@ -117,6 +117,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		timer.restart(); // reset timer
 	}
 	
+	private void checkPlayerDeath() {
+			if (player.isDead()) {
+				program.removeAll();
+				while (zombies.size() > 0) { // remove all enemies from ArrayList
+					zombies.remove(0);
+				}
+				gameOver(); // go to game over screen
+			}
+			
+	}
+	
 	public void setBackground(String File) {
 		background = new ArrayList<GImage>();
 		background.add(new GImage(File, 800, 640));
@@ -381,8 +392,29 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				if (timerCount % INTERACT_INTERVAL == 0) {
 					zombieSprite.movePolar(zombie.getSpeed(), angle(zombieSprite, playerSprite) + 180); // close range zombie moves towards player
 				}
+				if (Collision.check(zombie.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
+					//playSound("player", AudioPlayer.getInstance()); // player is damaged
+					double x = (zombieSprite.getX() + (zombieSprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
+					double y = (zombieSprite.getY() + (zombieSprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
+					playerSprite.movePolar(Math.sqrt(x*x+y*y) * 2, angle(zombieSprite, playerSprite) + 180); // player moves away from enemy
+					
+					/*
+					if (zombie.getEnemyType().contains("boss")) {
+						player.changeHealth(-2);
+					}
+					*/
+					//else {
+					player.changeHealth(-1);
+					//}
+					updateHealth();
+					//updateInventory(); ==> Should update player inventory based on player health.
+					System.out.println("Player hit by " + zombie.getEnemyType() + ". Player health: " + player.getHealth());
+					player.setDamaged(true); //player is damaged.
+					checkPlayerDeath();
+				}
 			}
 			setInBounds(zombie); // set long range enemy in bounds
+			
 		}
 		
 		//Slowly reduce hunger and thirst
