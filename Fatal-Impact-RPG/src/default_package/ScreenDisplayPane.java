@@ -77,6 +77,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		inventoryDisplayIndex = 0;
 		inventoryIndex = 0;
 		inventorySizeCount = 0;
+		populatingItemsIndex = 0;
 		//food = new GImage("waterBottle.jpg", 300, 100);
 		
 		
@@ -98,6 +99,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}
 	
 	public void createMap(int mapNum) {
+		timer.start(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		// TODO Auto-generated method stub
 		//program.removeAll();
@@ -135,6 +137,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		Item water6 = new Item(new GImage("waterBottle.jpg", 600, 300), "water");
 		populatingItems(water6);
 		
+		Item chicken1 = new Item(new GImage("chickenDrumstick.jpg", 400, 300), "food");
+		populatingItems(chicken1);
+		
+		Item chicken2 = new Item(new GImage("chickenDrumstick.jpg", 400, 500), "food");
+		populatingItems(chicken2);
+		
+		Item chicken3 = new Item(new GImage("chickenDrumstick.jpg", 300, 500), "food");
+		populatingItems(chicken3);
+		
+		
 		/* For adding all maps to the screen
 		for (GImage currentMap: background) { //Add all tiles to the screen.
 			program.add(currentMap);
@@ -163,90 +175,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			heart.setSize(HEART_SIZE, HEART_SIZE);
 			program.add(heart);
 		}
-		/*
-		if (currentRoom % 6 == 0) { // every sixth room is a boss room
-			bossLabel.sendToFront();
-			while (bossHealth.size() > 0) { // remove all boss hearts from screen
-				program.remove(bossHealth.get(0));
-				bossHealth.remove(0);
-			}
-			if (enemies.size() > 0) {
-				for (Enemy e: enemies) { // loop through all enemies on screen
-					if (e instanceof Boss) { // check if enemy is a boss
-						if (e.isDead()) { // check if boss is dead
-							program.remove(bossLabel); // remove bossLabel from screen
-							if (!dropWeaponUpgrade) { // if weapon has not been dropped yet
-								String upgradeType = ImageFolder.get() + "WizardUpgrade.png";
-								if (program.isCloseRangeCharacter()) {
-									upgradeType = ImageFolder.get() + "KnightUpgrade.png";
-								}
-								GImage upgradeSprite = new GImage (upgradeType, e.getSprite().getX(), e.getSprite().getY() + ITEM_SIZE); //Create a new sprite for weapon upgrade.
-								Weapon upgrade = new Weapon(upgradeSprite, "upgrade");
-								items.add(upgrade); // add weaponUpgrade to items list
-								program.add(upgradeSprite); // add weapon upgrade to screen
-								program.add(upgrade.getLabel()); //add label to screen.
-								player.getSprite().sendToFront(); // send player sprite to front
-								dropWeaponUpgrade = true; // weapon has been dropped
-								addHeart(e, 0, ITEM_SIZE * 2);
-								addHeart(e, 0, -ITEM_SIZE);
-							}
-						}
-						else { // boss is alive
-							bossLabel.setLocation(bossLabel.getX(), inventoryBox.getHeight() + ITEM_SIZE); // update boss label based on player inventory
-							int xOffset = (int)program.getWidth() - (int)(HEART_SIZE * 1.5);
-							int yOffset = ITEM_SIZE * (3 + (int)(player.getInventory().size() / 10));
-							bossHealth = ((Boss) e).displayHealth(xOffset, yOffset);
-						}
-					}
-				}
-			}
-		}
-		*/
 	}
 
 	public static void main(String[] args) {
 		//new ScreenDisplayPane().start();
 	}
-	
-	/*
-	public void setGUI() {
-		healthPoints = new GParagraph("HP:", 45, 625);
-		healthPoints.setColor(Color.white); 
-		healthPoints.setFont(this.customFont);
-	}
-	public void addGUI() {
-		//this.add(healthPoints);
-		//updatePlayerHeartsGUI(this.player.getHP());
-	}
-	public void removeGUI() {
-		//this.remove(healthPoints);
-		updatePlayerHeartsGUI(0);
-	}
-	
-	
-	public void updatePlayerHeartsGUI(int hp) {
-		int heartLen = playerHearts.size();
-		int dif = hp - heartLen;
-		if (dif > 0) {
-			for (int i = 0; i < dif; i++) {
-				GImage heart = new GImage("media/HP.png", heartRootX + ((heartLen + i) * heartWidth), heartRootY);
-				heart.setSize(25, 20);
-				heart.setVisible(true); 
-				playerHearts.add(heart);
-				//this.add(heart); 
-			}
-		}
-		else if (dif < 0) {
-			dif = dif * -1; // Absolute value
-			for (int i = 0; i < dif; i++) {
-				int end = playerHearts.size() - 1;
-				GImage heart = playerHearts.get(end);
-				//this.remove(heart);
-				playerHearts.remove(end);
-			}
-		}
-	}
-	*/
 	
 	public double inRange(double x, double min, double max) { // return value between minimum and maximum
         if (x > min && x < max) {
@@ -274,7 +207,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void gameOver() {
 		System.out.println("Player is dead. Game Over.");
 		program.removeAll(); // remove all objects from screen
-		//initializeGame(); // reset all game values (player win is set to false)
+		initializeGame(); // reset all game values
+		timer.stop();
+		
 		program.switchTo(3); // switch to game end screen
 	}
 	
@@ -312,16 +247,35 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				//TO DO: Need to create boundary around player inventory so that items can't be added again
 			}
 		} else if (keyCode == 82) { // r
-			int removeIndex = -1;
+			//replenish thirst from inventory.
+			int removeIndexWater = -1;
 			if (player.getInventory().size() > 0) {
-				removeIndex = player.searchItemIndex(player, removeIndex, "water");
-				if (removeIndex >= 0) { //check if the player has the heart to remove
+				removeIndexWater = player.searchItemIndex(player, removeIndexWater, "water");
+				if (removeIndexWater >= 0) { //check if the player has the heart to remove
 					//player.getInventory().get(removeIndex).getSprite().setLocation(0, 0);
-					program.remove(player.getInventory().get(removeIndex).getSprite());
-					player.removeFromInventory(removeIndex); //Remove the heart from the inventory.
+					program.remove(player.getInventory().get(removeIndexWater).getSprite());
+					player.removeFromInventory(removeIndexWater); //Remove the heart from the inventory.
 					
 					System.out.println("water consumed");
 					player.SetThirst(player.GetThirst() + 50);
+					
+					inventorySizeCount--;
+					inventoryIndex--;
+					inventoryDisplayIndex -= 32;
+				}
+			}
+		} else if (keyCode == 81) { // q
+			//Replenish hunger from inventory.
+			int removeIndexFood = -1;
+			if (player.getInventory().size() > 0) {
+				removeIndexFood = player.searchItemIndex(player, removeIndexFood, "food");
+				if (removeIndexFood >= 0) { //check if the player has the heart to remove
+					//player.getInventory().get(removeIndex).getSprite().setLocation(0, 0);
+					program.remove(player.getInventory().get(removeIndexFood).getSprite());
+					player.removeFromInventory(removeIndexFood); //Remove the heart from the inventory.
+					
+					System.out.println("food consumed");
+					player.SetHunger(player.GetHunger() + 50);
 					
 					inventorySizeCount--;
 					inventoryIndex--;
