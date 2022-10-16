@@ -401,29 +401,30 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		GImage playerSprite = player.getSprite();
-		/*
 		if (player.isAttackAvailable()) {
-			if (program.isCloseRangeCharacter()) {
-				//TO DO: Move player attack logic here after attack cooldown implementation.
-			}
-		}
-		*/
-		
-		removeZombieIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
-		for (int z = 0; z < zombies.size(); z++) { // loop for all enemies
-			Zombie zombie = zombies.get(z);
-			
-			if (player.canInteract(zombie.getSprite().getX(), zombie.getSprite().getY())) { //player in range of enemy.
-				System.out.println("Enemy is hit.");
-				zombie.changeHealth(-1); //Reduce health by 1.
-				if (zombie.isDead()) { //Enemy has no health.
-					removeZombieIndex.add(z); // add zombie to list if he dies
-					program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.
-					System.out.println("Enemy is dead.");
+			//if (program.isCloseRangeCharacter()) {
+			//TO DO: Move player attack logic here after attack cooldown implementation.
+			//}
+			removeZombieIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
+			for (int z = 0; z < zombies.size(); z++) { // loop for all enemies
+				Zombie zombie = zombies.get(z);
+				
+				if (player.canInteract(zombie.getSprite().getX(), zombie.getSprite().getY())) { //player in range of enemy.
+					System.out.println("Enemy is hit.");
+					zombie.changeHealth(-1); //Reduce health by 1.
+					if (zombie.isDead()) { //Enemy has no health.
+						removeZombieIndex.add(z); // add zombie to list if he dies
+						program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.
+						System.out.println("Enemy is dead.");
+					}
 				}
 			}
 		}
+	
+		
+		
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
+		player.setAttackAvailable(false); // Initiate attack cool down.
 	}
 	
 	@Override
@@ -437,7 +438,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			if (zombie.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
 				if (timerCount % INTERACT_INTERVAL == 0) {
 					zombieSprite.movePolar(zombie.getSpeed(), angle(zombieSprite, playerSprite) + 180); // close range zombie moves towards player
+					if (timerCount % player.getAttackCooldown() == 0) {
+						System.out.println("Attack Available!");
+						player.setAttackAvailable(true); //player can now attack
+					}
+					else if (!player.isAttackAvailable()){
+						System.out.println("Player is too tired to attack!");
+					}
 				}
+				
 				if (Collision.check(zombie.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
 					//playSound("player", AudioPlayer.getInstance()); // player is damaged
 					double x = (zombieSprite.getX() + (zombieSprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
@@ -462,6 +471,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			setInBounds(zombie); // set long range enemy in bounds
 			
 		}
+		
+		
 		
 		//Slowly reduce hunger and thirst
 		if (timerCount % HUNGER_AND_THIRST_INTERVAL == 0) {
