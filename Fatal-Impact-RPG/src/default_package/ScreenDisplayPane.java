@@ -27,6 +27,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 	private static final int INTERACT_INTERVAL = 50;
 	private static final int HUNGER_AND_THIRST_INTERVAL = 100;
+	private static final int LONG_RANGE_ENEMY_ATTACK_INTERVAL = 200;
 	
 	private MainApplication program;
 	private Timer timer;
@@ -445,9 +446,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					else if (!player.isAttackAvailable()){
 						System.out.println("Player is too tired to attack!");
 					}
+					if (timerCount % LONG_RANGE_ENEMY_ATTACK_INTERVAL == 0) {
+						for (Zombie z1 : zombies) {
+							z1.setAttackAvailable(true); //enemy can now attack
+						}
+					}
 				}
 				
-				if (Collision.check(zombie.getSprite().getBounds(), player.getSprite().getBounds())) { // player collides with enemy
+				if (Collision.check(zombie.getSprite().getBounds(), player.getSprite().getBounds()) && zombie.isAttackAvailable()) { // player collides with enemy
 					//playSound("player", AudioPlayer.getInstance()); // player is damaged
 					double x = (zombieSprite.getX() + (zombieSprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
 					double y = (zombieSprite.getY() + (zombieSprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
@@ -466,6 +472,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					System.out.println("Player hit by " + zombie.getEnemyType() + ". Player health: " + player.getHealth());
 					player.setDamaged(true); //player is damaged.
 					checkPlayerDeath();
+					zombie.setAttackAvailable(false);
 				}
 			}
 			setInBounds(zombie); // set long range enemy in bounds
