@@ -47,6 +47,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int inventorySizeCount;
 	private int populatingItemsIndex;
 	
+	//player animation members
+		private int frame = 0;
+		private String[] playerMovingRight = {"char-right-walking.png", "char-right-walking2.png", "char-right-walking3.png", "char-right-walking4.png"};
+	
 	//main game objects
 	private Player player;
 	
@@ -85,13 +89,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
         GImage sprite = character.getSprite();
         double x = sprite.getX();
         double y = sprite.getY();
-        double min = 0;
-        double xMax = program.getWidth() - 82; // before it was - 1.75 * sprite.getWidth()
-        double yMax = program.getHeight() - 150; // before it was - 2.25 * sprite.getHeight()
+        double xmin = -80;
+        double ymin = -20;
+        double xMax = program.getWidth() - 135; // before it was - 1.75 * sprite.getWidth()
+        double yMax = program.getHeight() - 130; // before it was - 2.25 * sprite.getHeight()
         /* if (character instanceof Enemy) { // check if character is an enemy
             yMax = program.getHeight() - 3 * sprite.getHeight();
         } */
-        sprite.setLocation(inRange(x, min, xMax), inRange(y, min, yMax)); // set location of sprite in bounds
+        sprite.setLocation(inRange(x, xmin, xMax), inRange(y, ymin, yMax)); // set location of sprite in bounds
     }
 	
 	private double angle(GImage enemySprite, GImage playerSprite) { // return angle between player and enemy
@@ -109,12 +114,12 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		map.setSize(800, 640); 
 		
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
-		GImage playerSprite = new GImage ("FI-short-ranged.PNG");
+		GImage playerSprite = new GImage ("char-right.PNG");
+		playerSprite.setSize(200,100);
 		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
 		zombies = new ArrayList<Zombie>(); // initialize enemy array list
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
 		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
-		
 		
 		inventory = new GImage("HotBar.png", 300, 535);
 		inventoryDisplayIndex = 0;
@@ -156,7 +161,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		timer.start(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		GImage zombieImage = new GImage("zombie.png", 500, 100);
-		zombieImage.setSize(60, 100);
+		zombieImage.setSize(30, 70);
 		Zombie zombie = new Zombie(zombieImage, 5, "zombie");
 		zombie.setSpeed(10);
 		zombies.add(zombie);
@@ -303,7 +308,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		GImage playerSprite = player.getSprite();
-		
+		GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY()); // For player animation
 		int keyCode = e.getKeyCode();
 		if (keyCode == 87) { // w
 			player.setMoveY(-1);
@@ -372,6 +377,27 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		} else if (keyCode == KeyEvent.VK_ESCAPE) {
 			pause();
 		}
+		
+		 if (player.getMoveX() > 0) { // player moving right
+				// If the player is not moving right, set to right stationary image.
+				if (!(keyCode == 68)) { // If !(d) key pressed
+					newPlayerSprite.setImage("char-right.png");
+					player.setSprite(newPlayerSprite);
+				}
+				
+				
+				newPlayerSprite.setImage(playerMovingRight[frame]);
+				newPlayerSprite.setSize(200,100);
+				frame++;
+				player.setSprite(newPlayerSprite);
+	            if(frame>=playerMovingRight.length){
+	                frame = 0;
+	            }
+	            player.setSprite(newPlayerSprite);
+	            program.remove(playerSprite); // remove previous player sprite
+	    		program.add(newPlayerSprite); // add new player sprite
+	    		setInBounds(player);
+		}
 		  
 		//playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		// for normalizing diagonal movement
@@ -381,7 +407,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 				
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
+		newPlayerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 	    setInBounds(player); 
+	    
+	   
+	    
+	    
+		
+		
 		
 	}
 	
