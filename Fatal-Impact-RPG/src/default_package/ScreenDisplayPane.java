@@ -53,7 +53,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int frame3 = 0;
 	private String[] playerMovingRight = {"char-right-walking.png", "char-right-walking2.png", "char-right-walking3.png", "char-right-walking4.png",};
 	private String[] playerMovingLeft = {"char-left-walking.png", "char-left-walking2.png", "char-left-walking3.png", "char-left-walking4.png"};
-	private String[] playerMovingUp = {"char-up-walking.png", "char-up-walking2.png", "char-up-walking3.png", "char-up-walking4.png"};
+	private String[] playerMovingUp = {"char-up-moving.png", "char-up-moving2.png", "char-up-moving3.png", "char-up-moving4.png"};
 	//main game objects
 	private Player player;
 	
@@ -425,7 +425,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 
 		 if (player.getMoveY() < 0) { // player moving up
 			 	newPlayerSprite.setImage(playerMovingUp[frame3]);
-				newPlayerSprite.setSize(220,120);
+				newPlayerSprite.setSize(200,100);
 				frame3++;
 				player.setSprite(newPlayerSprite);
 	            if(frame3>=playerMovingUp.length){
