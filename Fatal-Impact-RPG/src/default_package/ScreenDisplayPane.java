@@ -48,9 +48,12 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int populatingItemsIndex;
 	
 	//player animation members
-		private int frame = 0;
-		private String[] playerMovingRight = {"char-right-walking.png", "char-right-walking2.png", "char-right-walking3.png", "char-right-walking4.png"};
-	
+	private int frame = 0;
+	private int frame2 = 0;
+	private int frame3 = 0;
+	private String[] playerMovingRight = {"char-right-walking.png", "char-right-walking2.png", "char-right-walking3.png", "char-right-walking4.png",};
+	private String[] playerMovingLeft = {"char-left-walking.png", "char-left-walking2.png", "char-left-walking3.png", "char-left-walking4.png"};
+	private String[] playerMovingUp = {"char-up-walking.png", "char-up-walking2.png", "char-up-walking3.png", "char-up-walking4.png"};
 	//main game objects
 	private Player player;
 	
@@ -395,9 +398,45 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	            }
 	            player.setSprite(newPlayerSprite);
 	            program.remove(playerSprite); // remove previous player sprite
-	    		program.add(newPlayerSprite); // add new player sprite
-	    		setInBounds(player);
-		}
+	            program.add(newPlayerSprite); // add new player sprite
+	    		
+		 }
+		 
+		 if (player.getMoveX() < 0) { // player moving left
+				// If the player is not moving left, set to left stationary image.
+				/*if (!(keyCode == 65)) { // If !(a) key pressed
+					newPlayerSprite.setImage("char-left-standing2.png");
+					player.setSprite(newPlayerSprite);
+				}*/
+				
+				
+				newPlayerSprite.setImage(playerMovingLeft[frame2]);
+				newPlayerSprite.setSize(200,100);
+				frame2++;
+				player.setSprite(newPlayerSprite);
+	            if(frame2>=playerMovingLeft.length){
+	                frame2 = 0;
+	            }
+	            player.setSprite(newPlayerSprite);
+	            program.remove(playerSprite); // remove previous player sprite
+	            program.add(newPlayerSprite); // add new player sprite
+	    		
+		 }
+		 
+		 if (player.getMoveY() < 0) { // player moving up
+			 	newPlayerSprite.setImage(playerMovingUp[frame3]);
+				newPlayerSprite.setSize(220,120);
+				frame3++;
+				player.setSprite(newPlayerSprite);
+	            if(frame3>=playerMovingUp.length){
+	                frame3 = 0;
+	            }
+	            player.setSprite(newPlayerSprite);
+	            program.remove(playerSprite); // remove previous player sprite
+	            program.add(newPlayerSprite); // add new player sprite
+		 }
+		 
+		
 		  
 		//playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		// for normalizing diagonal movement
@@ -408,7 +447,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				
 		playerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		newPlayerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
-	    setInBounds(player); 
+		//newPlayerSprite2.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
+		setInBounds(player);
+		 
 	    
 	   
 	    
