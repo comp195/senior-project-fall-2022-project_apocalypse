@@ -133,7 +133,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		
 		
-		timer.restart(); // reset timer
+		//timer.restart(); // reset timer
 	}
 	
 	private void checkPlayerDeath() {
@@ -161,7 +161,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}
 	
 	public void createMap(int mapNum) {
-		timer.start(); //When the game restarts, this is important for restarting the timer.
+		timer.restart(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		GImage zombieImage = new GImage("zombie.png", 500, 100);
 		zombieImage.setSize(30, 70);
