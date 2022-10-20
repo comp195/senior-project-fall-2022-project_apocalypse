@@ -21,6 +21,7 @@ import acm.program.GraphicsProgram;
 
 public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
+	private static final int PLAYER_SPRITE_SIZE = 30;
 	private static final int HEART_SIZE = 50;
 	private static final int PLAYER_STARTING_HEALTH = 10;
 	private static final int PLAYER_STARTING_SPEED = 7;
@@ -51,9 +52,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int frame = 0;
 	private int frame2 = 0;
 	private int frame3 = 0;
-	private String[] playerMovingRight = {"char-right-walking.png", "char-right-walking2.png", "char-right-walking3.png", "char-right-walking4.png",};
-	private String[] playerMovingLeft = {"char-left-walking.png", "char-left-walking2.png", "char-left-walking3.png", "char-left-walking4.png"};
-	private String[] playerMovingUp = {"char-up-moving.png", "char-up-moving2.png", "char-up-moving3.png", "char-up-moving4.png"};
+	private int frame4 = 0;
+	private String[] playerMovingRight = {"FI-Char-Right.png", "FI-Char-Right-moving.png", "FI-Char-Right.png", "FI-Char-Right-moving-2.png"};
+	private String[] playerMovingLeft = {"FI-Char-Left.png", "FI-Char-Left-moving.png", "FI-Char-Left.png", "FI-Char-Left-moving2.png"};
+	private String[] playerMovingUp = {"FI-Char-Up.png","FI-Char-Up-moving.png","FI-Char-Up.png", "FI-Char-Up-moving2.png"};
+	private String[] playerMovingDown = {"FI-Char-Down.png","FI-Char-Down-moving.png","FI-Char-Down.png", "FI-Char-Down-moving2.png"};
 	//main game objects
 	private Player player;
 	
@@ -117,8 +120,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		map.setSize(800, 640); 
 		
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
-		GImage playerSprite = new GImage ("char-right.PNG");
-		playerSprite.setSize(200,100);
+		GImage playerSprite = new GImage ("FI-Char-Down.PNG");
+		playerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
 		zombies = new ArrayList<Zombie>(); // initialize enemy array list
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
@@ -390,7 +393,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				
 				
 				newPlayerSprite.setImage(playerMovingRight[frame]);
-				newPlayerSprite.setSize(200,100);
+				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 				frame++;
 				player.setSprite(newPlayerSprite);
 	            if(frame>=playerMovingRight.length){
@@ -411,7 +414,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				
 				
 				newPlayerSprite.setImage(playerMovingLeft[frame2]);
-				newPlayerSprite.setSize(200,100);
+				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 				frame2++;
 				player.setSprite(newPlayerSprite);
 	            if(frame2>=playerMovingLeft.length){
@@ -425,11 +428,24 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 
 		 if (player.getMoveY() < 0) { // player moving up
 			 	newPlayerSprite.setImage(playerMovingUp[frame3]);
-				newPlayerSprite.setSize(200,100);
+				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 				frame3++;
 				player.setSprite(newPlayerSprite);
 	            if(frame3>=playerMovingUp.length){
 	                frame3 = 0;
+	            }
+	            player.setSprite(newPlayerSprite);
+	            program.remove(playerSprite); // remove previous player sprite
+	            program.add(newPlayerSprite); // add new player sprite
+		 }
+		 
+		 if (player.getMoveY() > 0) { // player moving up
+			 	newPlayerSprite.setImage(playerMovingDown[frame4]);
+				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+				frame4++;
+				player.setSprite(newPlayerSprite);
+	            if(frame4>=playerMovingDown.length){
+	            	frame4 = 0;
 	            }
 	            player.setSprite(newPlayerSprite);
 	            program.remove(playerSprite); // remove previous player sprite
