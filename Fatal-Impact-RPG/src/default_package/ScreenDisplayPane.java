@@ -37,6 +37,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<Item> items; // items to display on the level.
 	private ArrayList<Zombie> zombies;
+	private ArrayList<Zombie2> zombies2; 
 	private ArrayList<Integer> removeZombieIndex; // to keep track of enemy indexes to remove
 	private int currentMap; // to display current room
 	private static final int BACKGROUND_TILE_SIZE = 50;
@@ -124,6 +125,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		playerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
 		zombies = new ArrayList<Zombie>(); // initialize enemy array list
+		zombies2 = new ArrayList<Zombie2>(); // initialized another enemy array list
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
 		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
 		
@@ -175,6 +177,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			program.add(z.getSprite()); //Add enemy sprite to screen.
 			
 		}
+		
+		GImage zombieImage2 = new GImage("zombie2.png", 650, 300);
+		zombieImage2.setSize(30, 70);
+		Zombie2 zombiesSecond = new Zombie2(zombieImage2, 5, "zombie2");
+		zombiesSecond.setSpeed(10);
+		zombies2.add(zombiesSecond);
+		for (Zombie2 z: zombies2) {
+			program.add(z.getSprite()); // Added another enemy sprite to the screen 
+		}
+		
 		//program.removeAll();
 		setBackground(newMap.getImageName()); //Set background map
 		
