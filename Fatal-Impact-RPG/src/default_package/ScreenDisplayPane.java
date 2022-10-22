@@ -95,10 +95,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
         GImage sprite = character.getSprite();
         double x = sprite.getX();
         double y = sprite.getY();
-        double xmin = -80;
-        double ymin = -20;
-        double xMax = program.getWidth() - 135; // before it was - 1.75 * sprite.getWidth()
-        double yMax = program.getHeight() - 130; // before it was - 2.25 * sprite.getHeight()
+        double xmin = 0;
+        double ymin = 0;
+        double xMax = program.getWidth() - 45; // before it was - 1.75 * sprite.getWidth()
+        double yMax = program.getHeight() - 70; // before it was - 2.25 * sprite.getHeight()
         /* if (character instanceof Enemy) { // check if character is an enemy
             yMax = program.getHeight() - 3 * sprite.getHeight();
         } */
@@ -386,10 +386,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		 if (player.getMoveX() > 0) { // player moving right
 				// If the player is not moving right, set to right stationary image.
-				if (!(keyCode == 68)) { // If !(d) key pressed
+				/*if (!(keyCode == 68)) { // If !(d) key pressed
 					newPlayerSprite.setImage("char-right.png");
 					player.setSprite(newPlayerSprite);
-				}
+				}*/
 				
 				
 				newPlayerSprite.setImage(playerMovingRight[frame]);
@@ -465,13 +465,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		newPlayerSprite.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		//newPlayerSprite2.move(player.getMoveX() * player.getSpeed(), player.getMoveY() * player.getSpeed()); // move playerSprite
 		setInBounds(player);
-		 
-	    
-	   
-	    
-	    
-		
-		
+		 		
 		
 	}
 	
