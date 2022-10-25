@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
-
+import java.util.concurrent.TimeUnit;
 
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
@@ -50,14 +50,24 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int populatingItemsIndex;
 	
 	//player animation members
+	private boolean knifeEquipped = false;
+	
 	private int frame = 0;
 	private int frame2 = 0;
 	private int frame3 = 0;
 	private int frame4 = 0;
+	
+	private int playerMovingDownKnifeFrame = 0;
+	private int playerAttackDownKnifeFrame = 0;
+	
 	private String[] playerMovingRight = {"FI-Char-Right.png", "FI-Char-Right-moving.png", "FI-Char-Right.png", "FI-Char-Right-moving-2.png"};
 	private String[] playerMovingLeft = {"FI-Char-Left.png", "FI-Char-Left-moving.png", "FI-Char-Left.png", "FI-Char-Left-moving2.png"};
 	private String[] playerMovingUp = {"FI-Char-Up.png","FI-Char-Up-moving.png","FI-Char-Up.png", "FI-Char-Up-moving2.png"};
 	private String[] playerMovingDown = {"FI-Char-Down.png","FI-Char-Down-moving.png","FI-Char-Down.png", "FI-Char-Down-moving2.png"};
+	
+	private String[] playerMovingDownKnife = {"FI-Char-Down-Knife-Standing.png", "FI-Char-Down-Knife-Moving.png"};
+	private String[] playerAttackDownKnife = {"FI-Char-Down-Knife-Attack.png", "FI-Char-Down-Knife-Attack2.png"};
+	
 	//main game objects
 	private Player player;
 	
@@ -394,6 +404,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			}
 		} else if (keyCode == KeyEvent.VK_ESCAPE) {
 			pause();
+		} else if (keyCode == 88) { //User clicks x
+			
 		}
 		
 		 if (player.getMoveX() > 0) { // player moving right
@@ -439,7 +451,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 }
 		 
 		 if (player.getMoveY() < 0) { // player moving up
-			 	newPlayerSprite.setImage(playerMovingUp[frame3]);
+			    newPlayerSprite.setImage(playerMovingUp[frame3]);
 				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 				frame3++;
 				player.setSprite(newPlayerSprite);
@@ -449,9 +461,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	            player.setSprite(newPlayerSprite);
 	            program.remove(playerSprite); // remove previous player sprite
 	            program.add(newPlayerSprite); // add new player sprite
+	          
+			 //setSpriteImage(playerMovingUp, frame3, player, playerSprite, newPlayerSprite);
 		 }
 		 
-		 if (player.getMoveY() > 0) { // player moving up
+		 if (player.getMoveY() > 0) { // player moving down
 			 	newPlayerSprite.setImage(playerMovingDown[frame4]);
 				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 				frame4++;
@@ -463,6 +477,20 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	            program.remove(playerSprite); // remove previous player sprite
 	            program.add(newPlayerSprite); // add new player sprite
 		 }
+		 /*
+		 else if (player.getMoveY() > 0 && knifeIsEquipped) {
+			 newPlayerSprite.setImage(playerMovingDownKnife[playerMovingDownKnifeFrame]);
+			 newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+			 playerMovingDownKnifeFrame++;
+			 player.setSprite(newPlayerSprite);
+			 if(playerMovingDownKnifeFrame>=playerMovingDownKnife.length){
+				 playerMovingDownKnifeFrame = 0;
+			 }
+			 player.setSprite(newPlayerSprite);
+			 program.remove(playerSprite); // remove previous player sprite
+			 program.add(newPlayerSprite); // add new player sprite
+
+		 }*/
 		 
 		
 		  
@@ -479,6 +507,19 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		setInBounds(player);
 		 		
 		
+	}
+	
+	public void setSpriteImage(String[] PlayerMoving, int frames, Player player, GImage playerSprite, GImage newPlayerSprite) {
+		newPlayerSprite.setImage(PlayerMoving[frames]);
+		newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+		frames++;
+		player.setSprite(newPlayerSprite);
+		if(frames>=PlayerMoving.length){
+			frames = 0;
+		}
+		player.setSprite(newPlayerSprite);
+		program.remove(playerSprite); // remove previous player sprite
+		program.add(newPlayerSprite); // add new player sprite
 	}
 	
 	@Override 
@@ -498,6 +539,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		GImage playerSprite = player.getSprite();
+		GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY()); // For player animation
 		if (player.isAttackAvailable()) {
 			//if (program.isCloseRangeCharacter()) {
 			//TO DO: Move player attack logic here after attack cooldown implementation.
@@ -507,6 +549,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				Zombie zombie = zombies.get(z);
 				
 				if (player.canInteract(zombie.getSprite().getX(), zombie.getSprite().getY())) { //player in range of enemy.
+					 
 					System.out.println("Enemy is hit.");
 					zombie.changeHealth(-1); //Reduce health by 1.
 					if (zombie.isDead()) { //Enemy has no health.
@@ -515,8 +558,29 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						System.out.println("Enemy is dead.");
 					}
 				}
+				
+				
 			}
 		}
+		newPlayerSprite.setImage(playerAttackDownKnife[playerAttackDownKnifeFrame]);
+		 newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+		 playerAttackDownKnifeFrame++;
+		 player.setSprite(newPlayerSprite);
+		 if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
+			 playerAttackDownKnifeFrame = 0;
+		 }
+		 player.setSprite(newPlayerSprite);
+		 program.remove(playerSprite); // remove previous player sprite
+		 program.add(newPlayerSprite); // add new player sprite
+		 
+		 /*try {
+			 Thread.sleep(1000);
+		 }
+		 catch (Exception e2) {
+	           
+	            // catching the exception
+	            System.out.println(e2);
+	     }*/
 	
 		
 		
