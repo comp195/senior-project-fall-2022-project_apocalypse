@@ -65,7 +65,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private String[] playerMovingUp = {"FI-Char-Up.png","FI-Char-Up-moving.png","FI-Char-Up.png", "FI-Char-Up-moving2.png"};
 	private String[] playerMovingDown = {"FI-Char-Down.png","FI-Char-Down-moving.png","FI-Char-Down.png", "FI-Char-Down-moving2.png"};
 	
-	private String[] playerMovingDownKnife = {"FI-Char-Down-Knife-Standing.png", "FI-Char-Down-Knife-Moving.png"};
+	private String[] playerMovingDownKnife = {"FI-Char-Down-Knife-Standing.png", "FI-Char-Down-Knife-Moving.png", "FI-Char-Down-Knife-Standing.png", "FI-Char-Down-Knife-Moving2.png" };
 	private String[] playerAttackDownKnife = {"FI-Char-Down-Knife-Attack.png", "FI-Char-Down-Knife-Attack2.png"};
 	
 	//main game objects
@@ -124,7 +124,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}
 	
 	private void initializeGame() {
-		
+		//knifeEquipped = false;
 		
 		currentMap = 1; // starting room number
 		map = new GImage("city-map.jpg", 0, 0);
@@ -404,8 +404,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			}
 		} else if (keyCode == KeyEvent.VK_ESCAPE) {
 			pause();
-		} else if (keyCode == 88) { //User clicks x
+		} else if (keyCode == 88) { //User clicks x (equip knife)
+		
+			knifeEquipped = true;
 			
+		}
+		
+		if (keyCode == 90) { //User clicks xx
+			knifeEquipped = false;
 		}
 		
 		 if (player.getMoveX() > 0) { // player moving right
@@ -414,7 +420,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					newPlayerSprite.setImage("char-right.png");
 					player.setSprite(newPlayerSprite);
 				}*/
-				
+			    knifeEquipped = false; //Player should be moving without knife
 				
 				newPlayerSprite.setImage(playerMovingRight[frame]);
 				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
@@ -435,7 +441,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					newPlayerSprite.setImage("char-left-standing2.png");
 					player.setSprite(newPlayerSprite);
 				}*/
-				
+			    knifeEquipped = false;
 				
 				newPlayerSprite.setImage(playerMovingLeft[frame2]);
 				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
@@ -451,6 +457,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 }
 		 
 		 if (player.getMoveY() < 0) { // player moving up
+			    knifeEquipped = false;
 			    newPlayerSprite.setImage(playerMovingUp[frame3]);
 				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 				frame3++;
@@ -465,20 +472,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			 //setSpriteImage(playerMovingUp, frame3, player, playerSprite, newPlayerSprite);
 		 }
 		 
-		 if (player.getMoveY() > 0) { // player moving down
-			 	newPlayerSprite.setImage(playerMovingDown[frame4]);
-				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
-				frame4++;
-				player.setSprite(newPlayerSprite);
-	            if(frame4>=playerMovingDown.length){
-	            	frame4 = 0;
-	            }
-	            player.setSprite(newPlayerSprite);
-	            program.remove(playerSprite); // remove previous player sprite
-	            program.add(newPlayerSprite); // add new player sprite
-		 }
-		 /*
-		 else if (player.getMoveY() > 0 && knifeIsEquipped) {
+		 if (player.getMoveY() > 0 && knifeEquipped) {
 			 newPlayerSprite.setImage(playerMovingDownKnife[playerMovingDownKnifeFrame]);
 			 newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 			 playerMovingDownKnifeFrame++;
@@ -490,7 +484,22 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			 program.remove(playerSprite); // remove previous player sprite
 			 program.add(newPlayerSprite); // add new player sprite
 
-		 }*/
+		 }
+		 
+		 else if (player.getMoveY() > 0) { // player moving down
+			    knifeEquipped = false;
+			 	newPlayerSprite.setImage(playerMovingDown[frame4]);
+				newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+				frame4++;
+				player.setSprite(newPlayerSprite);
+	            if(frame4>=playerMovingDown.length){
+	            	frame4 = 0;
+	            }
+	            player.setSprite(newPlayerSprite);
+	            program.remove(playerSprite); // remove previous player sprite
+	            program.add(newPlayerSprite); // add new player sprite
+		 }
+		
 		 
 		
 		  
