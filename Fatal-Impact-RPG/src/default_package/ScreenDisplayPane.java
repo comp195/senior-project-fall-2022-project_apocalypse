@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Timer;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +51,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int populatingItemsIndex;
 	
 	//player animation members
-	private boolean knifeEquipped = false;
+	private boolean knifeEquipped;
 	
 	private int frame = 0;
 	private int frame2 = 0;
@@ -62,6 +63,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int playerMovingLeftKnifeFrame = 0;
 	private int playerMovingRightKnifeFrame = 0;
 	private int playerAttackDownKnifeFrame = 0;
+	
+	private int equipOnAndOff;
 	
 	private String[] playerMovingRight = {"FI-Char-Right.png", "FI-Char-Right-moving.png", "FI-Char-Right.png", "FI-Char-Right-moving-2.png"};
 	private String[] playerMovingLeft = {"FI-Char-Left.png", "FI-Char-Left-moving.png", "FI-Char-Left.png", "FI-Char-Left-moving2.png"};
@@ -130,7 +133,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}
 	
 	private void initializeGame() {
-		//knifeEquipped = false;
+		knifeEquipped = false;
+		equipOnAndOff = 0;
 		
 		currentMap = 1; // starting room number
 		map = new GImage("city-map.jpg", 0, 0);
@@ -418,10 +422,21 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		} else if (keyCode == KeyEvent.VK_ESCAPE) {
 			pause();
 		} else if (keyCode == 88) { //User clicks x (equip knife)
-			knifeEquipped = true;
-		} else if (keyCode == 90) { //User clicks z (Un-equip knife)
+			if (equipOnAndOff % 2 == 0) { //Equips knife when x is entered every other time
+				knifeEquipped = true;
+				//Set image showing player equips knife
+				setSpriteImage(playerMovingDownKnife, 0, player, playerSprite, newPlayerSprite);
+			}
+			else { //Unequip knife
+				knifeEquipped = false;
+				//Set image showing player un equips knife
+				setSpriteImage(playerMovingDown, 0, player, playerSprite, newPlayerSprite);
+			}
+			equipOnAndOff++;
+				
+		} /*else if (keyCode == 90) { //User clicks z (Un-equip knife)
 			knifeEquipped = false;
-		}
+		}*/
 		
 		if (player.getMoveX() > 0 && knifeEquipped) {
 			setSpriteImage(playerMovingRightKnife, playerMovingRightKnifeFrame, player, playerSprite, newPlayerSprite);
@@ -432,7 +447,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		
 		else if (player.getMoveX() > 0) { // player moving right
-			 knifeEquipped = false; //Player should be moving without knife
+			 //knifeEquipped = false; //Player should be moving without knife
 			 setSpriteImage(playerMovingRight, frame, player, playerSprite, newPlayerSprite);
 			 frame++;
 			 if(frame>=playerMovingRight.length){
@@ -449,7 +464,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 }
 		 
 		 else if (player.getMoveX() < 0) { // player moving left
-			 knifeEquipped = false;
+			 //knifeEquipped = false;
 			 setSpriteImage(playerMovingLeft, frame2, player, playerSprite, newPlayerSprite);
 			 frame2++;
 			 if(frame2>=playerMovingLeft.length){
@@ -466,7 +481,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 }
 		 
 		 else if (player.getMoveY() < 0) { // player moving up
-			 knifeEquipped = false;
+			 //knifeEquipped = false;
 			 setSpriteImage(playerMovingUp, frame3, player, playerSprite, newPlayerSprite);
 			 frame3++;
 			 	if(frame3>=playerMovingUp.length){
@@ -486,7 +501,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 }
 		 
 		 else if (player.getMoveY() > 0) { // player moving down
-			 knifeEquipped = false;
+			// knifeEquipped = false;
 			 setSpriteImage(playerMovingDown, frame4, player, playerSprite, newPlayerSprite);
 			 frame4++;
 			 if(frame4>=playerMovingDown.length){
