@@ -19,6 +19,8 @@ import acm.graphics.GObject;
 import acm.graphics.GOval;
 import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
+import acm.graphics.*;
+import acm.program.*;
 
 public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
@@ -65,6 +67,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int playerAttackDownKnifeFrame = 0;
 	
 	private int equipOnAndOff;
+	private boolean enemyHit = false;
 	
 	private String[] playerMovingRight = {"FI-Char-Right.png", "FI-Char-Right-moving.png", "FI-Char-Right.png", "FI-Char-Right-moving-2.png"};
 	private String[] playerMovingLeft = {"FI-Char-Left.png", "FI-Char-Left-moving.png", "FI-Char-Left.png", "FI-Char-Left-moving2.png"};
@@ -272,7 +275,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		if (obj == this.pauseButton) {
 			//this.monsterTimer.stop();
 			
-			this.pause();
+			//this.pause();
 		}
 		if (obj == this.resume) {
 			this.resume();
@@ -281,13 +284,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}	
 		if (obj == this.quit) {System.exit(0);}
 	}
+	/*
 	public void pause() {
 		program.add(resumeImg);
 		program.add(quitImg);
 		program.add(resume);
 		program.add(quit);
 		paused = true;
-	}
+	}*/
 	public void resume() {
 		program.remove(resumeImg);
 		program.remove(resume);
@@ -331,8 +335,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
     }
 	
 	
-	public void setSpriteImage(String[] PlayerMoving, int frames, Player player, GImage playerSprite, GImage newPlayerSprite) {
-		newPlayerSprite.setImage(PlayerMoving[frames]);
+	public void setSpriteImage(String[] playerMoving, int frames, Player player, GImage playerSprite, GImage newPlayerSprite) {
+		newPlayerSprite.setImage(playerMoving[frames]);
 		newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 		player.setSprite(newPlayerSprite);
 		program.remove(playerSprite); // remove previous player sprite
@@ -420,7 +424,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				}
 			}
 		} else if (keyCode == KeyEvent.VK_ESCAPE) {
-			pause();
+			//pause();
 		} else if (keyCode == 88) { //User clicks x (equip knife)
 			if (equipOnAndOff % 2 == 0) { //Equips knife when x is entered every other time
 				knifeEquipped = true;
@@ -556,7 +560,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				Zombie zombie = zombies.get(z);
 				
 				if (player.canInteract(zombie.getSprite().getX(), zombie.getSprite().getY())) { //player in range of enemy.
-					 
+					//Player attack animation
+					setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
+					playerAttackDownKnifeFrame++;
+					if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
+						playerAttackDownKnifeFrame = 0;
+				 	}
+					enemyHit = true;
+					//Change zombie health and manage zombie death
 					System.out.println("Enemy is hit.");
 					zombie.changeHealth(-1); //Reduce health by 1.
 					if (zombie.isDead()) { //Enemy has no health.
@@ -564,40 +575,36 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.
 						System.out.println("Enemy is dead.");
 					}
+					
 				}
 				
 				
 			}
+			
+			
 		}
-		newPlayerSprite.setImage(playerAttackDownKnife[playerAttackDownKnifeFrame]);
-		 newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
-		 playerAttackDownKnifeFrame++;
-		 player.setSprite(newPlayerSprite);
-		 if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
-			 playerAttackDownKnifeFrame = 0;
-		 }
-		 player.setSprite(newPlayerSprite);
-		 program.remove(playerSprite); // remove previous player sprite
-		 program.add(newPlayerSprite); // add new player sprite
-		 
-		 /*try {
-			 Thread.sleep(1000);
-		 }
-		 catch (Exception e2) {
-	           
-	            // catching the exception
-	            System.out.println(e2);
-	     }*/
-	
+		
+		
 		
 		
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
 		player.setAttackAvailable(false); // Initiate attack cool down.
+		
+		
+		
+		
+	}
+	
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
+		GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY()); // For player animation
 		removeZombieIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		timerCount++;
 		for (int z = 0; z < zombies.size(); z++) { // loop through all enemies
@@ -654,6 +661,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			player.SetThirst(player.GetThirst() - 1);
 			System.out.println("Hunger: " + player.GetHunger());
 			System.out.println("Thirst: " + player.GetThirst());
+		}
+		
+		if (enemyHit && timerCount % 50 == 0 ) {
+			//Player attack animation
+			setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
+			playerAttackDownKnifeFrame++;
+			if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
+				playerAttackDownKnifeFrame = 0;
+				enemyHit = false;
+		 	}
 		}
 		
 		//When hunger and thirst run out, game over.
