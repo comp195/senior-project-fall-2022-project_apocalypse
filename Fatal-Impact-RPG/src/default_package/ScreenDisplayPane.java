@@ -24,6 +24,7 @@ import acm.program.*;
 
 public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
+	private static final int ATTACK_ANIMATION_INTERVAL = 15;
 	private static final int PLAYER_SPRITE_SIZE = 30;
 	private static final int HEART_SIZE = 50;
 	private static final int PLAYER_STARTING_HEALTH = 10;
@@ -54,6 +55,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
 	//player animation members
 	private boolean knifeEquipped;
+	private int equipOnAndOff;
+	private boolean enemyHitDown = false;
+	private boolean enemyHitUp = false;
+	private boolean enemyHitLeft = false;
+	private boolean enemyHitRight = false;
+
+	private int attackAnimationDownAcc = 0;
+	private int attackAnimationAcc = 0;
 	
 	private int frame = 0;
 	private int frame2 = 0;
@@ -64,10 +73,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int playerMovingUpKnifeFrame = 0;
 	private int playerMovingLeftKnifeFrame = 0;
 	private int playerMovingRightKnifeFrame = 0;
-	private int playerAttackDownKnifeFrame = 0;
 	
-	private int equipOnAndOff;
-	private boolean enemyHit = false;
+	private int playerAttackDownKnifeFrame = 0;
+	private int playerAttackUpKnifeFrame = 0;
+	private int playerAttackLeftKnifeFrame = 0;
+	private int playerAttackRightKnifeFrame = 0;
+	
+	
 	
 	private String[] playerMovingRight = {"FI-Char-Right.png", "FI-Char-Right-moving.png", "FI-Char-Right.png", "FI-Char-Right-moving-2.png"};
 	private String[] playerMovingLeft = {"FI-Char-Left.png", "FI-Char-Left-moving.png", "FI-Char-Left.png", "FI-Char-Left-moving2.png"};
@@ -78,7 +90,12 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private String[] playerMovingUpKnife = {"FI-Char-Up-Knife-Standing.png", "FI-Char-Up-Knife-Moving.png", "FI-Char-Up-Knife-Standing.png", "FI-Char-Up-Knife-Moving2.png" };
 	private String[] playerMovingLeftKnife = {"FI-Char-Left-Knife-Standing.png", "FI-Char-Left-Knife-Moving.png", "FI-Char-Left-Knife-Standing.png", "FI-Char-Left-Knife-Moving2.png"};
 	private String[] playerMovingRightKnife = {"FI-Char-Right-Knife-Standing.png","FI-Char-Right-Knife-Moving.png", "FI-Char-Right-Knife-Standing.png", "FI-Char-Right-Knife-Moving2.png"};
-	private String[] playerAttackDownKnife = {"FI-Char-Down-Knife-Attack.png", "FI-Char-Down-Knife-Attack2.png"};
+	
+	private String[] playerAttackDownKnife = {"FI-Char-Down-Knife-Attack.png", "FI-Char-Down-Knife-Attack2.png", "FI-Char-Down-Knife-Standing.png"};
+	private String[] playerAttackUpKnife = {"FI-Char-Up-Knife-Attack.png", "FI-Char-Up-Knife-Attack2.png", "FI-Char-Up-Knife-Attack.png", "FI-Char-Up-Knife-Standing.png"};
+	private String[] playerAttackLeftKnife = {"FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Attack2.png", "FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Standing.png"};
+	private String[] playerAttackRightKnife = {"FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Attack2.png", "FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Standing.png"};
+
 	
 	//main game objects
 	private Player player;
@@ -442,7 +459,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			knifeEquipped = false;
 		}*/
 		
-		if (player.getMoveX() > 0 && knifeEquipped) {
+		if (player.getMoveX() > 0 && knifeEquipped) { // player moving right
 			setSpriteImage(playerMovingRightKnife, playerMovingRightKnifeFrame, player, playerSprite, newPlayerSprite);
 			playerMovingRightKnifeFrame++;
 			 if(playerMovingRightKnifeFrame>=playerMovingRightKnife.length){
@@ -476,7 +493,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			 }
 		 }
 		 
-		 if (player.getMoveY() < 0 && knifeEquipped) {
+		 if (player.getMoveY() < 0 && knifeEquipped) { // player moving up
 			 setSpriteImage(playerMovingUpKnife, playerMovingUpKnifeFrame, player, playerSprite, newPlayerSprite);
 			 playerMovingUpKnifeFrame++;
 			 if(playerMovingUpKnifeFrame>=playerMovingUpKnife.length){
@@ -495,7 +512,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 
 		 
 		 
-		 if (player.getMoveY() > 0 && knifeEquipped) {
+		 if (player.getMoveY() > 0 && knifeEquipped) { // player moving down
 			 setSpriteImage(playerMovingDownKnife, playerMovingDownKnifeFrame, player, playerSprite, newPlayerSprite);
 			 playerMovingDownKnifeFrame++;
 			 	if(playerMovingDownKnifeFrame>=playerMovingDownKnife.length){
@@ -560,13 +577,53 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				Zombie zombie = zombies.get(z);
 				
 				if (player.canInteract(zombie.getSprite().getX(), zombie.getSprite().getY())) { //player in range of enemy.
-					//Player attack animation
-					setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
-					playerAttackDownKnifeFrame++;
-					if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
-						playerAttackDownKnifeFrame = 0;
-				 	}
-					enemyHit = true;
+					if (zombie.getSprite().getY() > player.getSprite().getY()) { //if zombie is below player. 
+						/*
+						//Player attack animation
+						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
+						playerAttackDownKnifeFrame++;
+						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
+							playerAttackDownKnifeFrame = 0;
+					 	}*/
+						enemyHitDown = true;
+					}
+					
+					if (zombie.getSprite().getY() < player.getSprite().getY()) { //if player is below zombie . 
+						/*
+						//Player attack animation
+						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
+						playerAttackDownKnifeFrame++;
+						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
+							playerAttackDownKnifeFrame = 0;
+					 	}*/
+						enemyHitUp = true;
+					}
+					
+					if (player.getSprite().getY() > zombie.getSprite().getY()) { //if zombie is to the left of player  . 
+						/*
+						//Player attack animation
+						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
+						playerAttackDownKnifeFrame++;
+						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
+							playerAttackDownKnifeFrame = 0;
+					 	}*/
+						enemyHitLeft = true;
+					}
+					
+					if (zombie.getSprite().getX() > player.getSprite().getX()) { //if zombie is to the right of player  . 
+						/*
+						//Player attack animation
+						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
+						playerAttackDownKnifeFrame++;
+						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
+							playerAttackDownKnifeFrame = 0;
+					 	}*/
+						enemyHitRight = true;
+					}
+					
+					
+					
+					
 					//Change zombie health and manage zombie death
 					System.out.println("Enemy is hit.");
 					zombie.changeHealth(-1); //Reduce health by 1.
@@ -659,19 +716,82 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		if (timerCount % HUNGER_AND_THIRST_INTERVAL == 0) {
 			player.SetHunger(player.GetHunger() - 1);
 			player.SetThirst(player.GetThirst() - 1);
-			System.out.println("Hunger: " + player.GetHunger());
-			System.out.println("Thirst: " + player.GetThirst());
+			//System.out.println("Hunger: " + player.GetHunger());
+			//System.out.println("Thirst: " + player.GetThirst());
 		}
 		
-		if (enemyHit && timerCount % 50 == 0 ) {
+		
+		
+		
+		//Use attackAnimationAcc for sing full cycle of attack animation.
+		if (attackAnimationDownAcc == 3) {
+			enemyHitDown = false; //Full cycle complete, stop from next cycle.
+			attackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
+		}
+		
+		if (attackAnimationAcc == 4) {
+			enemyHitUp = false; //Full cycle complete, stop from next cycle.
+			enemyHitLeft = false;
+			enemyHitRight = false;
+			attackAnimationAcc = 0; //When next attack happens, start from beginning frame/
+		}
+		
+		
+		
+		/*Initiate full down attack animation frames */
+		
+		//Use enemyHit to cycle through full attack animation frames.
+		if (enemyHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
 			//Player attack animation
 			setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
 			playerAttackDownKnifeFrame++;
 			if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
 				playerAttackDownKnifeFrame = 0;
-				enemyHit = false;
 		 	}
+			attackAnimationDownAcc++;
+			
 		}
+		
+		/*Initiate full up attack animation frames */
+		
+		/*//Use enemyHit to cycle through full attack animation frames.
+		if (enemyHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+			//Player attack animation
+			setSpriteImage(playerAttackUpKnife, playerAttackUpKnifeFrame, player, playerSprite, newPlayerSprite);
+			playerAttackUpKnifeFrame++;
+			if(playerAttackUpKnifeFrame>=playerAttackUpKnife.length){
+				playerAttackUpKnifeFrame = 0;
+		 	}
+			attackAnimationAcc++;
+			
+		}*/
+		
+		if (enemyHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+			//Player attack animation
+			setSpriteImage(playerAttackLeftKnife, playerAttackLeftKnifeFrame, player, playerSprite, newPlayerSprite);
+			playerAttackLeftKnifeFrame++;
+			if(playerAttackLeftKnifeFrame>=playerAttackLeftKnife.length){
+				playerAttackLeftKnifeFrame = 0;
+		 	}
+			attackAnimationAcc++;
+			
+		}
+		
+		if (enemyHitRight && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+			//Player attack animation
+			setSpriteImage(playerAttackRightKnife, playerAttackRightKnifeFrame, player, playerSprite, newPlayerSprite);
+			playerAttackRightKnifeFrame++;
+			if(playerAttackRightKnifeFrame>=playerAttackRightKnife.length){
+				playerAttackRightKnifeFrame = 0;
+		 	}
+			attackAnimationAcc++;
+			
+		}
+		
+		
+		
+		
+		
 		
 		//When hunger and thirst run out, game over.
 		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
@@ -681,7 +801,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		
 	}
-	
+
 	@Override
 	public void showContents() {
 		program.add(map);
