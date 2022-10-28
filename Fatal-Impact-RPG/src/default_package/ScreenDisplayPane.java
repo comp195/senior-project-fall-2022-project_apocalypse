@@ -208,8 +208,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void createMap(int mapNum) {
 		timer.restart(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
-		GImage zombieImage = new GImage("zombie.png", 500, 100);
-		zombieImage.setSize(30, 70);
+		GImage zombieImage = new GImage("ZombieSprite.png", 500, 100);
+		zombieImage.setSize(30, 30);
 		Zombie zombie = new Zombie(zombieImage, 5, "zombie");
 		zombie.setSpeed(10);
 		zombies.add(zombie);
