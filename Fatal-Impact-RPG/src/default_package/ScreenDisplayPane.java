@@ -37,6 +37,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private MainApplication program;
 	private Timer timer;
 	private int timerCount; // to keep track of timer
+	private int Z = 0;
 	private ArrayList<GImage> background;
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<Item> items; // items to display on the level.
@@ -60,9 +61,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private boolean enemyHitUp = false;
 	private boolean enemyHitLeft = false;
 	private boolean enemyHitRight = false;
-
+	
+	private boolean playerHitDown = false;
+	private boolean playerHitUp = false;
+	private boolean playerHitLeft = false;
+	private boolean playerHitRight = false;
+	
 	private int attackAnimationDownAcc = 0;
 	private int attackAnimationAcc = 0;
+	
+	private int zombieAttackAnimationDownAcc = 0;
+	
 	
 	private int frame = 0;
 	private int frame2 = 0;
@@ -95,12 +104,37 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private String[] playerAttackUpKnife = {"FI-Char-Up-Knife-Attack.png", "FI-Char-Up-Knife-Attack2.png", "FI-Char-Up-Knife-Attack.png", "FI-Char-Up-Knife-Standing.png"};
 	private String[] playerAttackLeftKnife = {"FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Attack2.png", "FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Standing.png"};
 	private String[] playerAttackRightKnife = {"FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Attack2.png", "FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Standing.png"};
+	
+	
+	//enemy animation members
+	private int zombieMovingDownFrame = 0;
+	private int zombieMovingUpFrame = 0;
+	private int zombieMovingLeftFrame = 0;
+	private int zombieMovingRightFrame = 0;
+	
+	private int zombieAttackDownFrame = 0;
+	private int zombieAttackUpFrame = 0;
+	private int zombieAttackLeftFrame = 0;
+	private int zombieAttackRightFrame = 0;
+
+	private String[] zombieMovingDown = {"Zombie-Moving-Down.png", "Zombie-Standing-Down.png", "Zombie-Moving-Down2.png", "Zombie-Standing-Down.png"};
+	private String[] zombieMovingUp = {"Zombie-Moving-Up.png", "Zombie-Standing-Up.png", "Zombie-Moving-Up2.png", "Zombie-Standing-Up.png"};
+	private String[] zombieMovingLeft = {"Zombie-Moving-Left.png", "Zombie-Standing-Left.png", "Zombie-Moving-Left2.png", "Zombie-Standing-Left.png"};
+	private String[] zombieMovingRight = {"Zombie-Moving-Right.png", "Zombie-Standing-Right.png", "Zombie-Moving-Right2.png", "Zombie-Standing-Right.png"};
+	
+	
+	private String[] zombieAttackDown = {"Zombie-Attack-Down.png", "Zombie-Attack-Down2.png", "Zombie-Attack-Down.png", "Zombie-Standing-Down.png"};
+	private String[] zombieAttackUp = {"Zombie-Attack-Up.png", "Zombie-Attack-Up2.png", "Zombie-Attack-Up.png", "Zombie-Standing-Up.png"};
+	private String[] zombieAttackLeft = {"Zombie-Attack-Left.png", "Zombie-Attack-Left2.png", "Zombie-Attack-Left.png", "Zombie-Standing-Left.png"};
+	private String[] zombieAttackRight = {"Zombie-Attack-Right.png", "Zombie-Attack-Right2.png", "Zombie-Attack-Right.png", "Zombie-Standing-Right.png"};
 
 	
 	//main game objects
 	private Player player;
 	
-	
+
+
+
 	//pause and resume
 	private GImage pauseImg;
 	public GButton pauseButton;
@@ -360,6 +394,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		program.add(newPlayerSprite); // add new player sprite
 	}
 	
+	private void setSpriteImageZombie(String[] zombieAttackDown2, int frames, Zombie zombie, GImage zombieSprite, GImage newZombieSprite) {
+		newZombieSprite.setImage(zombieAttackDown2[frames]);
+		newZombieSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+		zombie.setSprite(newZombieSprite);
+		program.remove(zombieSprite); // remove previous player sprite
+		program.add(newZombieSprite); // add new player sprite
+	}
+	
 	public void gameOver() {
 		System.out.println("Player is dead. Game Over.");
 		program.removeAll(); // remove all objects from screen
@@ -599,7 +641,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						enemyHitUp = true;
 					}
 					
-					if (player.getSprite().getY() > zombie.getSprite().getY()) { //if zombie is to the left of player  . 
+					if (player.getSprite().getX() > zombie.getSprite().getX()) { //if zombie is to the left of player  . 
 						/*
 						//Player attack animation
 						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
@@ -664,8 +706,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY()); // For player animation
 		removeZombieIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		timerCount++;
-		for (int z = 0; z < zombies.size(); z++) { // loop through all enemies
-			Zombie zombie = zombies.get(z);
+		for (Z = 0; Z < zombies.size(); Z++) { // loop through all enemies
+			Zombie zombie = zombies.get(Z);
 			GImage zombieSprite = zombie.getSprite();
 			if (zombie.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
 				if (timerCount % INTERACT_INTERVAL == 0) {
@@ -689,6 +731,24 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					double x = (zombieSprite.getX() + (zombieSprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
 					double y = (zombieSprite.getY() + (zombieSprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
 					playerSprite.movePolar(Math.sqrt(x*x+y*y) * 2, angle(zombieSprite, playerSprite) + 180); // player moves away from enemy
+					
+					
+					if (player.getSprite().getY() > zombie.getSprite().getY()) { //if player is below zombie. 
+						playerHitDown = true;
+					}
+					
+					if (player.getSprite().getY() < zombie.getSprite().getY()) { //if zombie is below player . 
+						playerHitUp = true;
+					}
+					
+					if (zombie.getSprite().getX() > player.getSprite().getX()) { //if player is to the left of zombie  . 
+						playerHitLeft = true;
+					}
+					
+					if (player.getSprite().getX() > zombie.getSprite().getX()) { //if player is to the right of zombie  . 
+						playerHitRight = true;
+					}
+					
 					
 					/*
 					if (zombie.getEnemyType().contains("boss")) {
@@ -738,7 +798,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		
 		
-		/*Initiate full down attack animation frames */
+		/*Initiate full down attack animation frames for Player */
 		
 		//Use enemyHit to cycle through full attack animation frames.
 		if (enemyHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
@@ -752,7 +812,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 		}
 		
-		/*Initiate full up attack animation frames */
+		
+		
+		/*Initiate full up attack animation frames for Player */
 		
 		/*//Use enemyHit to cycle through full attack animation frames.
 		if (enemyHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
@@ -788,19 +850,51 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 		}
 		
-		
-		
-		
+		/*Initiate full up attack animation frames for Zombie */
+		for (Z = 0; Z < zombies.size(); Z++) { // loop through all enemies
+			Zombie zombie = zombies.get(Z);
+			GImage zombieSprite = zombie.getSprite();
+			GImage newZombierSprite = new GImage("", zombieSprite.getX(), zombieSprite.getY()); // For player animation
+			if (zombieAttackAnimationDownAcc == 4) {
+				playerHitDown = false; //Full cycle complete, stop from next cycle.
+				playerHitUp = false; //Full cycle complete, stop from next cycle.
+				playerHitLeft = false; //Full cycle complete, stop from next cycle.
+				playerHitRight = false; //Full cycle complete, stop from next cycle.
+				zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
+			}
+			
+			if (playerHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+				//Zombie attack animation
+				setSpriteImageZombie(zombieAttackDown, zombieAttackDownFrame, zombie, zombieSprite, newZombierSprite);
+				zombieAttackDownFrame++;
+				if(zombieAttackDownFrame>=zombieAttackDown.length){
+					zombieAttackDownFrame = 0;
+			 	}
+				zombieAttackAnimationDownAcc++;
+			}
+			
+			if (playerHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+				//Zombie attack animation
+				setSpriteImageZombie(zombieAttackUp, zombieAttackUpFrame, zombie, zombieSprite, newZombierSprite);
+				zombieAttackUpFrame++;
+				if(zombieAttackUpFrame>=zombieAttackUp.length){
+					zombieAttackUpFrame = 0;
+			 	}
+				zombieAttackAnimationDownAcc++;
+			}
+		}
 		
 		
 		//When hunger and thirst run out, game over.
 		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
-			gameOver();
+			// gameOver();
 		}
 		
 		
 		
 	}
+
+	
 
 	@Override
 	public void showContents() {
