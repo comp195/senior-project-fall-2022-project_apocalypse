@@ -34,7 +34,7 @@ public class Player extends Entity {
 		//bulletSprite = new GImage(ImageFolder.get() + "lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
 		//bulletSprite.setVisible(false); 
 		dashCooldown = 500; // set to 500 by default
-		super.setAttackCooldown(100); // set to 200 by default
+		super.setAttackCooldown(200); // set to 200 by default
 		
 		SetHunger(100);
 		SetThirst(100);

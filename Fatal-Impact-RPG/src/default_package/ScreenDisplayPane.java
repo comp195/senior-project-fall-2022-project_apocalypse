@@ -28,7 +28,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private static final int PLAYER_SPRITE_SIZE = 30;
 	private static final int HEART_SIZE = 50;
 	private static final int PLAYER_STARTING_HEALTH = 10;
-	private static final int PLAYER_STARTING_SPEED = 7;
+	private static final int PLAYER_STARTING_SPEED = 5;
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 	private static final int INTERACT_INTERVAL = 50;
 	private static final int HUNGER_AND_THIRST_INTERVAL = 100;
@@ -67,6 +67,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private boolean playerHitLeft = false;
 	private boolean playerHitRight = false;
 	
+	private boolean zombieMoveDown = false;
+	private boolean zombieMoveUp = false;
+	private boolean zombieMoveLeft = false;
+	private boolean zombieMoveRight = false;
+
 	private int attackAnimationDownAcc = 0;
 	private int attackAnimationAcc = 0;
 	
@@ -245,7 +250,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		GImage zombieImage = new GImage("ZombieSprite.png", 500, 100);
 		zombieImage.setSize(30, 30);
 		Zombie zombie = new Zombie(zombieImage, 5, "zombie");
-		zombie.setSpeed(10);
+		zombie.setSpeed(5);
 		zombies.add(zombie);
 		for (Zombie z: zombies) { // loop for all enemies
 			program.add(z.getSprite()); //Add enemy sprite to screen.
@@ -619,47 +624,21 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				Zombie zombie = zombies.get(z);
 				
 				if (player.canInteract(zombie.getSprite().getX(), zombie.getSprite().getY())) { //player in range of enemy.
-					if (zombie.getSprite().getY() > player.getSprite().getY()) { //if zombie is below player. 
-						/*
-						//Player attack animation
-						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
-						playerAttackDownKnifeFrame++;
-						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
-							playerAttackDownKnifeFrame = 0;
-					 	}*/
+					double playerYDiff = Math.abs(zombie.getSprite().getY() - player.getSprite().getY()); //For determining accuracy of player location.
+					double playerXDiff = Math.abs(zombie.getSprite().getX() - player.getSprite().getX()); //For determining accuracy of player location.
+					if (zombie.getSprite().getY() > player.getSprite().getY() && playerYDiff > playerXDiff) { //if zombie is below player. 
 						enemyHitDown = true;
 					}
 					
-					if (zombie.getSprite().getY() < player.getSprite().getY()) { //if player is below zombie . 
-						/*
-						//Player attack animation
-						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
-						playerAttackDownKnifeFrame++;
-						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
-							playerAttackDownKnifeFrame = 0;
-					 	}*/
+					if (zombie.getSprite().getY() < player.getSprite().getY() && playerYDiff > playerXDiff) { //if player is below zombie . 
 						enemyHitUp = true;
 					}
 					
-					if (player.getSprite().getX() > zombie.getSprite().getX()) { //if zombie is to the left of player  . 
-						/*
-						//Player attack animation
-						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
-						playerAttackDownKnifeFrame++;
-						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
-							playerAttackDownKnifeFrame = 0;
-					 	}*/
+					if (player.getSprite().getX() > zombie.getSprite().getX() && playerXDiff > playerYDiff) { //if zombie is to the left of player  . 
 						enemyHitLeft = true;
 					}
 					
-					if (zombie.getSprite().getX() > player.getSprite().getX()) { //if zombie is to the right of player  . 
-						/*
-						//Player attack animation
-						setSpriteImage(playerAttackDownKnife, playerAttackDownKnifeFrame, player, playerSprite, newPlayerSprite);
-						playerAttackDownKnifeFrame++;
-						if(playerAttackDownKnifeFrame>=playerAttackDownKnife.length){
-							playerAttackDownKnifeFrame = 0;
-					 	}*/
+					if (zombie.getSprite().getX() > player.getSprite().getX() && playerXDiff > playerYDiff) { //if zombie is to the right of player  . 
 						enemyHitRight = true;
 					}
 					
@@ -710,6 +689,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			Zombie zombie = zombies.get(Z);
 			GImage zombieSprite = zombie.getSprite();
 			if (zombie.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
+				zombieMoveDown = false;
+				zombieMoveUp = false;
+				zombieMoveRight = false;
+				zombieMoveLeft = false;
 				if (timerCount % INTERACT_INTERVAL == 0) {
 					zombieSprite.movePolar(zombie.getSpeed(), angle(zombieSprite, playerSprite) + 180); // close range zombie moves towards player
 					if (timerCount % player.getAttackCooldown() == 0) {
@@ -724,28 +707,55 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 							z1.setAttackAvailable(true); //enemy can now attack
 						}
 					}
+					
+					/* Logic for zombie movement animation */
+					double zombieYDiff = Math.abs(zombie.getSprite().getY() - player.getSprite().getY()); //For determining accuracy of zombie location to player.
+					double zombieXDiff = Math.abs(zombie.getSprite().getX() - player.getSprite().getX()); //For determining accuracy of zombie location to player.
+					if (player.getSprite().getY() > zombie.getSprite().getY() && zombieYDiff > zombieXDiff) { //if player is below zombie. 
+						zombieMoveDown = true;
+					}
+					
+					if (player.getSprite().getY() < zombie.getSprite().getY() && zombieYDiff > zombieXDiff) { //if zombie is below player . 
+						zombieMoveUp = true;
+					}
+					
+					if (zombie.getSprite().getX() > player.getSprite().getX() && zombieXDiff > zombieYDiff) { //if player is to the left of zombie  . 
+						zombieMoveLeft = true;
+					}
+					
+					if (player.getSprite().getX() > zombie.getSprite().getX() && zombieXDiff > zombieYDiff) { //if player is to the right of zombie  . 
+						zombieMoveRight = true;
+					}
 				}
+				
+				
+				
 				
 				if (Collision.check(zombie.getSprite().getBounds(), player.getSprite().getBounds()) && zombie.isAttackAvailable()) { // player collides with enemy
 					//playSound("player", AudioPlayer.getInstance()); // player is damaged
-					double x = (zombieSprite.getX() + (zombieSprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
+				
+					/* Logic for player getting hit back */
+					/*double x = (zombieSprite.getX() + (zombieSprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
 					double y = (zombieSprite.getY() + (zombieSprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
 					playerSprite.movePolar(Math.sqrt(x*x+y*y) * 2, angle(zombieSprite, playerSprite) + 180); // player moves away from enemy
+					*/
 					
-					
-					if (player.getSprite().getY() > zombie.getSprite().getY()) { //if player is below zombie. 
+					/* Logic for determining Zombie attack animation from direction */
+					double zombieY2Diff = Math.abs(zombie.getSprite().getY() - player.getSprite().getY()); //For determining accuracy of zombie location to player.
+					double zombieX2Diff = Math.abs(zombie.getSprite().getX() - player.getSprite().getX()); //For determining accuracy of zombie location to player.
+					if (player.getSprite().getY() > zombie.getSprite().getY() && zombieY2Diff > zombieX2Diff) { //if player is below zombie. 
 						playerHitDown = true;
 					}
 					
-					if (player.getSprite().getY() < zombie.getSprite().getY()) { //if zombie is below player . 
+					if (player.getSprite().getY() < zombie.getSprite().getY() && zombieY2Diff > zombieX2Diff) { //if zombie is below player . 
 						playerHitUp = true;
 					}
 					
-					if (zombie.getSprite().getX() > player.getSprite().getX()) { //if player is to the left of zombie  . 
+					if (zombie.getSprite().getX() > player.getSprite().getX() && zombieX2Diff > zombieY2Diff) { //if player is to the left of zombie  . 
 						playerHitLeft = true;
 					}
 					
-					if (player.getSprite().getX() > zombie.getSprite().getX()) { //if player is to the right of zombie  . 
+					if (player.getSprite().getX() > zombie.getSprite().getX() && zombieX2Diff > zombieY2Diff) { //if player is to the right of zombie  . 
 						playerHitRight = true;
 					}
 					
@@ -816,7 +826,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		/*Initiate full up attack animation frames for Player */
 		
-		/*//Use enemyHit to cycle through full attack animation frames.
+		//Use enemyHit to cycle through full attack animation frames.
 		if (enemyHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
 			//Player attack animation
 			setSpriteImage(playerAttackUpKnife, playerAttackUpKnifeFrame, player, playerSprite, newPlayerSprite);
@@ -826,7 +836,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 	}
 			attackAnimationAcc++;
 			
-		}*/
+		}
 		
 		if (enemyHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
 			//Player attack animation
@@ -850,7 +860,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 		}
 		
-		/*Initiate full up attack animation frames for Zombie */
+		/*Initiate full movement and attack animation frames for Zombie */
 		for (Z = 0; Z < zombies.size(); Z++) { // loop through all enemies
 			Zombie zombie = zombies.get(Z);
 			GImage zombieSprite = zombie.getSprite();
@@ -882,12 +892,65 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			 	}
 				zombieAttackAnimationDownAcc++;
 			}
+			
+			if (playerHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+				//Zombie attack animation
+				setSpriteImageZombie(zombieAttackLeft, zombieAttackLeftFrame, zombie, zombieSprite, newZombierSprite);
+				zombieAttackLeftFrame++;
+				if(zombieAttackLeftFrame>=zombieAttackLeft.length){
+					zombieAttackLeftFrame = 0;
+			 	}
+				zombieAttackAnimationDownAcc++;
+			}
+			
+			if (playerHitRight && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+				//Zombie attack animation
+				setSpriteImageZombie(zombieAttackRight, zombieAttackRightFrame, zombie, zombieSprite, newZombierSprite);
+				zombieAttackRightFrame++;
+				if(zombieAttackRightFrame>=zombieAttackRight.length){
+					zombieAttackRightFrame = 0;
+			 	}
+				zombieAttackAnimationDownAcc++;
+			}
+			
+			/* Zombie movement animation logic */
+			if (zombieMoveDown) {
+				setSpriteImageZombie(zombieMovingDown, zombieMovingDownFrame, zombie, zombieSprite, newZombierSprite);
+				zombieMovingDownFrame++;
+				if(zombieMovingDownFrame>=zombieMovingDown.length){
+					zombieMovingDownFrame = 0;
+			 	}
+			}
+			
+			if (zombieMoveUp) {
+				setSpriteImageZombie(zombieMovingUp, zombieMovingUpFrame, zombie, zombieSprite, newZombierSprite);
+				zombieMovingUpFrame++;
+				if(zombieMovingUpFrame>=zombieMovingUp.length){
+					zombieMovingUpFrame = 0;
+			 	}
+			}
+			
+			if (zombieMoveLeft) {
+				setSpriteImageZombie(zombieMovingLeft, zombieMovingLeftFrame, zombie, zombieSprite, newZombierSprite);
+				zombieMovingLeftFrame++;
+				if(zombieMovingLeftFrame>=zombieMovingLeft.length){
+					zombieMovingLeftFrame = 0;
+			 	}
+			}
+			
+			if (zombieMoveRight) {
+				setSpriteImageZombie(zombieMovingRight, zombieMovingRightFrame, zombie, zombieSprite, newZombierSprite);
+				zombieMovingRightFrame++;
+				if(zombieMovingRightFrame>=zombieMovingRight.length){
+					zombieMovingRightFrame = 0;
+			 	}
+			}
+			
 		}
-		
 		
 		//When hunger and thirst run out, game over.
 		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
-			// gameOver();
+			 gameOver();
 		}
 		
 		
