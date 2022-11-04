@@ -48,6 +48,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private static final int BACKGROUND_TILE_SIZE = 50;
 	private GImage attackArea; // to display player attack
 	private GImage map; 
+	private GImage mapTree;
+	private GImage mapHouse;
+	private GImage mapHouse2;
+	private GImage mapHouse3;
 	private GImage inventory;
 	private int inventoryDisplayIndex;
 	private int inventoryIndex;
@@ -184,6 +188,18 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
         sprite.setLocation(inRange(x, xmin, xMax), inRange(y, ymin, yMax)); // set location of sprite in bounds
     }
 	
+	/*
+	private void setBoundsFromHouse(Entity character) { // set character sprite in bounds on the screen
+		GImage sprite = character.getSprite();
+        double x = sprite.getX();
+        double y = sprite.getY();
+        
+        
+        if(mapHouse.getBounds() == sprite.getBounds()) {
+        	sprite.setLocation(x-5, y-5);
+        }
+	}*/
+	
 	private double angle(GImage enemySprite, GImage playerSprite) { // return angle between player and enemy
 		double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
 		double y = (enemySprite.getY() + (enemySprite.getHeight() / 2)) - (playerSprite.getY() + (playerSprite.getHeight() / 2));  //y is set to vertical distance between enemy and player
@@ -196,8 +212,18 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		equipOnAndOff = 0;
 		
 		currentMap = 1; // starting room number
-		map = new GImage("city-map.jpg", 0, 0);
-		map.setSize(800, 640); 
+		map = new GImage("FI-Official-Map.png", 0, 0);
+		//map.setSize(800, 640); 
+		mapTree = new GImage("FI-Official-Map-Tree.png", 0, 0);
+		mapHouse = new GImage("FI-House1.png", 100, 100);
+		mapHouse.setSize(100, 100);
+		
+		mapHouse2 = new GImage("FI-House2.png", 100, 400);
+		mapHouse2.setSize(100, 100);
+		
+		mapHouse3 = new GImage("FI-House3.png", 500, 250);
+		mapHouse3.setSize(100, 100);
+		
 		
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
 		GImage playerSprite = new GImage ("FI-Char-Down.PNG");
@@ -423,19 +449,22 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		GImage playerSprite = player.getSprite();
 		GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY()); // For player animation
 		int keyCode = e.getKeyCode();
-		if (keyCode == 87) { // w
-			player.setMoveY(-1);
-		} else if (keyCode == 65) { // a
-			player.setMoveX(-1);
-		} else if (keyCode == 83) { // s
-			player.setMoveY(1);
-		} else if (keyCode == 68) { // d
-			player.setMoveX(1);
-		}else if (keyCode == 16) { // shift
-			timer.stop();
-			player.setSpeed(PLAYER_STARTING_SPEED*2); //Make player very fast if sprinting
-			timer.start();
-		}else if (keyCode == 69) { // e
+		if (!player.isDamaged()) {
+			if (keyCode == 87) { // w
+				player.setMoveY(-1);
+			} else if (keyCode == 65) { // a
+				player.setMoveX(-1);
+			} else if (keyCode == 83) { // s
+				player.setMoveY(1);
+			} else if (keyCode == 68) { // d
+				player.setMoveX(1);
+			}else if (keyCode == 16) { // shift
+				timer.stop();
+				player.setSpeed(PLAYER_STARTING_SPEED*2); //Make player very fast if sprinting
+				timer.start();
+			}
+		}
+		if (keyCode == 69) { // e
 			//Player should pick up an item if it's an item.
 			Item nearestItem = player.nearestItem(items); //check for item nearest to player
 			//If player can interact with closest item and presses "e"
@@ -451,7 +480,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				inventorySizeCount++;
 				//TO DO: Need to create boundary around player inventory so that items can't be added again
 			}
-		} else if (keyCode == 82) { // r
+		} if (keyCode == 82) { // r
 			//replenish thirst from inventory.
 			int removeIndexWater = -1;
 			if (player.getInventory().size() > 0) {
@@ -469,7 +498,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					inventoryDisplayIndex -= 32;
 				}
 			}
-		} else if (keyCode == 81) { // q
+		} if (keyCode == 81) { // q
 			//Replenish hunger from inventory.
 			int removeIndexFood = -1;
 			if (player.getInventory().size() > 0) {
@@ -487,9 +516,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					inventoryDisplayIndex -= 32;
 				}
 			}
-		} else if (keyCode == KeyEvent.VK_ESCAPE) {
+		} if (keyCode == KeyEvent.VK_ESCAPE) {
 			//pause();
-		} else if (keyCode == 88) { //User clicks x (equip knife)
+		} if (keyCode == 88) { //User clicks x (equip knife)
 			if (equipOnAndOff % 2 == 0) { //Equips knife when x is entered every other time
 				knifeEquipped = true;
 				//Set image showing player equips knife
@@ -624,30 +653,33 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				Zombie zombie = zombies.get(z);
 				
 				if (player.canInteract(zombie.getSprite().getX(), zombie.getSprite().getY())) { //player in range of enemy.
-					double playerYDiff = Math.abs(zombie.getSprite().getY() - player.getSprite().getY()); //For determining accuracy of player location.
-					double playerXDiff = Math.abs(zombie.getSprite().getX() - player.getSprite().getX()); //For determining accuracy of player location.
-					if (zombie.getSprite().getY() > player.getSprite().getY() && playerYDiff > playerXDiff) { //if zombie is below player. 
-						enemyHitDown = true;
+					if(!player.isDamaged() && knifeEquipped) {
+						double playerYDiff = Math.abs(zombie.getSprite().getY() - player.getSprite().getY()); //For determining accuracy of player location.
+						double playerXDiff = Math.abs(zombie.getSprite().getX() - player.getSprite().getX()); //For determining accuracy of player location.
+						if (zombie.getSprite().getY() > player.getSprite().getY() && playerYDiff > playerXDiff) { //if zombie is below player. 
+							enemyHitDown = true;
+						}
+						
+						if (zombie.getSprite().getY() < player.getSprite().getY() && playerYDiff > playerXDiff) { //if player is below zombie . 
+							enemyHitUp = true;
+						}
+						
+						if (player.getSprite().getX() > zombie.getSprite().getX() && playerXDiff > playerYDiff) { //if zombie is to the left of player  . 
+							enemyHitLeft = true;
+						}
+						
+						if (zombie.getSprite().getX() > player.getSprite().getX() && playerXDiff > playerYDiff) { //if zombie is to the right of player  . 
+							enemyHitRight = true;
+						}
+						
+						
+						
+						
+						//Change zombie health and manage zombie death
+						System.out.println("Enemy is hit.");
+						zombie.changeHealth(-1); //Reduce health by 1.
 					}
 					
-					if (zombie.getSprite().getY() < player.getSprite().getY() && playerYDiff > playerXDiff) { //if player is below zombie . 
-						enemyHitUp = true;
-					}
-					
-					if (player.getSprite().getX() > zombie.getSprite().getX() && playerXDiff > playerYDiff) { //if zombie is to the left of player  . 
-						enemyHitLeft = true;
-					}
-					
-					if (zombie.getSprite().getX() > player.getSprite().getX() && playerXDiff > playerYDiff) { //if zombie is to the right of player  . 
-						enemyHitRight = true;
-					}
-					
-					
-					
-					
-					//Change zombie health and manage zombie death
-					System.out.println("Enemy is hit.");
-					zombie.changeHealth(-1); //Reduce health by 1.
 					if (zombie.isDead()) { //Enemy has no health.
 						removeZombieIndex.add(z); // add zombie to list if he dies
 						program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.
@@ -699,6 +731,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						System.out.println("Attack Available!");
 						player.setAttackAvailable(true); //player can now attack
 					}
+					if (timerCount % zombie.getAttackCooldown() == 0) {
+						zombie.setAttackAvailable(true); //zombie can now attack
+					}
 					else if (!player.isAttackAvailable()){
 						System.out.println("Player is too tired to attack!");
 					}
@@ -727,9 +762,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						zombieMoveRight = true;
 					}
 				}
-				
-				
-				
 				
 				if (Collision.check(zombie.getSprite().getBounds(), player.getSprite().getBounds()) && zombie.isAttackAvailable()) { // player collides with enemy
 					//playSound("player", AudioPlayer.getInstance()); // player is damaged
@@ -779,8 +811,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			setInBounds(zombie); // set long range enemy in bounds
 			
 		}
-		
-		
 		
 		//Slowly reduce hunger and thirst
 		if (timerCount % HUNGER_AND_THIRST_INTERVAL == 0) {
@@ -871,6 +901,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				playerHitLeft = false; //Full cycle complete, stop from next cycle.
 				playerHitRight = false; //Full cycle complete, stop from next cycle.
 				zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
+				player.setDamaged(false);
 			}
 			
 			if (playerHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
@@ -950,7 +981,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		//When hunger and thirst run out, game over.
 		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
-			 gameOver();
+			 //gameOver();
 		}
 		
 		
@@ -962,6 +993,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	@Override
 	public void showContents() {
 		program.add(map);
+		program.add(mapTree);
+		program.add(mapHouse);
+		program.add(mapHouse2);
+		program.add(mapHouse3);
 		createMap(currentMap); // currentMap is initially at 1
 		program.add(inventory);
 		
@@ -992,5 +1027,4 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 	}
 
-	
-}
+}	

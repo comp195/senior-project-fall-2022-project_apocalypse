@@ -34,7 +34,7 @@ public class Player extends Entity {
 		//bulletSprite = new GImage(ImageFolder.get() + "lightningBallSprite.png", getSprite().getX() + getSprite().getWidth() / 2, getSprite().getY() + getSprite().getHeight() / 2);
 		//bulletSprite.setVisible(false); 
 		dashCooldown = 500; // set to 500 by default
-		super.setAttackCooldown(200); // set to 200 by default
+		super.setAttackCooldown(100); // set to 200 by default
 		
 		SetHunger(100);
 		SetThirst(100);
@@ -166,7 +166,7 @@ public class Player extends Entity {
 	public Boolean canInteract(double x, double y) {
 		double xDiff = Math.abs(x - super.getSprite().getX()); // find difference in x coordinates
 		double yDiff = Math.abs(y - super.getSprite().getY()); // find difference in y coordinates
-		return xDiff <= 50 && yDiff <= 50; //returns true if x,y coordinates are within 50 in x direction and y direction
+		return xDiff <= 40 && yDiff <= 40; //returns true if x,y coordinates are within 40 in x direction and y direction
 	}
 	
 	/*
@@ -316,5 +316,3 @@ public class Player extends Entity {
 		
 	}
 }
-
-

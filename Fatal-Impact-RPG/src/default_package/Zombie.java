@@ -13,6 +13,7 @@ public class Zombie extends Entity {
 		attackAvailable = false;
 		detectionRange = 100; // detection range is 100 by default
 		super.setSpeed(5); // speed is 5 by default
+		super.setAttackCooldown(200);
 	}
 	
 	public boolean canInteract(double x, double y) {
@@ -59,4 +60,5 @@ public class Zombie extends Entity {
 
 	}
 }
+
 
