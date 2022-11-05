@@ -738,7 +738,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				zombieMoveRight = false;
 				zombieMoveLeft = false;
 				if (timerCount % INTERACT_INTERVAL == 0) {
-					zombieSprite.movePolar(zombie.getSpeed(), angle(zombieSprite, playerSprite) + 180); // close range zombie moves towards player
+					//if (enemyHitDown || enemyHitUp || enemyHitLeft || enemyHitRight) {
+					//	break;
+					//}
+					
+					if (!enemyHitDown && !enemyHitUp && !enemyHitLeft && !enemyHitRight) {
+						zombieSprite.movePolar(zombie.getSpeed(), angle(zombieSprite, playerSprite) + 180); // close range zombie moves towards player
+					}
+					
 					if (timerCount % player.getAttackCooldown() == 0) {
 						System.out.println("Attack Available!");
 						player.setAttackAvailable(true); //player can now attack
@@ -760,18 +767,30 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					double zombieXDiff = Math.abs(zombie.getSprite().getX() - player.getSprite().getX()); //For determining accuracy of zombie location to player.
 					if (player.getSprite().getY() > zombie.getSprite().getY() && zombieYDiff > zombieXDiff) { //if player is below zombie. 
 						zombieMoveDown = true;
+						if (enemyHitDown || enemyHitUp || enemyHitLeft || enemyHitRight) {
+							zombieMoveDown = false;
+						}
 					}
 					
 					if (player.getSprite().getY() < zombie.getSprite().getY() && zombieYDiff > zombieXDiff) { //if zombie is below player . 
 						zombieMoveUp = true;
+						if (enemyHitDown || enemyHitUp || enemyHitLeft || enemyHitRight) {
+							zombieMoveUp = false;
+						}
 					}
 					
 					if (zombie.getSprite().getX() > player.getSprite().getX() && zombieXDiff > zombieYDiff) { //if player is to the left of zombie  . 
 						zombieMoveLeft = true;
+						if (enemyHitDown || enemyHitUp || enemyHitLeft || enemyHitRight) {
+							zombieMoveLeft = false;
+						}
 					}
 					
 					if (player.getSprite().getX() > zombie.getSprite().getX() && zombieXDiff > zombieYDiff) { //if player is to the right of zombie  . 
 						zombieMoveRight = true;
+						if (enemyHitDown || enemyHitUp || enemyHitLeft || enemyHitRight) {
+							zombieMoveRight = false;
+						}
 					}
 				}
 				

@@ -12,7 +12,7 @@ public class Zombie extends Entity {
 		setEnemyType(enemyName);
 		attackAvailable = false;
 		detectionRange = 100; // detection range is 100 by default
-		super.setSpeed(5); // speed is 5 by default
+		super.setSpeed(10); // speed is 5 by default
 		super.setAttackCooldown(300);
 	}
 	
