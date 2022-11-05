@@ -78,6 +78,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 
 	private int attackAnimationDownAcc = 0;
 	private int attackAnimationAcc = 0;
+	private int attackAnimationLeftAndRightAcc = 0;
 	
 	private int zombieAttackAnimationDownAcc = 0;
 	
@@ -111,9 +112,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
 	private String[] playerAttackDownKnife = {"FI-Char-Down-Knife-Attack.png", "FI-Char-Down-Knife-Attack2.png", "FI-Char-Down-Knife-Standing.png"};
 	private String[] playerAttackUpKnife = {"FI-Char-Up-Knife-Attack.png", "FI-Char-Up-Knife-Attack2.png", "FI-Char-Up-Knife-Attack.png", "FI-Char-Up-Knife-Standing.png"};
-	private String[] playerAttackLeftKnife = {"FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Attack2.png", "FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Standing.png"};
-	private String[] playerAttackRightKnife = {"FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Attack2.png", "FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Standing.png"};
-	
+	//private String[] playerAttackLeftKnife = {"FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Attack2.png", "FI-Char-Left-Knife-Attack.png", "FI-Char-Left-Knife-Standing.png"};
+	private String[] playerAttackLeftKnife = {"FI-Char-Left-Heavy-Attack.png", "FI-Char-Left-Heavy-Attack2.png", "FI-Char-Left-Heavy-Attack3.png", "FI-Char-Left-Heavy-Attack.png", "FI-Char-Left-Knife-Standing.png"};
+	//private String[] playerAttackRightKnife = {"FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Attack2.png", "FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Standing.png"};
+	private String[] playerAttackRightKnife = {"FI-Char-Right-Heavy-Attack.png", "FI-Char-Right-Heavy-Attack2.png", "FI-Char-Right-Heavy-Attack3.png", "FI-Char-Right-Heavy-Attack.png", "FI-Char-Right-Knife-Standing.png"};
 	
 	//enemy animation members
 	private int zombieMovingDownFrame = 0;
@@ -831,11 +833,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		if (attackAnimationAcc == 4) {
 			enemyHitUp = false; //Full cycle complete, stop from next cycle.
-			enemyHitLeft = false;
-			enemyHitRight = false;
+			//enemyHitLeft = false;
+			//enemyHitRight = false;
 			attackAnimationAcc = 0; //When next attack happens, start from beginning frame/
 		}
 		
+		if (attackAnimationLeftAndRightAcc == 5) {
+			enemyHitRight = false;
+			enemyHitLeft = false;
+			attackAnimationLeftAndRightAcc = 0;
+		}
 		
 		
 		/*Initiate full down attack animation frames for Player */
@@ -875,7 +882,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			if(playerAttackLeftKnifeFrame>=playerAttackLeftKnife.length){
 				playerAttackLeftKnifeFrame = 0;
 		 	}
-			attackAnimationAcc++;
+			attackAnimationLeftAndRightAcc++;
 			
 		}
 		
@@ -886,7 +893,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			if(playerAttackRightKnifeFrame>=playerAttackRightKnife.length){
 				playerAttackRightKnifeFrame = 0;
 		 	}
-			attackAnimationAcc++;
+			attackAnimationLeftAndRightAcc++;
 			
 		}
 		
