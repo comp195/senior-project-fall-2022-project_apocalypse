@@ -49,6 +49,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private GImage attackArea; // to display player attack
 	private GImage map; 
 	private GImage mapTree;
+	private GImage mapTree2;
+	private GImage mapTree3;
+	private GImage mapTree4;
+	private GImage mapTree5;
+	private GImage mapTree6;
 	private GImage mapHouse;
 	private GImage mapHouse2;
 	private GImage mapHouse3;
@@ -214,16 +219,21 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		equipOnAndOff = 0;
 		
 		currentMap = 1; // starting room number
-		map = new GImage("FI-Official-Map.png", 0, 0);
+		map = new GImage("FI-Forest-Map.png", 0, 0);
 		//map.setSize(800, 640); 
-		mapTree = new GImage("FI-Official-Map-Tree.png", 0, 0);
-		mapHouse = new GImage("FI-House1.png", 100, 100);
+		mapTree = new GImage("FI-Forest-Map-Tree.png", 0, 0);
+		mapTree2 = new GImage("FI-Forest-Map-Tree.png", 500, 420);
+		mapTree3 = new GImage("FI-Forest-Map-Tree.png", 200, 150);
+		mapTree4 = new GImage("FI-Forest-Map-Tree.png", 555, 130);
+		mapTree5 = new GImage("FI-Forest-Map-Tree.png", 150, 450);
+		mapTree6 = new GImage("FI-Forest-Map-Tree.png", 300, -40);
+		mapHouse = new GImage("FI-House1.png", 50, 100);
 		mapHouse.setSize(100, 100);
 		
-		mapHouse2 = new GImage("FI-House2.png", 100, 400);
+		mapHouse2 = new GImage("FI-House2.png", 50, 450);
 		mapHouse2.setSize(100, 100);
 		
-		mapHouse3 = new GImage("FI-House3.png", 500, 250);
+		mapHouse3 = new GImage("FI-House3.png", 700, 400);
 		mapHouse3.setSize(100, 100);
 		
 		
@@ -1001,6 +1011,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void showContents() {
 		program.add(map);
 		program.add(mapTree);
+		program.add(mapTree2);
+		program.add(mapTree3);
+		program.add(mapTree4);
+		program.add(mapTree5);
+		program.add(mapTree6);
 		program.add(mapHouse);
 		program.add(mapHouse2);
 		program.add(mapHouse3);
