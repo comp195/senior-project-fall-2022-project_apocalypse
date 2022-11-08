@@ -1049,7 +1049,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 	}
 
-	
+	//New comment
 
 	@Override
 	public void showContents() {
