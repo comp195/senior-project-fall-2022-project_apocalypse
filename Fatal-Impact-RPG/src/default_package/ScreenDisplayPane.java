@@ -285,16 +285,39 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void createMap(int mapNum) {
 		timer.restart(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
+		
+		//Add zombies to the map
 		GImage zombieImage = new GImage("ZombieSprite.png", 500, 100);
 		zombieImage.setSize(30, 30);
 		Zombie zombie = new Zombie(zombieImage, 5, "zombie");
 		zombie.setSpeed(5);
 		zombies.add(zombie);
+		
+		
+		GImage zombieImage2 = new GImage("ZombieSprite.png", 500, 350);
+		zombieImage2.setSize(30, 30);
+		Zombie zombie2 = new Zombie(zombieImage2, 5, "zombie");
+		zombie2.setSpeed(5);
+		zombies.add(zombie2);
+		
+		GImage zombieImage3 = new GImage("ZombieSprite.png", 200, 300);
+		zombieImage3.setSize(30, 30);
+		Zombie zombie3 = new Zombie(zombieImage3, 5, "zombie");
+		zombie3.setSpeed(5);
+		zombies.add(zombie3);
+		
+		GImage zombieImage4 = new GImage("ZombieSprite.png", 50, 100);
+		zombieImage4.setSize(30, 30);
+		Zombie zombie4 = new Zombie(zombieImage4, 5, "zombie");
+		zombie4.setSpeed(5);
+		zombies.add(zombie4);
+		
 		for (Zombie z: zombies) { // loop for all enemies
 			program.add(z.getSprite()); //Add enemy sprite to screen.
 			
 		}
 		
+		/*
 		GImage zombieImage2 = new GImage("zombie2.png", 650, 300);
 		zombieImage2.setSize(30, 70);
 		Zombie2 zombiesSecond = new Zombie2(zombieImage2, 5, "zombie2");
@@ -302,7 +325,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		zombies2.add(zombiesSecond);
 		for (Zombie2 z: zombies2) {
 			program.add(z.getSprite()); // Added another enemy sprite to the screen 
-		}
+		}*/
 		
 		//program.removeAll();
 		setBackground(newMap.getImageName()); //Set background map
@@ -838,6 +861,96 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					checkPlayerDeath();
 					zombie.setAttackAvailable(false);
 				}
+				
+				GImage newZombierSprite = new GImage("", zombieSprite.getX(), zombieSprite.getY()); // For player animation
+				/*Zombie attack animation*/
+				if (zombieAttackAnimationDownAcc == 4) {
+					playerHitDown = false; //Full cycle complete, stop from next cycle.
+					playerHitUp = false; //Full cycle complete, stop from next cycle.
+					playerHitLeft = false; //Full cycle complete, stop from next cycle.
+					playerHitRight = false; //Full cycle complete, stop from next cycle.
+					zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
+					player.setDamaged(false);
+				}
+				
+				if (playerHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+					//Zombie attack animation
+					setSpriteImageZombie(zombieAttackDown, zombieAttackDownFrame, zombie, zombieSprite, newZombierSprite);
+					zombieAttackDownFrame++;
+					if(zombieAttackDownFrame>=zombieAttackDown.length){
+						zombieAttackDownFrame = 0;
+				 	}
+					zombieAttackAnimationDownAcc++;
+				}
+				
+				if (playerHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+					//Zombie attack animation
+					setSpriteImageZombie(zombieAttackUp, zombieAttackUpFrame, zombie, zombieSprite, newZombierSprite);
+					zombieAttackUpFrame++;
+					if(zombieAttackUpFrame>=zombieAttackUp.length){
+						zombieAttackUpFrame = 0;
+				 	}
+					zombieAttackAnimationDownAcc++;
+				}
+				
+				if (playerHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+					//Zombie attack animation
+					setSpriteImageZombie(zombieAttackLeft, zombieAttackLeftFrame, zombie, zombieSprite, newZombierSprite);
+					zombieAttackLeftFrame++;
+					if(zombieAttackLeftFrame>=zombieAttackLeft.length){
+						zombieAttackLeftFrame = 0;
+				 	}
+					zombieAttackAnimationDownAcc++;
+				}
+				
+				if (playerHitRight && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+					//Zombie attack animation
+					setSpriteImageZombie(zombieAttackRight, zombieAttackRightFrame, zombie, zombieSprite, newZombierSprite);
+					zombieAttackRightFrame++;
+					if(zombieAttackRightFrame>=zombieAttackRight.length){
+						zombieAttackRightFrame = 0;
+				 	}
+					zombieAttackAnimationDownAcc++;
+				}
+				
+				/* Zombie movement animation logic */
+				
+				if (zombieMoveDown) {
+					setSpriteImageZombie(zombieMovingDown, zombieMovingDownFrame, zombie, zombieSprite, newZombierSprite);
+					zombieMovingDownFrame++;
+					if(zombieMovingDownFrame>=zombieMovingDown.length){
+						zombieMovingDownFrame = 0;
+				 	}
+				}
+				
+				
+				if (zombieMoveUp) {
+					setSpriteImageZombie(zombieMovingUp, zombieMovingUpFrame, zombie, zombieSprite, newZombierSprite);
+					zombieMovingUpFrame++;
+					if(zombieMovingUpFrame>=zombieMovingUp.length){
+						zombieMovingUpFrame = 0;
+				 	}
+				}
+				
+				
+				if (zombieMoveLeft) {
+					setSpriteImageZombie(zombieMovingLeft, zombieMovingLeftFrame, zombie, zombieSprite, newZombierSprite);
+					zombieMovingLeftFrame++;
+					if(zombieMovingLeftFrame>=zombieMovingLeft.length){
+						zombieMovingLeftFrame = 0;
+				 	}
+				}
+				
+				if (zombieMoveRight) {
+					setSpriteImageZombie(zombieMovingRight, zombieMovingRightFrame, zombie, zombieSprite, newZombierSprite);
+					zombieMovingRightFrame++;
+					if(zombieMovingRightFrame>=zombieMovingRight.length){
+						zombieMovingRightFrame = 0;
+				 	}
+				}
+				
+				
+				
 			}
 			setInBounds(zombie); // set long range enemy in bounds
 			
@@ -926,94 +1039,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 		}
 		
-		/*Initiate full movement and attack animation frames for Zombie */
-		for (Z = 0; Z < zombies.size(); Z++) { // loop through all enemies
-			Zombie zombie = zombies.get(Z);
-			GImage zombieSprite = zombie.getSprite();
-			GImage newZombierSprite = new GImage("", zombieSprite.getX(), zombieSprite.getY()); // For player animation
-			if (zombieAttackAnimationDownAcc == 4) {
-				playerHitDown = false; //Full cycle complete, stop from next cycle.
-				playerHitUp = false; //Full cycle complete, stop from next cycle.
-				playerHitLeft = false; //Full cycle complete, stop from next cycle.
-				playerHitRight = false; //Full cycle complete, stop from next cycle.
-				zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
-				player.setDamaged(false);
-			}
-			
-			if (playerHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-				//Zombie attack animation
-				setSpriteImageZombie(zombieAttackDown, zombieAttackDownFrame, zombie, zombieSprite, newZombierSprite);
-				zombieAttackDownFrame++;
-				if(zombieAttackDownFrame>=zombieAttackDown.length){
-					zombieAttackDownFrame = 0;
-			 	}
-				zombieAttackAnimationDownAcc++;
-			}
-			
-			if (playerHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-				//Zombie attack animation
-				setSpriteImageZombie(zombieAttackUp, zombieAttackUpFrame, zombie, zombieSprite, newZombierSprite);
-				zombieAttackUpFrame++;
-				if(zombieAttackUpFrame>=zombieAttackUp.length){
-					zombieAttackUpFrame = 0;
-			 	}
-				zombieAttackAnimationDownAcc++;
-			}
-			
-			if (playerHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-				//Zombie attack animation
-				setSpriteImageZombie(zombieAttackLeft, zombieAttackLeftFrame, zombie, zombieSprite, newZombierSprite);
-				zombieAttackLeftFrame++;
-				if(zombieAttackLeftFrame>=zombieAttackLeft.length){
-					zombieAttackLeftFrame = 0;
-			 	}
-				zombieAttackAnimationDownAcc++;
-			}
-			
-			if (playerHitRight && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-				//Zombie attack animation
-				setSpriteImageZombie(zombieAttackRight, zombieAttackRightFrame, zombie, zombieSprite, newZombierSprite);
-				zombieAttackRightFrame++;
-				if(zombieAttackRightFrame>=zombieAttackRight.length){
-					zombieAttackRightFrame = 0;
-			 	}
-				zombieAttackAnimationDownAcc++;
-			}
-			
-			/* Zombie movement animation logic */
-			if (zombieMoveDown) {
-				setSpriteImageZombie(zombieMovingDown, zombieMovingDownFrame, zombie, zombieSprite, newZombierSprite);
-				zombieMovingDownFrame++;
-				if(zombieMovingDownFrame>=zombieMovingDown.length){
-					zombieMovingDownFrame = 0;
-			 	}
-			}
-			
-			if (zombieMoveUp) {
-				setSpriteImageZombie(zombieMovingUp, zombieMovingUpFrame, zombie, zombieSprite, newZombierSprite);
-				zombieMovingUpFrame++;
-				if(zombieMovingUpFrame>=zombieMovingUp.length){
-					zombieMovingUpFrame = 0;
-			 	}
-			}
-			
-			if (zombieMoveLeft) {
-				setSpriteImageZombie(zombieMovingLeft, zombieMovingLeftFrame, zombie, zombieSprite, newZombierSprite);
-				zombieMovingLeftFrame++;
-				if(zombieMovingLeftFrame>=zombieMovingLeft.length){
-					zombieMovingLeftFrame = 0;
-			 	}
-			}
-			
-			if (zombieMoveRight) {
-				setSpriteImageZombie(zombieMovingRight, zombieMovingRightFrame, zombie, zombieSprite, newZombierSprite);
-				zombieMovingRightFrame++;
-				if(zombieMovingRightFrame>=zombieMovingRight.length){
-					zombieMovingRightFrame = 0;
-			 	}
-			}
-			
-		}
 		
 		//When hunger and thirst run out, game over.
 		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
