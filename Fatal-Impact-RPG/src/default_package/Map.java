@@ -55,10 +55,10 @@ public class Map {
 		zombies = new ArrayList<Zombie>(); // initialize enemy array list
 		switch(map) {
 		case 1:
-			//addZombie("zombie", 3, "zombie", 100, 10, 500, 100); 
-			//addZombie("zombie", 3, "zombie", 100, 10, 500, 350);
-			//addZombie("zombie", 3, "zombie", 100, 10, 200, 300);
-			//addZombie("zombie", 3, "zombie", 100, 10, 50, 100);
+			addZombie("zombie", 3, "zombie", 100, 10, 500, 100); 
+			addZombie("zombie", 3, "zombie", 100, 10, 500, 350);
+			addZombie("zombie", 3, "zombie", 100, 10, 200, 300);
+			addZombie("zombie", 3, "zombie", 100, 10, 50, 100);
 			break;
 		case 2:
 			addZombie("zombie", 3, "zombie", 100, 10, 500, 100); 
@@ -87,8 +87,37 @@ public class Map {
 			addItem("food", "food", 30, 30, 400, 300);
 			addItem("food", "food", 30, 30, 400, 500);
 			addItem("food", "food", 30, 30, 300, 500);
+			break;
+		case 3:
+			addItem("water", "water", 30, 30, 300, 100);
+			addItem("water", "water", 30, 30, 400, 200);
+			addItem("water", "water", 30, 30, 500, 300);
+			addItem("water", "water", 30, 30, 600, 100);
+			addItem("water", "water", 30, 30, 550, 100);
+			addItem("water", "water", 30, 30, 300, 100);
+			addItem("water", "water", 30, 30, 600, 300);
+
+			addItem("food", "food", 30, 30, 400, 300);
+			addItem("food", "food", 30, 30, 400, 500);
+			addItem("food", "food", 30, 30, 300, 500);
+			break;
+		case 4:
+			addItem("water", "water", 30, 30, 300, 100);
+			addItem("water", "water", 30, 30, 400, 200);
+			addItem("water", "water", 30, 30, 500, 300);
+			addItem("water", "water", 30, 30, 600, 100);
+			addItem("water", "water", 30, 30, 550, 100);
+			addItem("water", "water", 30, 30, 300, 100);
+			addItem("water", "water", 30, 30, 600, 300);
+
+			addItem("food", "food", 30, 30, 400, 300);
+			addItem("food", "food", 30, 30, 400, 500);
+			addItem("food", "food", 30, 30, 300, 500);
+			break;
 
 		}
+		
+
 		return items;
 	}
 	

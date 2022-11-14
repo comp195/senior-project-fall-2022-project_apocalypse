@@ -64,6 +64,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int inventorySizeCount;
 	private int populatingItemsIndex;
 	
+	//Vars for Player locations during map transitions
+	private double playerLocationX;
+	private double playerLocationY;
+	private boolean playerExitsHouse1;
+	private boolean playerExitsHouse2;
+	private boolean playerExitsHouse3;
+	
 	//player animation members
 	private boolean knifeEquipped;
 	private int equipOnAndOff;
@@ -242,8 +249,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		populatingItemsIndex = 0;
 		//food = new GImage("waterBottle.jpg", 300, 100);
 		
-		
-		
+		playerExitsHouse1 = false;
+		playerExitsHouse2 = false;
+		playerExitsHouse3 = false;
 		//timer.restart(); // reset timer
 	}
 	
@@ -298,7 +306,34 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		
 		if (mapNum == 2) {
-			map = new GImage("city-map.jpg", 0, 0);
+			//map = new GImage("city-map.jpg", 0, 0);
+			map = new GImage("FI-House-interior-map1.png", 0, 0);
+			map.setSize(program.getWidth()+80,program.getHeight()+65); //set Map to fit program window size
+			player.getSprite().setLocation(140, 650); //Set player at inside house entry location
+			
+		}
+		
+		if (mapNum == 3) {
+			//map = new GImage("city-map.jpg", 0, 0);
+			map = new GImage("FI-House-interior-map2.png", 0, 0);
+			map.setSize(program.getWidth(),program.getHeight()); //set Map to fit program window size
+			
+			//Replace old player sprite with new one, facing downwards
+			GImage playerSprite = player.getSprite();
+			GImage newPlayerSprite = new GImage("FI-Char-Down.png", playerSprite.getX(), playerSprite.getY()); // For player animation
+			newPlayerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+			player.setSprite(newPlayerSprite);
+			player.getSprite().setLocation(416, 91); //Set player at inside house entry location
+			program.remove(playerSprite);
+
+			
+		}
+		
+		if (mapNum == 4) {
+			//map = new GImage("city-map.jpg", 0, 0);
+			map = new GImage("FI-House-interior-map3.png", 0, 0);
+			//map.setSize(program.getWidth()+80,program.getHeight()+65); //set Map to fit program window size
+			player.getSprite().setLocation(429, 474); //Set player at inside house entry location
 		}
 		
 		
@@ -346,14 +381,30 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		//setBackground(newMap.getImageName()); //Set background map
 		
+		/* If player exits houses */
+		if (playerExitsHouse1) {
+			player.getSprite().setLocation(110, 210); //Set player at inside house entry location
+		}
+		
+		if (playerExitsHouse2) {
+			player.getSprite().setLocation(115, 558); //Set player at inside house entry location
+		}
+		
+		if (playerExitsHouse3) {
+			player.getSprite().setLocation(765, 495); //Set player at inside house entry location
+		}
 		
 		
 		
-		/*Add Player Sprite o the screen */
+		
+		/*Add Player Sprite to the screen */
 		program.add(player.getSprite()); //Add player sprite to screen.
 		player.getSprite().sendToFront(); //send player sprite to front.
 		
-		
+		/* reset house exit values */
+		playerExitsHouse1 = false;
+		playerExitsHouse2 = false;
+		playerExitsHouse3 = false;
 		
 		for (Item i : items) {
 			populatingItems(i);
@@ -491,15 +542,28 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		if (keyCode == 69) { // e
 			for (House h : houses) {
 				if (player.canInteract(h.getSprite().getX() + (h.getSprite().getWidth()/2), h.getSprite().getY() + (h.getSprite().getHeight()/2))) {
+					playerLocationX = player.getSprite().getX();
+					playerLocationY = player.getSprite().getY();
 					if (h.getItemType() == "house1") {
 						currentMap = 2; // increase current room number
+						createMap(currentMap); // create next room
+					}
+					if (h.getItemType() == "house2") {
+						currentMap = 3; // increase current room number
+						
+						createMap(currentMap); // create next room
+					}
+					if (h.getItemType() == "house3") {
+						currentMap = 4; // increase current room number
 						createMap(currentMap); // create next room
 					}
 					
 				}
 			}
+			
+			
 			//Player should pick up an item if it's an item.
-			if (currentMap == 2) { // Add to condition for ALL maps that have items in it (otherwise its an error) 
+			if (currentMap == 2 || currentMap == 3 || currentMap == 4) { // Add to condition for ALL maps that have items in it (otherwise its an error) 
 				Item nearestItem = player.nearestItem(items); //check for item nearest to player
 				//If player can interact with closest item and presses "e"
 				if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
@@ -516,7 +580,47 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				}
 			}
 			
-		} if (keyCode == 82) { // r
+		} if (keyCode == 90) { // z
+			if (currentMap == 2) {
+				//If Player is at the door, and wants to go back outside, send him to main map
+				if (player.getSprite().getX() >= 117 && player.getSprite().getX() <= 178 && player.getSprite().getY() >= 540) {
+					playerExitsHouse1 = true; //For seting player location accordingly
+					currentMap = 1; // increase current room number
+					//This is for if player exits house and re-enters it. Set item index back to 0 when re-populating house with it.
+					populatingItemsIndex = 0; 
+					inventoryIndex = 0;
+					inventorySizeCount = 0;
+					createMap(currentMap); // create next room
+				}
+			}
+			if (currentMap == 3) {
+				//If Player is at the door, and wants to go back outside, send him to main map
+				if (player.getSprite().getX() >= 381 && player.getSprite().getX() <= 460 && player.getSprite().getY() <= 113) {
+					playerExitsHouse2 = true; //For seting player location accordingly
+					currentMap = 1; // increase current room number
+					//This is for if player exits house and re-enters it. Set item index back to 0 when re-populating house with it.
+					populatingItemsIndex = 0; 
+					inventoryIndex = 0;
+					inventorySizeCount = 0;
+					createMap(currentMap); // create next room
+				}
+			}
+			if (currentMap == 4) {
+				//If Player is at the door, and wants to go back outside, send him to main map
+				if (player.getSprite().getX() >= 383 && player.getSprite().getX() <= 475 && player.getSprite().getY() >= 474) {
+					playerExitsHouse3 = true; //For seting player location accordingly
+					currentMap = 1; // increase current room number
+					//This is for if player exits house and re-enters it. Set item index back to 0 when re-populating house with it.
+					populatingItemsIndex = 0; 
+					inventoryIndex = 0;
+					inventorySizeCount = 0;
+					createMap(currentMap); // create next room
+				}
+			}
+		}
+		
+		
+		if (keyCode == 82) { // r
 			//replenish thirst from inventory.
 			int removeIndexWater = -1;
 			if (player.getInventory().size() > 0) {
@@ -736,6 +840,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
 		player.setAttackAvailable(false); // Initiate attack cool down.
 		
+		System.out.println("mouse x: " + e.getX());
+		System.out.println("mouse Y: " + e.getY());
+
 	}
 	
 	
