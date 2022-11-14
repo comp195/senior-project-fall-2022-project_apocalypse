@@ -53,6 +53,19 @@ public class Player extends Entity {
 		return i;
 	}
 	
+	/*
+	public House nearestHouse(ArrayList<Item> houses) {
+		double lowestDistance = distanceToHouse(houses.get(0));
+		Item h = houses.get(0);
+		for (int x = 0 ; x < houses.size(); x++) {
+			if (distanceToHouse(houses.get(x)) < lowestDistance) {
+				lowestDistance = distanceToItem(houses.get(x));
+				h = houses.get(x);
+			}
+		}	
+		return h;
+	}
+	*/
 	public void addToInventory(Item item) {
 		inventory.add(item);
 	}
@@ -77,6 +90,13 @@ public class Player extends Entity {
 	public double distanceToItem(Item i) {
 		double x = Math.abs(i.getSprite().getX()- super.getSprite().getX()); // find difference in x coordinates
 		double y = Math.abs(i.getSprite().getY() - super.getSprite().getY()); // find difference in y coordinates
+		return Math.sqrt(x * x + y * y);
+		
+	}
+	
+	public double distanceToHouse(House h) {
+		double x = Math.abs(h.getSprite().getX()- super.getSprite().getX()); // find difference in x coordinates
+		double y = Math.abs(h.getSprite().getY() - super.getSprite().getY()); // find difference in y coordinates
 		return Math.sqrt(x * x + y * y);
 		
 	}
