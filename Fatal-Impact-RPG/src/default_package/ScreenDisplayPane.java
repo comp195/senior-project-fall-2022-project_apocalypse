@@ -63,6 +63,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int inventoryIndex;
 	private int inventorySizeCount;
 	private int populatingItemsIndex;
+	private int numOfZombiesMainMap;
 	
 	//Vars for Player locations during map transitions
 	private double playerLocationX;
@@ -252,7 +253,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		playerExitsHouse1 = false;
 		playerExitsHouse2 = false;
 		playerExitsHouse3 = false;
+		
 		//timer.restart(); // reset timer
+		numOfZombiesMainMap = 4;
 	}
 	
 	private void checkPlayerDeath() {
@@ -284,8 +287,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		timer.restart(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		
+		newMap.setNumOfZombies(numOfZombiesMainMap);
 		//Add zombies to the map
 		zombies = newMap.getZombies();
+		
+		
 		houses = newMap.getHouses();
 		items = newMap.getItems();
 		
@@ -356,12 +362,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			program.add(inventory);
 		}
 		
-		
 		//Add zombies sprites to the screen
 		for (Zombie z: zombies) { // loop for all enemies
 			program.add(z.getSprite()); //Add enemy sprite to screen.
 			z.getSprite().sendToFront();
 		}
+		
+		
 		
 		if (mapNum == 2) {
 			program.add(inventory);
@@ -550,7 +557,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					}
 					if (h.getItemType() == "house2") {
 						currentMap = 3; // increase current room number
-						
 						createMap(currentMap); // create next room
 					}
 					if (h.getItemType() == "house3") {
@@ -822,6 +828,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					
 					if (zombie.isDead()) { //Enemy has no health.
 						removeZombieIndex.add(z); // add zombie to list if he dies
+						if (currentMap == 1) {
+							numOfZombiesMainMap--; //If zombie dies in the main map, decrement the number of zombie re-spawns when exiting houses
+						}
+						
 						program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.
 						System.out.println("Enemy is dead.");
 					}
@@ -840,8 +850,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
 		player.setAttackAvailable(false); // Initiate attack cool down.
 		
-		System.out.println("mouse x: " + e.getX());
-		System.out.println("mouse Y: " + e.getY());
 
 	}
 	

@@ -1,11 +1,21 @@
 package default_package;
 import java.util.ArrayList; // for ArrayList
 import java.util.HashMap;
+import java.util.Random;
 
 import acm.graphics.GImage; // for GImage
 import acm.graphics.GPoint;
 
+
 public class Map {
+	
+	//For random placement of zombie spawns
+	Random rand = new Random();
+	int randMinX = 50;  
+	int randMaxX = 600; 
+	int randMinY = 50;
+	int randMaxY = 450; 
+	
 	
 	private double width; // width of program
 	private double height; // height of program
@@ -17,6 +27,7 @@ public class Map {
 	private ArrayList<Zombie> zombies;
 	private ArrayList<House> houses;
 	private String backgroundName;
+	private int zombieSpawnsMainMap;
 	
 	public Map(int mapNumber, double w, double h) {
 		map = mapNumber;
@@ -51,14 +62,27 @@ public class Map {
 		
 	}
 	
+	public void setNumOfZombies(int numOfZombies) {
+		zombieSpawnsMainMap = numOfZombies;
+	}
+	
+	public int getNumOfZombies() {
+		return zombieSpawnsMainMap;
+	}
+	
 	public ArrayList<Zombie> getZombies() {
 		zombies = new ArrayList<Zombie>(); // initialize enemy array list
 		switch(map) {
 		case 1:
+			for (int i = 0; i < zombieSpawnsMainMap; i++) {
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxX-randMinX+50)+randMinX, Math.random()*(randMaxY-randMinY+50)+randMinY);
+			}
+			/*
 			addZombie("zombie", 3, "zombie", 100, 10, 500, 100); 
 			addZombie("zombie", 3, "zombie", 100, 10, 500, 350);
 			addZombie("zombie", 3, "zombie", 100, 10, 200, 300);
 			addZombie("zombie", 3, "zombie", 100, 10, 50, 100);
+			*/
 			break;
 		case 2:
 			addZombie("zombie", 3, "zombie", 100, 10, 500, 100); 
@@ -134,7 +158,7 @@ public class Map {
 	}
 	
 	
-	private void addZombie(String enemy, int health, String enemyType, int detectionRange, double speed, int xCoord, int yCoord) {
+	private void addZombie(String enemy, int health, String enemyType, int detectionRange, double speed, double xCoord, double yCoord) {
 		
 		GImage enemySprite = new GImage(sprites.get(enemy), xCoord, yCoord);
 		enemySprite.setSize(30, 30);
