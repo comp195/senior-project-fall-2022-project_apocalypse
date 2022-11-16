@@ -64,6 +64,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int inventorySizeCount;
 	private int populatingItemsIndex;
 	private int numOfZombiesMainMap;
+	private int numOfZombiesHouse1;
+	private int numOfZombiesHouse2;
+	private int numOfZombiesHouse3;
 	
 	//Vars for Player locations during map transitions
 	private double playerLocationX;
@@ -256,6 +259,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		//timer.restart(); // reset timer
 		numOfZombiesMainMap = 4;
+		numOfZombiesHouse1 = 3;
+		numOfZombiesHouse2 = 2;
+		numOfZombiesHouse3 = 1;
 	}
 	
 	private void checkPlayerDeath() {
@@ -284,10 +290,26 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}*/
 	
 	public void createMap(int mapNum) {
+		program.removeAll();
 		timer.restart(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		
-		newMap.setNumOfZombies(numOfZombiesMainMap);
+		if (mapNum == 1) {
+			newMap.setNumOfZombies(numOfZombiesMainMap);
+		}
+		
+		if (mapNum == 2) {
+			newMap.setNumOfZombiesHouse1(numOfZombiesHouse1);
+		}
+		
+		if (mapNum == 3) {
+			newMap.setNumOfZombiesHouse2(numOfZombiesHouse2);
+		}
+		
+		if (mapNum == 4) {
+			newMap.setNumOfZombiesHouse3(numOfZombiesHouse3);
+		}
+		
 		//Add zombies to the map
 		zombies = newMap.getZombies();
 		
@@ -297,7 +319,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		
 		
-		program.removeAll();
+		//program.removeAll();
 		
 		
 		if (mapNum == 1) {
@@ -830,6 +852,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						removeZombieIndex.add(z); // add zombie to list if he dies
 						if (currentMap == 1) {
 							numOfZombiesMainMap--; //If zombie dies in the main map, decrement the number of zombie re-spawns when exiting houses
+						}
+						if (currentMap == 2) {
+							numOfZombiesHouse1--;
+						}
+						if (currentMap == 3) {
+							numOfZombiesHouse2--;
+						}
+						if (currentMap == 4) {
+							numOfZombiesHouse3--;
 						}
 						
 						program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.

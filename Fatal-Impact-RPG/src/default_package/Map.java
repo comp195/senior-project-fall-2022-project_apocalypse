@@ -11,10 +11,11 @@ public class Map {
 	
 	//For random placement of zombie spawns
 	Random rand = new Random();
-	int randMinX = 50;  
-	int randMaxX = 600; 
-	int randMinY = 50;
-	int randMaxY = 450; 
+	int randMinXMainMap = 50;  
+	int randMaxXMainMap = 600; 
+	int randMinYMainMap = 50;
+	int randMaxYMainMap = 450; 
+	
 	
 	
 	private double width; // width of program
@@ -28,6 +29,9 @@ public class Map {
 	private ArrayList<House> houses;
 	private String backgroundName;
 	private int zombieSpawnsMainMap;
+	private int zombieSpawnsHouse1;
+	private int zombieSpawnsHouse2;
+	private int zombieSpawnsHouse3;
 	
 	public Map(int mapNumber, double w, double h) {
 		map = mapNumber;
@@ -66,27 +70,59 @@ public class Map {
 		zombieSpawnsMainMap = numOfZombies;
 	}
 	
+	public void setNumOfZombiesHouse1(int numOfZombies) {
+		zombieSpawnsHouse1 = numOfZombies;
+	}
+	
+	public void setNumOfZombiesHouse2(int numOfZombies) {
+		zombieSpawnsHouse2 = numOfZombies;
+	}
+	
+	public void setNumOfZombiesHouse3(int numOfZombies) {
+		zombieSpawnsHouse3 = numOfZombies;
+	}
+	
 	public int getNumOfZombies() {
 		return zombieSpawnsMainMap;
 	}
+	
+	public int getNumOfZombiesHouse1() {
+		return zombieSpawnsHouse1;
+	}
+	
+	public int getNumOfZombiesHouse2() {
+		return zombieSpawnsHouse2;
+	}
+	
+	public int getNumOfZombiesHouse3() {
+		return zombieSpawnsHouse3;
+	}
+	
+	
 	
 	public ArrayList<Zombie> getZombies() {
 		zombies = new ArrayList<Zombie>(); // initialize enemy array list
 		switch(map) {
 		case 1:
 			for (int i = 0; i < zombieSpawnsMainMap; i++) {
-				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxX-randMinX+50)+randMinX, Math.random()*(randMaxY-randMinY+50)+randMinY);
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
 			}
-			/*
-			addZombie("zombie", 3, "zombie", 100, 10, 500, 100); 
-			addZombie("zombie", 3, "zombie", 100, 10, 500, 350);
-			addZombie("zombie", 3, "zombie", 100, 10, 200, 300);
-			addZombie("zombie", 3, "zombie", 100, 10, 50, 100);
-			*/
 			break;
 		case 2:
-			addZombie("zombie", 3, "zombie", 100, 10, 500, 100); 
-			break;	
+			for (int i = 0; i < zombieSpawnsHouse1; i++) {
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
+			}
+			break;
+		case 3:
+			for (int i = 0; i < zombieSpawnsHouse2; i++) {
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
+			}
+			break;
+		case 4:
+			for (int i = 0; i < zombieSpawnsHouse3; i++) {
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
+			}
+			break;
 			
 		}
 		
