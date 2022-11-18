@@ -21,9 +21,14 @@ import acm.graphics.GRect;
 import acm.program.GraphicsProgram;
 import acm.graphics.*;
 import acm.program.*;
+import java.util.Random;
 
 public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
-	
+	Random rand = new Random(); 
+	int randMinXMainMap = 50;  
+	int randMaxXMainMap = 600; 
+	int randMinYMainMap = 50;
+	int randMaxYMainMap = 450; 
 	private static final int ATTACK_ANIMATION_INTERVAL = 15;
 	private static final int PLAYER_SPRITE_SIZE = 30;
 	private static final int HEART_SIZE = 50;
@@ -67,7 +72,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int numOfZombiesHouse1;
 	private int numOfZombiesHouse2;
 	private int numOfZombiesHouse3;
-	
+	private int numOfFoodHouse1;
+	private int numOfFoodHouse2;
+	private int numOfFoodHouse3;
+	private int numOfWaterHouse1;
+	private int numOfWaterHouse2;
+	private int numOfWaterHouse3;
+
+
 	//Vars for Player locations during map transitions
 	private double playerLocationX;
 	private double playerLocationY;
@@ -262,6 +274,19 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		numOfZombiesHouse1 = 3;
 		numOfZombiesHouse2 = 2;
 		numOfZombiesHouse3 = 1;
+		
+		numOfFoodHouse1 = 2;
+		numOfFoodHouse2 = 2;
+		numOfFoodHouse3 = 1;
+		
+		numOfWaterHouse1 = 2;
+		numOfWaterHouse2 = 2;
+		numOfWaterHouse3 = 1;
+		
+		
+		
+
+
 	}
 	
 	private void checkPlayerDeath() {
@@ -294,20 +319,27 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		timer.restart(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		
+		
 		if (mapNum == 1) {
 			newMap.setNumOfZombies(numOfZombiesMainMap);
 		}
 		
 		if (mapNum == 2) {
 			newMap.setNumOfZombiesHouse1(numOfZombiesHouse1);
+			newMap.setNumOffoodsHouse1(numOfFoodHouse1);
+			newMap.setNumOfWaterHouse1(numOfWaterHouse1);
 		}
 		
 		if (mapNum == 3) {
 			newMap.setNumOfZombiesHouse2(numOfZombiesHouse2);
+			newMap.setNumOffoodsHouse2(numOfFoodHouse2);
+			newMap.setNumOfWaterHouse2(numOfWaterHouse2);
 		}
 		
 		if (mapNum == 4) {
 			newMap.setNumOfZombiesHouse3(numOfZombiesHouse3);
+			newMap.setNumOffoodsHouse3(numOfFoodHouse3);
+			newMap.setNumOfWaterHouse3(numOfWaterHouse3);
 		}
 		
 		//Add zombies to the map
@@ -381,9 +413,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			for (House h : houses) {
 				program.add(h.getSprite()); //Add enemy sprite to screen.
 			}
-			program.add(inventory);
+			//program.add(inventory);
+			 
 		}
 		
+		program.add(inventory);
 		//Add zombies sprites to the screen
 		for (Zombie z: zombies) { // loop for all enemies
 			program.add(z.getSprite()); //Add enemy sprite to screen.
@@ -393,7 +427,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		
 		if (mapNum == 2) {
-			program.add(inventory);
+			//program.add(inventory);
 		}
 		
 		
@@ -591,20 +625,48 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 			
 			//Player should pick up an item if it's an item.
-			if (currentMap == 2 || currentMap == 3 || currentMap == 4) { // Add to condition for ALL maps that have items in it (otherwise its an error) 
+			if ((currentMap == 2 && numOfFoodHouse1 > 0) || ( currentMap == 2 && numOfWaterHouse1 > 0) || (currentMap == 3 && numOfFoodHouse2 > 0) || (currentMap == 3 && numOfWaterHouse2 > 0) || (currentMap == 4 && numOfFoodHouse3 > 0) || (currentMap == 4 && numOfWaterHouse3 > 0)) { // Add to condition for ALL maps that have items in it (otherwise its an error) 
 				Item nearestItem = player.nearestItem(items); //check for item nearest to player
 				//If player can interact with closest item and presses "e"
 				if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
+					/*
 					if (inventorySizeCount < 5) {
 						player.addToInventory(nearestItem); // add item to player inventory
 						//Move item to inventory location
 						player.getInventory().get(inventoryIndex).getSprite().setLocation(inventory.getX() + inventoryDisplayIndex, inventory.getY() + 33);
 						player.getInventory().get(inventoryIndex).getSprite().sendToFront();
+						
 					}
 					inventoryDisplayIndex += 32;
 					inventoryIndex++;
 					inventorySizeCount++;
-					//TO DO: Need to create boundary around player inventory so that items can't be added again
+					*/
+					if (nearestItem.getItemType() == "food") {
+						if (currentMap == 2) {
+							numOfFoodHouse1--;
+						}
+						if (currentMap == 3) {
+							numOfFoodHouse2--;
+						}
+						if (currentMap == 4) {
+							numOfFoodHouse3--;
+						}
+						player.SetHunger(player.GetHunger() + 50);
+					}
+					else if (nearestItem.getItemType() == "water") {
+						if (currentMap == 2) {
+							numOfWaterHouse1--;
+						}
+						if (currentMap == 3) {
+							numOfWaterHouse2--;
+						}
+						if (currentMap == 4) {
+							numOfWaterHouse3--;
+						}
+						player.SetThirst(player.GetThirst() + 50);
+					}
+					items.remove(nearestItem);
+					program.remove(nearestItem.getSprite());
 				}
 			}
 			
@@ -650,11 +712,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		if (keyCode == 82) { // r
 			//replenish thirst from inventory.
-			int removeIndexWater = -1;
-			if (player.getInventory().size() > 0) {
+			//int removeIndexWater = -1;
+			//if (player.getInventory().size() > 0) {
+				/*
 				removeIndexWater = player.searchItemIndex(player, removeIndexWater, "water");
+				*/
+				/*
 				if (removeIndexWater >= 0) { //check if the player has the heart to remove
 					//player.getInventory().get(removeIndex).getSprite().setLocation(0, 0);
+				*/
+					/*
 					program.remove(player.getInventory().get(removeIndexWater).getSprite());
 					player.removeFromInventory(removeIndexWater); //Remove the heart from the inventory.
 					
@@ -664,15 +731,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					inventorySizeCount--;
 					inventoryIndex--;
 					inventoryDisplayIndex -= 32;
-				}
-			}
+					*/
+				//}
+			
 		} if (keyCode == 81) { // q
 			//Replenish hunger from inventory.
-			int removeIndexFood = -1;
-			if (player.getInventory().size() > 0) {
-				removeIndexFood = player.searchItemIndex(player, removeIndexFood, "food");
-				if (removeIndexFood >= 0) { //check if the player has the heart to remove
+			//int removeIndexFood = -1;
+			//if (player.getInventory().size() > 0) {
+				//removeIndexFood = player.searchItemIndex(player, removeIndexFood, "food");
+				//if (removeIndexFood >= 0) { //check if the player has the heart to remove
 					//player.getInventory().get(removeIndex).getSprite().setLocation(0, 0);
+					/*
 					program.remove(player.getInventory().get(removeIndexFood).getSprite());
 					player.removeFromInventory(removeIndexFood); //Remove the heart from the inventory.
 					
@@ -684,6 +753,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					inventoryDisplayIndex -= 32;
 				}
 			}
+			*/
 		} if (keyCode == KeyEvent.VK_ESCAPE) {
 			//pause();
 		} if (keyCode == 88) { //User clicks x (equip knife)
@@ -881,7 +951,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
 		player.setAttackAvailable(false); // Initiate attack cool down.
 		
-
+		System.out.println("mouse x: " + e.getX());
+		System.out.println("mouse y: " + e.getY());
 	}
 	
 	

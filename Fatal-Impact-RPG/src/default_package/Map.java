@@ -15,8 +15,9 @@ public class Map {
 	int randMaxXMainMap = 600; 
 	int randMinYMainMap = 50;
 	int randMaxYMainMap = 450; 
-	
-	
+	private boolean playerEntersHouse1FirstTime;
+	private boolean playerEntersHouse2FirstTime;
+	private boolean playerEntersHouse3FirstTime;
 	
 	private double width; // width of program
 	private double height; // height of program
@@ -32,6 +33,15 @@ public class Map {
 	private int zombieSpawnsHouse1;
 	private int zombieSpawnsHouse2;
 	private int zombieSpawnsHouse3;
+	
+	private int foodsSpawnHouse1;
+	private int foodsSpawnHouse2;
+	private int foodsSpawnHouse3;
+	
+	private int waterSpawnHouse1;
+	private int waterSpawnHouse2;
+	private int waterSpawnHouse3;
+	
 	
 	public Map(int mapNumber, double w, double h) {
 		map = mapNumber;
@@ -82,6 +92,34 @@ public class Map {
 		zombieSpawnsHouse3 = numOfZombies;
 	}
 	
+	public void setNumOffoodsHouse1(int numOfItems) {
+		foodsSpawnHouse1 = numOfItems;
+	}
+	
+	public void setNumOffoodsHouse2(int numOfItems) {
+		foodsSpawnHouse2 = numOfItems;
+	}
+	
+	public void setNumOffoodsHouse3(int numOfItems) {
+		foodsSpawnHouse3 = numOfItems;
+	}
+	
+	public void setNumOfWaterHouse1(int numOfItems) {
+		waterSpawnHouse1 = numOfItems;
+	}
+	
+	public void setNumOfWaterHouse2(int numOfItems) {
+		waterSpawnHouse2 = numOfItems;
+	}
+	
+	public void setNumOfWaterHouse3(int numOfItems) {
+		waterSpawnHouse3 = numOfItems;
+	}
+	
+	public void setPlayerHouse1FirstTime(boolean TrueOrFalse) {
+		playerEntersHouse1FirstTime = TrueOrFalse;
+	}
+	
 	public int getNumOfZombies() {
 		return zombieSpawnsMainMap;
 	}
@@ -98,6 +136,33 @@ public class Map {
 		return zombieSpawnsHouse3;
 	}
 	
+	public int getNumOfFoodsHouse1() {
+		return foodsSpawnHouse1;
+	}
+	
+	public int getNumOfFoodsHouse2() {
+		return foodsSpawnHouse2;
+	}
+	
+	public int getNumOfFoodsHouse3() {
+		return foodsSpawnHouse3;
+	}
+	
+	public int getNumOfWaterHouse1() {
+		return waterSpawnHouse1;
+	}
+	
+	public int getNumOfWaterHouse2() {
+		return waterSpawnHouse2;
+	}
+	
+	public int getNumOfWaterHouse3() {
+		return waterSpawnHouse3;
+	}
+	
+	public boolean getPlayerHouse1FirstTime() {
+		return playerEntersHouse1FirstTime;
+	}
 	
 	
 	public ArrayList<Zombie> getZombies() {
@@ -136,47 +201,79 @@ public class Map {
 		items = new ArrayList<Item>();
 		switch(map) {
 		case 2:
+			/*
 			addItem("water", "water", 30, 30, 300, 100);
 			addItem("water", "water", 30, 30, 400, 200);
 			addItem("water", "water", 30, 30, 500, 300);
 			addItem("water", "water", 30, 30, 600, 100);
 			addItem("water", "water", 30, 30, 550, 100);
-			addItem("water", "water", 30, 30, 300, 100);
 			addItem("water", "water", 30, 30, 600, 300);
 
 			addItem("food", "food", 30, 30, 400, 300);
 			addItem("food", "food", 30, 30, 400, 500);
 			addItem("food", "food", 30, 30, 300, 500);
+			*/
+			for (int i = 0; i < waterSpawnHouse1; i++) {
+				
+				addItem("water", "water", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap,  Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
+			for (int i = 0; i < foodsSpawnHouse1; i++) {
+				
+				addItem("food", "food", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
 			break;
 		case 3:
+			/*
 			addItem("water", "water", 30, 30, 300, 100);
 			addItem("water", "water", 30, 30, 400, 200);
 			addItem("water", "water", 30, 30, 500, 300);
 			addItem("water", "water", 30, 30, 600, 100);
 			addItem("water", "water", 30, 30, 550, 100);
-			addItem("water", "water", 30, 30, 300, 100);
 			addItem("water", "water", 30, 30, 600, 300);
 
 			addItem("food", "food", 30, 30, 400, 300);
 			addItem("food", "food", 30, 30, 400, 500);
 			addItem("food", "food", 30, 30, 300, 500);
+			*/
+			for (int i = 0; i < waterSpawnHouse2; i++) {
+				
+				addItem("water", "water", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap,  Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
+			for (int i = 0; i < foodsSpawnHouse2; i++) {
+				
+				addItem("food", "food", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
 			break;
 		case 4:
+			/*
 			addItem("water", "water", 30, 30, 300, 100);
 			addItem("water", "water", 30, 30, 400, 200);
 			addItem("water", "water", 30, 30, 500, 300);
 			addItem("water", "water", 30, 30, 600, 100);
 			addItem("water", "water", 30, 30, 550, 100);
-			addItem("water", "water", 30, 30, 300, 100);
 			addItem("water", "water", 30, 30, 600, 300);
 
 			addItem("food", "food", 30, 30, 400, 300);
 			addItem("food", "food", 30, 30, 400, 500);
 			addItem("food", "food", 30, 30, 300, 500);
+			*/
+			for (int i = 0; i < waterSpawnHouse3; i++) {
+				
+				addItem("water", "water", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap,  Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
+			for (int i = 0; i < foodsSpawnHouse3; i++) {
+				
+				addItem("food", "food", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
 			break;
 
 		}
-		
 
 		return items;
 	}
@@ -204,8 +301,8 @@ public class Map {
 		zombies.add(enemyToAdd);
 	}
 	
-	private void addItem(String item, String itemType, int sizeX, int sizeY, int xCoord, int yCoord) {
-		GImage itemSprite = new GImage(sprites.get(item), xCoord, yCoord);
+	private void addItem(String item, String itemType, int sizeX, int sizeY, double d, double e) {
+		GImage itemSprite = new GImage(sprites.get(item), d, e);
 		itemSprite.setSize(sizeX, sizeY);
 		Item itemToAdd = new Item(itemSprite, itemType);
 		items.add(itemToAdd);
