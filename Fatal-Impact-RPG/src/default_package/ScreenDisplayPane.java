@@ -366,7 +366,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		
 		if (mapNum == 2) {
-			//map = new GImage("city-map.jpg", 0, 0);
 			map = new GImage("FI-House-interior-map1.png", 0, 0);
 			map.setSize(program.getWidth()+80,program.getHeight()+65); //set Map to fit program window size
 			player.getSprite().setLocation(140, 650); //Set player at inside house entry location
@@ -374,7 +373,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		
 		if (mapNum == 3) {
-			//map = new GImage("city-map.jpg", 0, 0);
 			map = new GImage("FI-House-interior-map2.png", 0, 0);
 			map.setSize(program.getWidth(),program.getHeight()); //set Map to fit program window size
 			
@@ -396,7 +394,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			player.getSprite().setLocation(429, 474); //Set player at inside house entry location
 		}
 		
-		
+		if (mapNum == 5) {
+			map = new GImage("FI-Map-Level2.png", 0, 0);
+		}
 		//Add inventory image to screen
 		inventory = new GImage("HotBar.png", 300, 535);
 		inventory.sendToFront();
@@ -572,9 +572,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void gameOver() {
 		System.out.println("Player is dead. Game Over.");
 		currentMap = 1;
-		program.removeAll(); // remove all objects from screen
+		
 		
 		initializeGame(); // reset all game values
+		program.removeAll(); // remove all objects from screen
 		timer.stop();
 		populatingItemsIndex = 0;
 		program.switchTo(3); // switch to game end screen
@@ -623,7 +624,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				}
 			}
 			
-			
 			//Player should pick up an item if it's an item.
 			if ((currentMap == 2 && numOfFoodHouse1 > 0) || ( currentMap == 2 && numOfWaterHouse1 > 0) || (currentMap == 3 && numOfFoodHouse2 > 0) || (currentMap == 3 && numOfWaterHouse2 > 0) || (currentMap == 4 && numOfFoodHouse3 > 0) || (currentMap == 4 && numOfWaterHouse3 > 0)) { // Add to condition for ALL maps that have items in it (otherwise its an error) 
 				Item nearestItem = player.nearestItem(items); //check for item nearest to player
@@ -651,7 +651,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						if (currentMap == 4) {
 							numOfFoodHouse3--;
 						}
-						player.SetHunger(player.GetHunger() + 50);
+						player.SetHunger(player.GetHunger() + 50); //Increase Hunger quench
+						player.setHealth(player.getHealth() + 1); //Player gets an extra heart.
+						updateHealth(); //update health display
 					}
 					else if (nearestItem.getItemType() == "water") {
 						if (currentMap == 2) {
@@ -663,11 +665,18 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						if (currentMap == 4) {
 							numOfWaterHouse3--;
 						}
-						player.SetThirst(player.GetThirst() + 50);
+						player.SetThirst(player.GetThirst() + 50); //Increase Thirst quench
+						player.setHealth(player.getHealth() + 1); //Player gets an extra heart.
+						updateHealth(); //update health display
 					}
 					items.remove(nearestItem);
 					program.remove(nearestItem.getSprite());
 				}
+			}
+			
+			if (player.getSprite().getX() >= 500 && player.getSprite().getX() <= 607 && player.getSprite().getY() <= 23) {
+				currentMap = 5;
+				createMap(currentMap);
 			}
 			
 		} if (keyCode == 90) { // z
@@ -861,8 +870,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		 		
 		
 	}
-	
-	
 	
 	@Override 
 	public void keyReleased(KeyEvent e) {

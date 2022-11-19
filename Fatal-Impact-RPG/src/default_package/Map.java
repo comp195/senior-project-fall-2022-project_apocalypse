@@ -201,18 +201,6 @@ public class Map {
 		items = new ArrayList<Item>();
 		switch(map) {
 		case 2:
-			/*
-			addItem("water", "water", 30, 30, 300, 100);
-			addItem("water", "water", 30, 30, 400, 200);
-			addItem("water", "water", 30, 30, 500, 300);
-			addItem("water", "water", 30, 30, 600, 100);
-			addItem("water", "water", 30, 30, 550, 100);
-			addItem("water", "water", 30, 30, 600, 300);
-
-			addItem("food", "food", 30, 30, 400, 300);
-			addItem("food", "food", 30, 30, 400, 500);
-			addItem("food", "food", 30, 30, 300, 500);
-			*/
 			for (int i = 0; i < waterSpawnHouse1; i++) {
 				
 				addItem("water", "water", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap,  Math.random()*(randMaxYMainMap-randMinYMainMap+1));
@@ -307,6 +295,8 @@ public class Map {
 		Item itemToAdd = new Item(itemSprite, itemType);
 		items.add(itemToAdd);
 	}
+	
+	
 			
 	private void addHouse(String house, String houseType, int sizeX, int sizeY, int xCoord, int yCoord) {
 		GImage houseSprite = new GImage(sprites.get(house), xCoord, yCoord);
@@ -330,4 +320,3 @@ public class Map {
 	
 
 }
-
