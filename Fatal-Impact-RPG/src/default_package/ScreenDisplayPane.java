@@ -75,9 +75,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int numOfFoodHouse1;
 	private int numOfFoodHouse2;
 	private int numOfFoodHouse3;
+	private int numOfFoodLevel3House;
 	private int numOfWaterHouse1;
 	private int numOfWaterHouse2;
 	private int numOfWaterHouse3;
+	private int numOfWaterLevel3House;
+	
+	private int numOfZombiesLevel3;
+	private int numOfZombiesLevel3House;
 
 
 	//Vars for Player locations during map transitions
@@ -86,6 +91,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private boolean playerExitsHouse1;
 	private boolean playerExitsHouse2;
 	private boolean playerExitsHouse3;
+	private boolean playerExitsHouseLevel3;
 	
 	//player animation members
 	private boolean knifeEquipped;
@@ -168,6 +174,12 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private String[] zombieAttackLeft = {"Zombie-Attack-Left.png", "Zombie-Attack-Left2.png", "Zombie-Attack-Left.png", "Zombie-Standing-Left.png"};
 	private String[] zombieAttackRight = {"Zombie-Attack-Right.png", "Zombie-Attack-Right2.png", "Zombie-Attack-Right.png", "Zombie-Standing-Right.png"};
 
+	private String[] hungerDisplayImages = {"Hunger100.png","Hunger90.png","Hunger80.png","Hunger70.png","Hunger60.png","Hunger50.png","Hunger40.png","Hunger30.png","Hunger20.png","Hunger10.png","Hunger0.png"};
+	private String[] thirstDisplayImages = {"Thirst100.png","Thirst90.png","Thirst80.png","Thirst70.png","Thirst60.png","Thirst50.png","Thirst40.png","Thirst30.png","Thirst20.png","Thirst10.png","Thirst0.png"};
+	private int hungerDisplayIndex;
+	private int thirstDisplayIndex;
+	private GImage hungerDisplayCurrentImage = new GImage("Hunger100.png", 50, 300);
+	private GImage thirstDisplayCurrentImage = new GImage("Thirst100.png", 50, 300);
 	
 	//main game objects
 	private Player player;
@@ -263,11 +275,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		inventoryIndex = 0;
 		inventorySizeCount = 0;
 		populatingItemsIndex = 0;
+		
+		hungerDisplayIndex = 0;
+		thirstDisplayIndex = 0;
 		//food = new GImage("waterBottle.jpg", 300, 100);
 		
 		playerExitsHouse1 = false;
 		playerExitsHouse2 = false;
 		playerExitsHouse3 = false;
+		playerExitsHouseLevel3 = false;
 		
 		//timer.restart(); // reset timer
 		numOfZombiesMainMap = 4;
@@ -278,10 +294,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		numOfFoodHouse1 = 2;
 		numOfFoodHouse2 = 2;
 		numOfFoodHouse3 = 1;
+		numOfFoodLevel3House = 4;
+		numOfWaterLevel3House = 4;
 		
 		numOfWaterHouse1 = 2;
 		numOfWaterHouse2 = 2;
 		numOfWaterHouse3 = 1;
+		
+		numOfZombiesLevel3 = 3;
+		numOfZombiesLevel3House = 1;
 		
 		
 		
@@ -319,7 +340,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		timer.restart(); //When the game restarts, this is important for restarting the timer.
 		Map newMap = new Map(mapNum, program.getWidth(), program.getHeight());
 		
-		
 		if (mapNum == 1) {
 			newMap.setNumOfZombies(numOfZombiesMainMap);
 		}
@@ -345,6 +365,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		if (mapNum == 5) {
 			numOfZombiesMainMap = 8;
 			newMap.setNumOfZombies(numOfZombiesMainMap);
+		}
+		
+		if (mapNum == 6) {
+			newMap.setNumOfZombiesLevel3(numOfZombiesLevel3);
+		}
+		
+		if (mapNum == 7) {
+			newMap.setNumOfZombiesLevel3House(numOfZombiesLevel3House);
+			newMap.setNumOffoodsLevel3House(numOfFoodLevel3House);
+			newMap.setNumOfWaterLevel3House(numOfWaterLevel3House);
 		}
 		
 		//Add zombies to the map
@@ -403,9 +433,23 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			map = new GImage("FI-Map-Level2.png", 0, 0);
 			player.getSprite().setLocation(495,545);
 		}
+		
+		if (mapNum == 6) {
+			map = new GImage("FI-Level3-Map.png", 0, 0);
+			player.getSprite().setLocation(286,582);
+		}
+		
+		if (mapNum == 7) {
+			map = new GImage("FI-Level3-Interior-House.png", 0, 0);
+			player.getSprite().setLocation(185,562);
+		}
 		//Add inventory image to screen
 		inventory = new GImage("HotBar.png", 300, 535);
 		inventory.sendToFront();
+		
+		
+		
+		//hungerDisplay = new GImage(hungerString, 50, 300);
 		
 		//Add map and map stuff sprites to the screen
 		program.add(map);
@@ -417,11 +461,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			program.add(mapTree5);
 			program.add(mapTree6);
 			for (House h : houses) {
-				program.add(h.getSprite()); //Add enemy sprite to screen.
+				program.add(h.getSprite()); //Add house sprite to screen.
 			}
 			//program.add(inventory);
 			 
 		}
+		if (mapNum == 6) {
+			for (House h : houses) {
+				program.add(h.getSprite()); //Add house sprite to screen.
+			}
+		}
+		
 		
 		program.add(inventory);
 		//Add zombies sprites to the screen
@@ -463,6 +513,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			player.getSprite().setLocation(765, 495); //Set player at inside house entry location
 		}
 		
+		if (playerExitsHouseLevel3) {
+			player.getSprite().setLocation(292, 239); //Set player at inside house entry location
+		}
+		
 		
 		
 		
@@ -474,6 +528,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		playerExitsHouse1 = false;
 		playerExitsHouse2 = false;
 		playerExitsHouse3 = false;
+		playerExitsHouseLevel3 = false;
 		
 		for (Item i : items) {
 			populatingItems(i);
@@ -531,6 +586,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		populatingItemsIndex++;
 	}
 	
+	
 	public void updateHealth() {
 		while (playerHealth.size() > 0) { // remove all player hearts from screen
 			program.remove(playerHealth.get(0));
@@ -575,6 +631,22 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		program.add(newZombieSprite); // add new player sprite
 	}
 	
+	private void setSpriteImageHunger(String[] hungerImages, int frames, GImage prevHungerSprite, GImage newHungerSprite) {
+		newHungerSprite.setImage(hungerImages[frames]);
+		newHungerSprite.setSize(50, 50);
+		program.remove(prevHungerSprite);
+		hungerDisplayCurrentImage = newHungerSprite;
+		program.add(newHungerSprite);
+	}
+	
+	private void setSpriteImageThirst(String[] ThirstImages, int frames, GImage prevThirstSprite, GImage newThirstSprite) {
+		newThirstSprite.setImage(ThirstImages[frames]);
+		newThirstSprite.setSize(50, 50);
+		program.remove(prevThirstSprite);
+		thirstDisplayCurrentImage = newThirstSprite;
+		program.add(newThirstSprite);
+	}
+	
 	public void gameOver() {
 		System.out.println("Player is dead. Game Over.");
 		currentMap = 1;
@@ -611,7 +683,12 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		if (keyCode == 69) { // e
 			for (House h : houses) {
-				if (player.canInteract(h.getSprite().getX() + (h.getSprite().getWidth()/2), h.getSprite().getY() + (h.getSprite().getHeight()/2))) {
+				double houseX = h.getSprite().getX() + (h.getSprite().getWidth()/2);
+				double houseY = h.getSprite().getY() + (h.getSprite().getHeight()/2);
+				if (currentMap == 6) { //Since the house is big on this map, adjust y value
+					houseY = h.getSprite().getY() + (h.getSprite().getHeight()/2) + 50;
+				}
+				if (player.canInteract(houseX, houseY)) {
 					playerLocationX = player.getSprite().getX();
 					playerLocationY = player.getSprite().getY();
 					if (h.getItemType() == "house1") {
@@ -626,12 +703,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						currentMap = 4; // increase current room number
 						createMap(currentMap); // create next room
 					}
+					if (h.getItemType() == "houseLevel3") {
+						currentMap = 7; // increase current room number
+						createMap(currentMap); // create next room
+					}
 					
 				}
 			}
 			
 			//Player should pick up an item if it's an item.
-			if ((currentMap == 2 && numOfFoodHouse1 > 0) || ( currentMap == 2 && numOfWaterHouse1 > 0) || (currentMap == 3 && numOfFoodHouse2 > 0) || (currentMap == 3 && numOfWaterHouse2 > 0) || (currentMap == 4 && numOfFoodHouse3 > 0) || (currentMap == 4 && numOfWaterHouse3 > 0)) { // Add to condition for ALL maps that have items in it (otherwise its an error) 
+			if ((currentMap == 2 && numOfFoodHouse1 > 0) || ( currentMap == 2 && numOfWaterHouse1 > 0) || (currentMap == 3 && numOfFoodHouse2 > 0) || (currentMap == 3 && numOfWaterHouse2 > 0) || (currentMap == 4 && numOfFoodHouse3 > 0) || (currentMap == 4 && numOfWaterHouse3 > 0) || (currentMap == 7 && numOfFoodLevel3House > 0) || (currentMap == 7 && numOfWaterLevel3House > 0)) { // Add to condition for ALL maps that have items in it (otherwise its an error) 
 				Item nearestItem = player.nearestItem(items); //check for item nearest to player
 				//If player can interact with closest item and presses "e"
 				if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
@@ -657,6 +738,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						if (currentMap == 4) {
 							numOfFoodHouse3--;
 						}
+						if (currentMap == 7) {
+							numOfFoodLevel3House--;
+						}
 						player.SetHunger(player.GetHunger() + 50); //Increase Hunger quench
 						player.setHealth(player.getHealth() + 1); //Player gets an extra heart.
 						updateHealth(); //update health display
@@ -670,6 +754,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						}
 						if (currentMap == 4) {
 							numOfWaterHouse3--;
+						}
+						if (currentMap == 7) {
+							numOfWaterLevel3House--;
 						}
 						player.SetThirst(player.GetThirst() + 50); //Increase Thirst quench
 						player.setHealth(player.getHealth() + 1); //Player gets an extra heart.
@@ -722,6 +809,16 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					playerExitsHouse3 = true; //For seting player location accordingly
 					currentMap = 1; // increase current room number
 					//This is for if player exits house and re-enters it. Set item index back to 0 when re-populating house with it.
+					populatingItemsIndex = 0; 
+					inventoryIndex = 0;
+					inventorySizeCount = 0;
+					createMap(currentMap); // create next room
+				}
+			}
+			if (currentMap == 7) {
+				if (player.getSprite().getX() >= 129 && player.getSprite().getX() <= 248 && player.getSprite().getY() >= 552) {
+					playerExitsHouseLevel3 = true;
+					currentMap = 6;
 					populatingItemsIndex = 0; 
 					inventoryIndex = 0;
 					inventorySizeCount = 0;
@@ -951,6 +1048,12 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						if (currentMap == 4) {
 							numOfZombiesHouse3--;
 						}
+						if (currentMap == 6) {
+							numOfZombiesLevel3--;
+						}
+						if (currentMap == 7) {
+							numOfZombiesLevel3House--;
+						}
 						
 						program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.
 						System.out.println("Enemy is dead.");
@@ -985,6 +1088,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		GImage playerSprite = player.getSprite();
 		GImage newPlayerSprite = new GImage("", playerSprite.getX(), playerSprite.getY()); // For player animation
+		GImage newHungerDisplaySprite = new GImage("", 22, 550);
+		GImage newThirstDisplaySprite = new GImage("", 72, 550);
 		removeZombieIndex = new ArrayList<Integer>(); // initialize array list for indexes of dead enemies
 		timerCount++;
 		for (Z = 0; Z < zombies.size(); Z++) { // loop through all enemies
@@ -1197,7 +1302,87 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			player.SetThirst(player.GetThirst() - 1);
 			System.out.println("Hunger: " + player.GetHunger());
 			System.out.println("Thirst: " + player.GetThirst());
+			setSpriteImageHunger(hungerDisplayImages, hungerDisplayIndex, hungerDisplayCurrentImage, newHungerDisplaySprite);
+			setSpriteImageThirst(thirstDisplayImages, thirstDisplayIndex, thirstDisplayCurrentImage, newThirstDisplaySprite);
+			
 		}
+		
+		
+		
+		//Decrement Hunger accumulator
+		if (player.GetHunger() == 90) {
+			hungerDisplayIndex = 1;
+		}
+		
+		if (player.GetHunger() == 80) {
+			hungerDisplayIndex = 2;
+		}
+		
+		if (player.GetHunger() == 70) {
+			hungerDisplayIndex = 3;
+		}
+		
+		if (player.GetHunger() == 60) {
+			hungerDisplayIndex = 4;
+		}
+		
+		if (player.GetHunger() == 50) {
+			hungerDisplayIndex = 5;
+		}
+		
+		if (player.GetHunger() == 40) {
+			hungerDisplayIndex = 6;
+		}
+		
+		if (player.GetHunger() == 30) {
+			hungerDisplayIndex = 7;
+		}
+		
+		if (player.GetHunger() == 20) {
+			hungerDisplayIndex = 8;
+		}
+		
+		if (player.GetHunger() == 10) {
+			hungerDisplayIndex = 9;
+		}
+		
+		//Decrement Thirst accumulator
+		if (player.GetThirst() == 90) {
+			thirstDisplayIndex = 1;
+		}
+				
+		if (player.GetThirst() == 80) {
+			thirstDisplayIndex = 2;
+		}
+				
+		if (player.GetThirst() == 70) {
+			thirstDisplayIndex = 3;
+		}
+				
+		if (player.GetThirst() == 60) {
+			thirstDisplayIndex = 4;
+		}
+				
+		if (player.GetThirst() == 50) {
+			thirstDisplayIndex = 5;
+		}
+				
+		if (player.GetThirst() == 40) {
+			thirstDisplayIndex = 6;
+		}
+				
+		if (player.GetThirst() == 30) {
+			thirstDisplayIndex = 7;
+		}
+				
+		if (player.GetThirst() == 20) {
+			thirstDisplayIndex = 8;
+		}
+				
+		if (player.GetThirst() == 10) {
+			thirstDisplayIndex = 9;
+		}
+		
 		
 		
 		
@@ -1279,6 +1464,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
 			 //gameOver();
 		}
+		
+		
 		
 		
 		

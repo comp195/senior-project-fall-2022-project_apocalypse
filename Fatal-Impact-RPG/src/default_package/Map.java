@@ -42,6 +42,11 @@ public class Map {
 	private int waterSpawnHouse2;
 	private int waterSpawnHouse3;
 	
+	private int zombiesSpawnLevel3Map;
+	private int zombiesSpawnLevel3House;
+	private int foodsSpawnLevel3House;
+	private int waterSpawnLevel3House;
+
 	
 	public Map(int mapNumber, double w, double h) {
 		map = mapNumber;
@@ -70,6 +75,7 @@ public class Map {
 		sprites.put("house1", "FI-House1.png");
 		sprites.put("house2", "FI-House2.png");
 		sprites.put("house3", "FI-House3.png");
+		sprites.put("houseLevel3", "FI-Level3-House-Map.png");
 		
 		//items = new ArrayList<Item>();
 		zombies = new ArrayList<Zombie>();
@@ -80,6 +86,9 @@ public class Map {
 		zombieSpawnsMainMap = numOfZombies;
 	}
 	
+	public void setNumOfZombiesLevel3(int numOfZombies) {
+		zombiesSpawnLevel3Map = numOfZombies;
+	}
 	
 	public void setNumOfZombiesHouse1(int numOfZombies) {
 		zombieSpawnsHouse1 = numOfZombies;
@@ -93,6 +102,10 @@ public class Map {
 		zombieSpawnsHouse3 = numOfZombies;
 	}
 	
+	public void setNumOfZombiesLevel3House(int numOfZombies) {
+		zombiesSpawnLevel3House = numOfZombies;
+	}
+	
 	public void setNumOffoodsHouse1(int numOfItems) {
 		foodsSpawnHouse1 = numOfItems;
 	}
@@ -103,6 +116,14 @@ public class Map {
 	
 	public void setNumOffoodsHouse3(int numOfItems) {
 		foodsSpawnHouse3 = numOfItems;
+	}
+	
+	public void setNumOffoodsLevel3House(int numOfItems) {
+		foodsSpawnLevel3House = numOfItems;
+	}
+	
+	public void setNumOfWaterLevel3House(int numOfItems) {
+		waterSpawnLevel3House = numOfItems;
 	}
 	
 	public void setNumOfWaterHouse1(int numOfItems) {
@@ -125,6 +146,10 @@ public class Map {
 		return zombieSpawnsMainMap;
 	}
 	
+	public int getNumOfZombiesLevel3() {
+		return zombiesSpawnLevel3Map;
+	}
+	
 	public int getNumOfZombiesHouse1() {
 		return zombieSpawnsHouse1;
 	}
@@ -135,6 +160,10 @@ public class Map {
 	
 	public int getNumOfZombiesHouse3() {
 		return zombieSpawnsHouse3;
+	}
+	
+	public int getNumOfZombiesLevel3House() {
+		return zombiesSpawnLevel3House;
 	}
 	
 	public int getNumOfFoodsHouse1() {
@@ -149,6 +178,10 @@ public class Map {
 		return foodsSpawnHouse3;
 	}
 	
+	public int getNumOffoodsLevel3House() {
+		return foodsSpawnLevel3House;
+	}
+	
 	public int getNumOfWaterHouse1() {
 		return waterSpawnHouse1;
 	}
@@ -159,6 +192,10 @@ public class Map {
 	
 	public int getNumOfWaterHouse3() {
 		return waterSpawnHouse3;
+	}
+	
+	public int getNumOfWaterLevel3House() {
+		return waterSpawnLevel3House;
 	}
 	
 	public boolean getPlayerHouse1FirstTime() {
@@ -193,6 +230,17 @@ public class Map {
 			for (int i = 0; i < zombieSpawnsMainMap; i++) {
 				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
 			}
+			break;
+		case 6:
+			for (int i = 0; i < zombiesSpawnLevel3Map; i++) {
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
+			}
+			break;
+		case 7:
+			for (int i = 0; i < zombiesSpawnLevel3House; i++) {
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
+			}
+			break;
 			
 		}
 		
@@ -218,18 +266,6 @@ public class Map {
 			}
 			break;
 		case 3:
-			/*
-			addItem("water", "water", 30, 30, 300, 100);
-			addItem("water", "water", 30, 30, 400, 200);
-			addItem("water", "water", 30, 30, 500, 300);
-			addItem("water", "water", 30, 30, 600, 100);
-			addItem("water", "water", 30, 30, 550, 100);
-			addItem("water", "water", 30, 30, 600, 300);
-
-			addItem("food", "food", 30, 30, 400, 300);
-			addItem("food", "food", 30, 30, 400, 500);
-			addItem("food", "food", 30, 30, 300, 500);
-			*/
 			for (int i = 0; i < waterSpawnHouse2; i++) {
 				
 				addItem("water", "water", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap,  Math.random()*(randMaxYMainMap-randMinYMainMap+1));
@@ -242,18 +278,6 @@ public class Map {
 			}
 			break;
 		case 4:
-			/*
-			addItem("water", "water", 30, 30, 300, 100);
-			addItem("water", "water", 30, 30, 400, 200);
-			addItem("water", "water", 30, 30, 500, 300);
-			addItem("water", "water", 30, 30, 600, 100);
-			addItem("water", "water", 30, 30, 550, 100);
-			addItem("water", "water", 30, 30, 600, 300);
-
-			addItem("food", "food", 30, 30, 400, 300);
-			addItem("food", "food", 30, 30, 400, 500);
-			addItem("food", "food", 30, 30, 300, 500);
-			*/
 			for (int i = 0; i < waterSpawnHouse3; i++) {
 				
 				addItem("water", "water", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap,  Math.random()*(randMaxYMainMap-randMinYMainMap+1));
@@ -265,6 +289,17 @@ public class Map {
 				
 			}
 			break;
+		case 7:
+			for (int i = 0; i < waterSpawnLevel3House; i++) {
+				
+				addItem("water", "water", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap,  Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
+			for (int i = 0; i < foodsSpawnLevel3House; i++) {
+				
+				addItem("food", "food", 30, 30, Math.random()*(randMaxXMainMap-randMinXMainMap+1)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+1));
+				
+			}
 
 		}
 
@@ -279,7 +314,11 @@ public class Map {
 			addHouse("house2", "house2", 100, 100, 50, 450);
 			addHouse("house3", "house3", 100, 100, 700, 400);
 			break;
+		case 6:
+			addHouseDefaultSize("houseLevel3", "houseLevel3", 97, 3);
+			break;
 		}
+
 		return houses;
 	}
 	
@@ -306,6 +345,12 @@ public class Map {
 	private void addHouse(String house, String houseType, int sizeX, int sizeY, int xCoord, int yCoord) {
 		GImage houseSprite = new GImage(sprites.get(house), xCoord, yCoord);
 		houseSprite.setSize(sizeX, sizeY);
+		House houseToAdd = new House(houseSprite, houseType);
+		houses.add(houseToAdd);
+	}
+	
+	private void addHouseDefaultSize(String house, String houseType, int xCoord, int yCoord) {
+		GImage houseSprite = new GImage(sprites.get(house), xCoord, yCoord);
 		House houseToAdd = new House(houseSprite, houseType);
 		houses.add(houseToAdd);
 	}
