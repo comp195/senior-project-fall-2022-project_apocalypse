@@ -80,6 +80,7 @@ public class Map {
 		zombieSpawnsMainMap = numOfZombies;
 	}
 	
+	
 	public void setNumOfZombiesHouse1(int numOfZombies) {
 		zombieSpawnsHouse1 = numOfZombies;
 	}
@@ -188,6 +189,10 @@ public class Map {
 				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
 			}
 			break;
+		case 5:
+			for (int i = 0; i < zombieSpawnsMainMap; i++) {
+				addZombie("zombie", 3, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
+			}
 			
 		}
 		

@@ -342,6 +342,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			newMap.setNumOfWaterHouse3(numOfWaterHouse3);
 		}
 		
+		if (mapNum == 5) {
+			numOfZombiesMainMap = 8;
+			newMap.setNumOfZombies(numOfZombiesMainMap);
+		}
+		
 		//Add zombies to the map
 		zombies = newMap.getZombies();
 		
@@ -396,6 +401,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		if (mapNum == 5) {
 			map = new GImage("FI-Map-Level2.png", 0, 0);
+			player.getSprite().setLocation(495,545);
 		}
 		//Add inventory image to screen
 		inventory = new GImage("HotBar.png", 300, 535);
@@ -561,8 +567,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		program.add(newPlayerSprite); // add new player sprite
 	}
 	
-	private void setSpriteImageZombie(String[] zombieAttackDown2, int frames, Zombie zombie, GImage zombieSprite, GImage newZombieSprite) {
-		newZombieSprite.setImage(zombieAttackDown2[frames]);
+	private void setSpriteImageZombie(String[] zombieAnimation, int frames, Zombie zombie, GImage zombieSprite, GImage newZombieSprite) {
+		newZombieSprite.setImage(zombieAnimation[frames]);
 		newZombieSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 		zombie.setSprite(newZombieSprite);
 		program.remove(zombieSprite); // remove previous player sprite
@@ -674,8 +680,14 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				}
 			}
 			
-			if (player.getSprite().getX() >= 500 && player.getSprite().getX() <= 607 && player.getSprite().getY() <= 23) {
+			if (currentMap == 1 && player.getSprite().getX() >= 500 && player.getSprite().getX() <= 607 && player.getSprite().getY() <= 23) {
 				currentMap = 5;
+				createMap(currentMap);
+			}
+			
+
+			if (currentMap == 5 && player.getSprite().getX() >= 449 && player.getSprite().getX() <= 544 && player.getSprite().getY() <= 56) {
+				currentMap = 6;
 				createMap(currentMap);
 			}
 			
@@ -960,6 +972,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		System.out.println("mouse x: " + e.getX());
 		System.out.println("mouse y: " + e.getY());
+
 	}
 	
 	
@@ -1086,7 +1099,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				
 				GImage newZombierSprite = new GImage("", zombieSprite.getX(), zombieSprite.getY()); // For player animation
 				/*Zombie attack animation*/
-				if (zombieAttackAnimationDownAcc == 4) {
+				if (zombieAttackAnimationDownAcc == zombieAttackDown.length) {
 					playerHitDown = false; //Full cycle complete, stop from next cycle.
 					playerHitUp = false; //Full cycle complete, stop from next cycle.
 					playerHitLeft = false; //Full cycle complete, stop from next cycle.
