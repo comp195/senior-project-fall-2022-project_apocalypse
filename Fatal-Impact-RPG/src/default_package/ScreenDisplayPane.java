@@ -36,7 +36,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private static final int PLAYER_STARTING_SPEED = 5;
 	private static final double SQRT_TWO_DIVIDED_BY_TWO = 0.7071067811865476;
 	private static final int INTERACT_INTERVAL = 50;
-	private static final int HUNGER_AND_THIRST_INTERVAL = 100;
+	private static final int HUNGER_AND_THIRST_INTERVAL = 50;
 	private static final int LONG_RANGE_ENEMY_ATTACK_INTERVAL = 200;
 	
 	private MainApplication program;
@@ -152,7 +152,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	//private String[] playerAttackRightKnife = {"FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Attack2.png", "FI-Char-Right-Knife-Attack.png", "FI-Char-Right-Knife-Standing.png"};
 	private String[] playerAttackRightKnife = {"FI-Char-Right-Heavy-Attack.png", "FI-Char-Right-Heavy-Attack2.png", "FI-Char-Right-Heavy-Attack3.png", "FI-Char-Right-Heavy-Attack.png", "FI-Char-Right-Knife-Standing.png"};
 	
-	//enemy animation members
+	//Zombie 1 animation members
 	private int zombieMovingDownFrame = 0;
 	private int zombieMovingUpFrame = 0;
 	private int zombieMovingLeftFrame = 0;
@@ -174,6 +174,31 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private String[] zombieAttackLeft = {"Zombie-Attack-Left.png", "Zombie-Attack-Left2.png", "Zombie-Attack-Left.png", "Zombie-Standing-Left.png"};
 	private String[] zombieAttackRight = {"Zombie-Attack-Right.png", "Zombie-Attack-Right2.png", "Zombie-Attack-Right.png", "Zombie-Standing-Right.png"};
 
+	
+	/*Animation variables for Zombie 2 */
+	private int zombie2MovingDownFrame = 0;
+	private int zombie2MovingUpFrame = 0;
+	private int zombie2MovingLeftFrame = 0;
+	private int zombie2MovingRightFrame = 0;
+	
+	private int zombie2AttackDownFrame = 0;
+	private int zombie2AttackUpFrame = 0;
+	private int zombie2AttackLeftFrame = 0;
+	private int zombie2AttackRightFrame = 0;
+	
+	private String[] zombie2MovingDown = {"FI-Zombie2-Moving-Down.png", "FI-Zombie2-Arms-Down.png", "FI-Zombie2-Moving-Down2.png", "FI-Zombie2-Arms-Down.png"};
+	private String[] zombie2MovingUp = {"FI-Zombie2-Moving-Up.png", "FI-Zombie2-Standing-Up.png", "FI-Zombie2-Moving-Up2.png", "FI-Zombie2-Standing-Up.png"};
+	private String[] zombie2MovingLeft = {"FI-Zombie2-Moving-Left.png", "FI-Zombie2-Arms-Left.png", "FI-Zombie2-Moving-Left2.png", "FI-Zombie2-Arms-Left.png"};
+	private String[] zombie2MovingRight = {"FI-Zombie2-Moving-Right.png", "FI-Zombie2-Arms-Right.png", "FI-Zombie2-Moving-Right2.png", "FI-Zombie2-Arms-Right.png"};
+	
+	private String[] zombie2AttackDown = {"FI-Zombie2-Attack-Down.png", "FI-Zombie2-Attack-Down2.png", "FI-Zombie2-Standing-Down.png"};
+	private String[] zombie2AttackUp = {"FI-Zombie2-Attack-Up.png", "FI-Zombie2-Attack-Up2.png", "FI-Zombie2-Standing-Up.png"};
+	private String[] zombie2AttackLeft = {"FI-Zombie2-Attack-Left.png", "FI-Zombie2-Attack-Left2.png", "FI-Zombie2-Standing-Left.png"};
+	private String[] zombie2AttackRight = {"FI-Zombie2-Attack-Right.png", "FI-Zombie2-Attack-Right2.png", "FI-Zombie2-Standing-Right.png"};
+
+
+	
+	/* Hunger+Thirst Display Members */
 	private String[] hungerDisplayImages = {"Hunger100.png","Hunger90.png","Hunger80.png","Hunger70.png","Hunger60.png","Hunger50.png","Hunger40.png","Hunger30.png","Hunger20.png","Hunger10.png","Hunger-Warning.png","Hunger0.png"};
 	private String[] thirstDisplayImages = {"Thirst100.png","Thirst90.png","Thirst80.png","Thirst70.png","Thirst60.png","Thirst50.png","Thirst40.png","Thirst30.png","Thirst20.png","Thirst10.png","Thirst-Warning.png","Thirst0.png"};
 	private int hungerDisplayIndex;
@@ -184,7 +209,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	//main game objects
 	private Player player;
 	
-
 
 
 	//pause and resume
@@ -377,8 +401,25 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			newMap.setNumOfWaterLevel3House(numOfWaterLevel3House);
 		}
 		
+		if (mapNum == 8) {
+			numOfZombiesMainMap = 4;
+			newMap.setNumOfZombies(numOfZombiesMainMap);
+		}
+		
+		if (mapNum == 9) {
+			numOfZombiesMainMap = 8;
+			newMap.setNumOfZombies(numOfZombiesMainMap);
+		}
+		
+		
 		//Add zombies to the map
-		zombies = newMap.getZombies();
+		if (mapNum == 10) {
+			zombies = newMap.getZombies2();
+		}
+		else {
+			zombies = newMap.getZombies();
+		}
+		
 		
 		
 		houses = newMap.getHouses();
@@ -443,9 +484,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			map = new GImage("FI-Level3-Interior-House.png", 0, 0);
 			player.getSprite().setLocation(185,562);
 		}
-		//Add inventory image to screen
-		inventory = new GImage("HotBar.png", 300, 535);
-		inventory.sendToFront();
+		
+		if (mapNum == 8) {
+			map = new GImage("FI-Map-Level2.png", 0, 0);
+			player.getSprite().setLocation(496,560);
+		}
+		
+		if (mapNum == 9) {
+			map = new GImage("FI-Map-Level2.png", 0, 0);
+			player.getSprite().setLocation(496,560);
+		}
+		
 		
 		
 		
@@ -472,8 +521,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			}
 		}
 		
-		
-		program.add(inventory);
 		//Add zombies sprites to the screen
 		for (Zombie z: zombies) { // loop for all enemies
 			program.add(z.getSprite()); //Add enemy sprite to screen.
@@ -779,6 +826,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				currentMap = 6;
 				createMap(currentMap);
 			}
+			
+			if (currentMap == 6 && player.getSprite().getX() >= 739 && player.getSprite().getY() >= 327 && player.getSprite().getY() <= 420) {
+				currentMap = 8;
+				createMap(currentMap);
+			}
+			
+			if (currentMap == 8 && player.getSprite().getX() >= 449 && player.getSprite().getX() <= 544 && player.getSprite().getY() <= 56) {
+				currentMap = 9;
+				createMap(currentMap);
+			}
+			
 			
 		} if (keyCode == 90) { // z
 			if (currentMap == 2) {
