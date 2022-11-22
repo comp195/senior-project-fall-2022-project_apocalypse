@@ -174,8 +174,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private String[] zombieAttackLeft = {"Zombie-Attack-Left.png", "Zombie-Attack-Left2.png", "Zombie-Attack-Left.png", "Zombie-Standing-Left.png"};
 	private String[] zombieAttackRight = {"Zombie-Attack-Right.png", "Zombie-Attack-Right2.png", "Zombie-Attack-Right.png", "Zombie-Standing-Right.png"};
 
-	private String[] hungerDisplayImages = {"Hunger100.png","Hunger90.png","Hunger80.png","Hunger70.png","Hunger60.png","Hunger50.png","Hunger40.png","Hunger30.png","Hunger20.png","Hunger10.png","Hunger0.png"};
-	private String[] thirstDisplayImages = {"Thirst100.png","Thirst90.png","Thirst80.png","Thirst70.png","Thirst60.png","Thirst50.png","Thirst40.png","Thirst30.png","Thirst20.png","Thirst10.png","Thirst0.png"};
+	private String[] hungerDisplayImages = {"Hunger100.png","Hunger90.png","Hunger80.png","Hunger70.png","Hunger60.png","Hunger50.png","Hunger40.png","Hunger30.png","Hunger20.png","Hunger10.png","Hunger-Warning.png","Hunger0.png"};
+	private String[] thirstDisplayImages = {"Thirst100.png","Thirst90.png","Thirst80.png","Thirst70.png","Thirst60.png","Thirst50.png","Thirst40.png","Thirst30.png","Thirst20.png","Thirst10.png","Thirst-Warning.png","Thirst0.png"};
 	private int hungerDisplayIndex;
 	private int thirstDisplayIndex;
 	private GImage hungerDisplayCurrentImage = new GImage("Hunger100.png", 50, 300);
@@ -534,11 +534,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			populatingItems(i);
 		}
 		
-		/* For adding all maps to the screen
-		for (GImage currentMap: background) { //Add all tiles to the screen.
-			program.add(currentMap);
-		}
-		*/ 
+		
+		//Display Hunger and Thirst to the screen.
+		GImage newHungerDisplaySprite = new GImage("", 22, 550);
+		GImage newThirstDisplaySprite = new GImage("", 72, 550);
+		
+		setSpriteImageHunger(hungerDisplayImages, hungerDisplayIndex, hungerDisplayCurrentImage, newHungerDisplaySprite);
+		setSpriteImageThirst(thirstDisplayImages, thirstDisplayIndex, thirstDisplayCurrentImage, newThirstDisplaySprite);
 		
 		updateHealth();
 		
@@ -1307,7 +1309,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 		}
 		
-		
+		//Decrement Hunger accumulator
+		if (player.GetHunger() >= 100) {
+			hungerDisplayIndex = 0;
+		}
 		
 		//Decrement Hunger accumulator
 		if (player.GetHunger() == 90) {
@@ -1346,7 +1351,21 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			hungerDisplayIndex = 9;
 		}
 		
+		//Show HungerWarning to user
+		if (player.GetHunger() <= 10) {
+			if (timerCount % 20 == 0) {
+				setSpriteImageHunger(hungerDisplayImages, 10, hungerDisplayCurrentImage, newHungerDisplaySprite);
+			}
+			if (timerCount % 40 == 0) {
+				setSpriteImageHunger(hungerDisplayImages, 9, hungerDisplayCurrentImage, newHungerDisplaySprite);
+			}
+		}
+		
 		//Decrement Thirst accumulator
+		if (player.GetThirst() >= 100) {
+			thirstDisplayIndex = 0;
+		}
+		
 		if (player.GetThirst() == 90) {
 			thirstDisplayIndex = 1;
 		}
@@ -1383,9 +1402,15 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			thirstDisplayIndex = 9;
 		}
 		
-		
-		
-		
+		//Show thirst warning to user.
+		if (player.GetThirst() <= 10) {
+			if (timerCount % 20 == 0) {
+				setSpriteImageThirst(thirstDisplayImages, 10, thirstDisplayCurrentImage, newThirstDisplaySprite);
+			}
+			if (timerCount % 40 == 0) {
+				setSpriteImageThirst(thirstDisplayImages, 9, thirstDisplayCurrentImage, newThirstDisplaySprite);
+			}
+		}
 		
 		//Use attackAnimationAcc for sing full cycle of attack animation.
 		if (attackAnimationDownAcc == 3) {
