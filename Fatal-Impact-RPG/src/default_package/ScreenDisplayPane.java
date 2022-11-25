@@ -24,6 +24,7 @@ import acm.program.*;
 import java.util.Random;
 
 public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
+	private static final int ZOMBIE_SPRITE_SIZE = 50;
 	Random rand = new Random(); 
 	int randMinXMainMap = 50;  
 	int randMaxXMainMap = 600; 
@@ -411,10 +412,17 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			newMap.setNumOfZombies(numOfZombiesMainMap);
 		}
 		
+
+		if (mapNum == 10) {
+			numOfZombiesMainMap = 1;
+			newMap.setNumOfZombies(numOfZombiesMainMap);
+		}
+		
+		
 		
 		//Add zombies to the map
 		if (mapNum == 10) {
-			zombies = newMap.getZombies2();
+			zombies = newMap.getZombies();
 		}
 		else {
 			zombies = newMap.getZombies();
@@ -493,6 +501,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		if (mapNum == 9) {
 			map = new GImage("FI-Map-Level2.png", 0, 0);
 			player.getSprite().setLocation(496,560);
+		}
+		
+		if (mapNum == 10) {
+			map = new GImage("FI-Level3-Map.png");
+			player.getSprite().setLocation(286,582);
 		}
 		
 		
@@ -675,6 +688,10 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private void setSpriteImageZombie(String[] zombieAnimation, int frames, Zombie zombie, GImage zombieSprite, GImage newZombieSprite) {
 		newZombieSprite.setImage(zombieAnimation[frames]);
 		newZombieSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
+		//Change the size for zombie boss
+		if (currentMap == 10) {
+			newZombieSprite.setSize(ZOMBIE_SPRITE_SIZE, ZOMBIE_SPRITE_SIZE);
+		}
 		zombie.setSprite(newZombieSprite);
 		program.remove(zombieSprite); // remove previous player sprite
 		program.add(newZombieSprite); // add new player sprite
@@ -817,7 +834,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			}
 			
 			if (currentMap == 1 && player.getSprite().getX() >= 500 && player.getSprite().getX() <= 607 && player.getSprite().getY() <= 23) {
-				currentMap = 5;
+				currentMap = 9;
 				createMap(currentMap);
 			}
 			
@@ -834,6 +851,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 			if (currentMap == 8 && player.getSprite().getX() >= 449 && player.getSprite().getX() <= 544 && player.getSprite().getY() <= 56) {
 				currentMap = 9;
+				createMap(currentMap);
+			}
+			
+			if (currentMap == 9 && player.getSprite().getX() >= 449 && player.getSprite().getX() <= 544 && player.getSprite().getY() <= 56) {
+				currentMap = 10;
 				createMap(currentMap);
 			}
 			
@@ -1262,92 +1284,183 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					zombie.setAttackAvailable(false);
 				}
 				
-				GImage newZombierSprite = new GImage("", zombieSprite.getX(), zombieSprite.getY()); // For player animation
-				/*Zombie attack animation*/
-				if (zombieAttackAnimationDownAcc == zombieAttackDown.length) {
-					playerHitDown = false; //Full cycle complete, stop from next cycle.
-					playerHitUp = false; //Full cycle complete, stop from next cycle.
-					playerHitLeft = false; //Full cycle complete, stop from next cycle.
-					playerHitRight = false; //Full cycle complete, stop from next cycle.
-					zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
-					player.setDamaged(false);
+				if (currentMap != 10) {
+					GImage newZombierSprite = new GImage("", zombieSprite.getX(), zombieSprite.getY()); // For player animation
+					/*Zombie attack animation*/
+					if (zombieAttackAnimationDownAcc == zombieAttackDown.length) {
+						playerHitDown = false; //Full cycle complete, stop from next cycle.
+						playerHitUp = false; //Full cycle complete, stop from next cycle.
+						playerHitLeft = false; //Full cycle complete, stop from next cycle.
+						playerHitRight = false; //Full cycle complete, stop from next cycle.
+						zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
+						player.setDamaged(false);
+					}
+					
+					if (playerHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombieAttackDown, zombieAttackDownFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackDownFrame++;
+						if(zombieAttackDownFrame>=zombieAttackDown.length){
+							zombieAttackDownFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					if (playerHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombieAttackUp, zombieAttackUpFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackUpFrame++;
+						if(zombieAttackUpFrame>=zombieAttackUp.length){
+							zombieAttackUpFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					if (playerHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombieAttackLeft, zombieAttackLeftFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackLeftFrame++;
+						if(zombieAttackLeftFrame>=zombieAttackLeft.length){
+							zombieAttackLeftFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					if (playerHitRight && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombieAttackRight, zombieAttackRightFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackRightFrame++;
+						if(zombieAttackRightFrame>=zombieAttackRight.length){
+							zombieAttackRightFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					/* Zombie movement animation logic */
+					
+					if (zombieMoveDown) {
+						setSpriteImageZombie(zombieMovingDown, zombieMovingDownFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingDownFrame++;
+						if(zombieMovingDownFrame>=zombieMovingDown.length){
+							zombieMovingDownFrame = 0;
+					 	}
+					}
+					
+					
+					if (zombieMoveUp) {
+						setSpriteImageZombie(zombieMovingUp, zombieMovingUpFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingUpFrame++;
+						if(zombieMovingUpFrame>=zombieMovingUp.length){
+							zombieMovingUpFrame = 0;
+					 	}
+					}
+					
+					
+					if (zombieMoveLeft) {
+						setSpriteImageZombie(zombieMovingLeft, zombieMovingLeftFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingLeftFrame++;
+						if(zombieMovingLeftFrame>=zombieMovingLeft.length){
+							zombieMovingLeftFrame = 0;
+					 	}
+					}
+					
+					if (zombieMoveRight) {
+						setSpriteImageZombie(zombieMovingRight, zombieMovingRightFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingRightFrame++;
+						if(zombieMovingRightFrame>=zombieMovingRight.length){
+							zombieMovingRightFrame = 0;
+					 	}
+					}
+				}
+				else {
+					GImage newZombierSprite = new GImage("", zombieSprite.getX(), zombieSprite.getY()); // For player animation
+					/*Zombie attack animation*/
+					if (zombieAttackAnimationDownAcc == zombie2AttackDown.length) {
+						playerHitDown = false; //Full cycle complete, stop from next cycle.
+						playerHitUp = false; //Full cycle complete, stop from next cycle.
+						playerHitLeft = false; //Full cycle complete, stop from next cycle.
+						playerHitRight = false; //Full cycle complete, stop from next cycle.
+						zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
+						player.setDamaged(false);
+					}
+					
+					if (playerHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombie2AttackDown, zombieAttackDownFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackDownFrame++;
+						if(zombieAttackDownFrame>=zombie2AttackDown.length){
+							zombieAttackDownFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					if (playerHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombie2AttackUp, zombieAttackUpFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackUpFrame++;
+						if(zombieAttackUpFrame>=zombie2AttackUp.length){
+							zombieAttackUpFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					if (playerHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombie2AttackLeft, zombieAttackLeftFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackLeftFrame++;
+						if(zombieAttackLeftFrame>=zombie2AttackLeft.length){
+							zombieAttackLeftFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					if (playerHitRight && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
+						//Zombie attack animation
+						setSpriteImageZombie(zombie2AttackRight, zombieAttackRightFrame, zombie, zombieSprite, newZombierSprite);
+						zombieAttackRightFrame++;
+						if(zombieAttackRightFrame>=zombie2AttackRight.length){
+							zombieAttackRightFrame = 0;
+					 	}
+						zombieAttackAnimationDownAcc++;
+					}
+					
+					/* Zombie movement animation logic */
+					
+					if (zombieMoveDown) {
+						setSpriteImageZombie(zombie2MovingDown, zombieMovingDownFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingDownFrame++;
+						if(zombieMovingDownFrame>=zombie2MovingDown.length){
+							zombieMovingDownFrame = 0;
+					 	}
+					}
+					
+					
+					if (zombieMoveUp) {
+						setSpriteImageZombie(zombie2MovingUp, zombieMovingUpFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingUpFrame++;
+						if(zombieMovingUpFrame>=zombie2MovingUp.length){
+							zombieMovingUpFrame = 0;
+					 	}
+					}
+					
+					
+					if (zombieMoveLeft) {
+						setSpriteImageZombie(zombie2MovingLeft, zombieMovingLeftFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingLeftFrame++;
+						if(zombieMovingLeftFrame>=zombie2MovingLeft.length){
+							zombieMovingLeftFrame = 0;
+					 	}
+					}
+					
+					if (zombieMoveRight) {
+						setSpriteImageZombie(zombie2MovingRight, zombieMovingRightFrame, zombie, zombieSprite, newZombierSprite);
+						zombieMovingRightFrame++;
+						if(zombieMovingRightFrame>=zombie2MovingRight.length){
+							zombieMovingRightFrame = 0;
+					 	}
+					}
 				}
 				
-				if (playerHitDown && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-					//Zombie attack animation
-					setSpriteImageZombie(zombieAttackDown, zombieAttackDownFrame, zombie, zombieSprite, newZombierSprite);
-					zombieAttackDownFrame++;
-					if(zombieAttackDownFrame>=zombieAttackDown.length){
-						zombieAttackDownFrame = 0;
-				 	}
-					zombieAttackAnimationDownAcc++;
-				}
-				
-				if (playerHitUp && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-					//Zombie attack animation
-					setSpriteImageZombie(zombieAttackUp, zombieAttackUpFrame, zombie, zombieSprite, newZombierSprite);
-					zombieAttackUpFrame++;
-					if(zombieAttackUpFrame>=zombieAttackUp.length){
-						zombieAttackUpFrame = 0;
-				 	}
-					zombieAttackAnimationDownAcc++;
-				}
-				
-				if (playerHitLeft && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-					//Zombie attack animation
-					setSpriteImageZombie(zombieAttackLeft, zombieAttackLeftFrame, zombie, zombieSprite, newZombierSprite);
-					zombieAttackLeftFrame++;
-					if(zombieAttackLeftFrame>=zombieAttackLeft.length){
-						zombieAttackLeftFrame = 0;
-				 	}
-					zombieAttackAnimationDownAcc++;
-				}
-				
-				if (playerHitRight && timerCount % ATTACK_ANIMATION_INTERVAL == 0) {
-					//Zombie attack animation
-					setSpriteImageZombie(zombieAttackRight, zombieAttackRightFrame, zombie, zombieSprite, newZombierSprite);
-					zombieAttackRightFrame++;
-					if(zombieAttackRightFrame>=zombieAttackRight.length){
-						zombieAttackRightFrame = 0;
-				 	}
-					zombieAttackAnimationDownAcc++;
-				}
-				
-				/* Zombie movement animation logic */
-				
-				if (zombieMoveDown) {
-					setSpriteImageZombie(zombieMovingDown, zombieMovingDownFrame, zombie, zombieSprite, newZombierSprite);
-					zombieMovingDownFrame++;
-					if(zombieMovingDownFrame>=zombieMovingDown.length){
-						zombieMovingDownFrame = 0;
-				 	}
-				}
-				
-				
-				if (zombieMoveUp) {
-					setSpriteImageZombie(zombieMovingUp, zombieMovingUpFrame, zombie, zombieSprite, newZombierSprite);
-					zombieMovingUpFrame++;
-					if(zombieMovingUpFrame>=zombieMovingUp.length){
-						zombieMovingUpFrame = 0;
-				 	}
-				}
-				
-				
-				if (zombieMoveLeft) {
-					setSpriteImageZombie(zombieMovingLeft, zombieMovingLeftFrame, zombie, zombieSprite, newZombierSprite);
-					zombieMovingLeftFrame++;
-					if(zombieMovingLeftFrame>=zombieMovingLeft.length){
-						zombieMovingLeftFrame = 0;
-				 	}
-				}
-				
-				if (zombieMoveRight) {
-					setSpriteImageZombie(zombieMovingRight, zombieMovingRightFrame, zombie, zombieSprite, newZombierSprite);
-					zombieMovingRightFrame++;
-					if(zombieMovingRightFrame>=zombieMovingRight.length){
-						zombieMovingRightFrame = 0;
-				 	}
-				}
 				
 				
 				

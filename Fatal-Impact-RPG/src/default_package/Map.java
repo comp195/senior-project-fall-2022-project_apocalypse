@@ -65,7 +65,7 @@ public class Map {
 		
 		//enemy sprites for different kinds of enemies
 		sprites.put("zombie", "ZombieSprite.png"); 
-		sprites.put("zombie2", "FI-Zombie2-Standing-Down.png");
+		sprites.put("zombieBoss", "FI-Zombie2-Standing-Down.png");
 		
 		//item sprites for different kinds of items
 		sprites.put("food", "chickenDrumstick.jpg");
@@ -251,6 +251,11 @@ public class Map {
 				addZombie("zombie", 5, "zombie", 100, 10, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
 			}
 			break;
+		case 10:
+			for (int i = 0; i < zombieSpawnsMainMap; i++) {
+				addZombie2("zombieBoss", 5, "zombieBoss", 200, 15, Math.random()*(randMaxXMainMap-randMinXMainMap+50)+randMinXMainMap, Math.random()*(randMaxYMainMap-randMinYMainMap+50)+randMinYMainMap);
+			}
+			break;
 			
 		}
 		
@@ -346,7 +351,7 @@ public class Map {
 	private void addZombie2(String enemy, int health, String enemyType, int detectionRange, double speed, double xCoord, double yCoord) {
 		
 		GImage enemySprite = new GImage(sprites.get(enemy), xCoord, yCoord);
-		enemySprite.setSize(30, 30);
+		enemySprite.setSize(50, 50);
 		Zombie enemyToAdd = new Zombie(enemySprite, health, enemyType);
 		enemyToAdd.setDetectionRange(detectionRange);
 		enemyToAdd.setSpeed(speed);
@@ -390,10 +395,11 @@ public class Map {
 		return backgroundImageName;
 	}
 
+	/*
 	public ArrayList<Zombie> getZombies2() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+	*/
 
 }
