@@ -4,10 +4,9 @@
 
 # Project Description
 Fatal Impact is about a zombie apocalypse survival game. The player will try to survive hordes
-of zombies that intend to attack him. There will be items that he can pick up to help him survive:
+of zombies that intend to attack him. There will be items that he can consume to help him survive:
 food and water to fend off hunger and thirst. The player can explore the world and find a zombie boss to defeat and win the game.
-Alternatively, the player will have to find a way to survive each day, while having the option to
-hide and sleep through the night.
+The player also has an option to explore houses for the additional challenge of fighting of zombies.
 
 # Project Components
 1. Windows PC, Apple Mac, or Linux
