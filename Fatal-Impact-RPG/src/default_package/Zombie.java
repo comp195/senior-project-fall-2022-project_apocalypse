@@ -1,11 +1,14 @@
 package default_package;
 
+import java.util.ArrayList;
+
 import acm.graphics.GImage;
 
 public class Zombie extends Entity {
 	private boolean attackAvailable;
 	private String enemyType;
 	private int detectionRange;
+	private static final int HEART_SIZE = 50;
 	
 	public Zombie(GImage image, int health, String enemyName) {
 		super(image, health);
@@ -14,6 +17,15 @@ public class Zombie extends Entity {
 		detectionRange = 100; // detection range is 100 by default
 		super.setSpeed(10); // speed is 5 by default
 		super.setAttackCooldown(300);
+	}
+	
+	public ArrayList<GImage> displayHealth(int xOffset, int yOffset) {
+		ArrayList<GImage> bossHealth = new ArrayList<GImage>(); 
+		for (int x = 0; x < getHealth(); x++) { //add hearts based on boss health
+			// if health > 5, place the next row of hearts right next to original row of hearts
+			bossHealth.add(new GImage("HP.png", xOffset + (5 * (x / 5)), x % 5 * HEART_SIZE + yOffset)); 
+		}
+		return bossHealth;
 	}
 	
 	public boolean canInteract(double x, double y) {
@@ -60,5 +72,3 @@ public class Zombie extends Entity {
 
 	}
 }
-
-

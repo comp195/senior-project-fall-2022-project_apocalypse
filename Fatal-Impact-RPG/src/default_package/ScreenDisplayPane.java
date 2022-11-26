@@ -46,6 +46,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private int Z = 0;
 	private ArrayList<GImage> background;
 	private ArrayList<GImage> playerHealth;
+	private ArrayList<GImage> bossHealth;
 	private ArrayList<Item> items; // items to display on the level.
 	private ArrayList<Zombie> zombies;
 	private ArrayList<House> houses;
@@ -237,9 +238,24 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	}
 	
 	private void removeAllDeadEnemies() {
-		for (int y = removeZombieIndex.size() - 1; y >= 0 ; y--) {
-			zombies.remove((int)removeZombieIndex.get(y));
+		Zombie zombie = zombies.get(0);
+		if (zombie.getEnemyType() == "zombieBoss" && zombie.isDead()) {
+			initializeGame(); // reset all game values
+			program.removeAll(); // remove all objects from screen
+			timer.stop();
+			populatingItemsIndex = 0;
+			program.setPlayerWin(true); // set player win
+			program.switchTo(3); // switch to game end screen
 		}
+		
+		if (removeZombieIndex != null) {
+			for (int y = removeZombieIndex.size() - 1; y >= 0 ; y--) {
+				zombies.remove((int)removeZombieIndex.get(y));
+			}
+		}
+		
+		
+		
 	}
 	
 	private void setInBounds(Entity character) { // set character sprite in bounds on the screen
@@ -285,6 +301,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
+		bossHealth = new ArrayList<GImage>(); //initialize bossHealth
 		GImage playerSprite = new GImage ("FI-Char-Down.PNG");
 		playerSprite.setSize(PLAYER_SPRITE_SIZE,PLAYER_SPRITE_SIZE);
 		player = new Player(playerSprite, PLAYER_STARTING_HEALTH);
@@ -660,6 +677,33 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			heart.setSize(HEART_SIZE, HEART_SIZE);
 			program.add(heart);
 		}
+		
+		if (currentMap == 10) {
+			while (bossHealth.size() > 0) { // remove all boss hearts from screen
+				program.remove(bossHealth.get(0));
+				bossHealth.remove(0);
+			}
+			if (zombies.size() > 0) {
+				for (Zombie z: zombies) { // loop through all enemies on screen
+					int xOffset = (int)program.getWidth() - (int)(HEART_SIZE * 1.5);
+					int yOffset = 25 * 3;
+					bossHealth = z.displayHealth(xOffset, yOffset);
+				}
+			}
+			for (GImage heart : bossHealth) { // display all zombie hearts
+				heart.setSize(HEART_SIZE, HEART_SIZE);
+				program.add(heart);
+			}
+			
+		}
+	}
+	
+	private void addHeart(Zombie zombie, int xOffset, int yOffset) {
+		if (zombie.getEnemyType() == "zombieBoss") { //if enemy is a boss OR (50 + (2 * currentRoom)) % chance)
+			GImage heartSprite = new GImage ("HP.png", zombie.getSprite().getX() + xOffset, zombie.getSprite().getY() + yOffset); //Create a new sprite for heart.
+			heartSprite.setSize(25, 25); //Resize sprite to make it smaller.
+			program.add(heartSprite);
+		}
 	}
 
 	public static void main(String[] args) {
@@ -834,7 +878,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			}
 			
 			if (currentMap == 1 && player.getSprite().getX() >= 500 && player.getSprite().getX() <= 607 && player.getSprite().getY() <= 23) {
-				currentMap = 9;
+				currentMap = 10;
 				createMap(currentMap);
 			}
 			
@@ -1114,6 +1158,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						//Change zombie health and manage zombie death
 						System.out.println("Enemy is hit.");
 						zombie.changeHealth(-1); //Reduce health by 1.
+						if (zombie.getEnemyType() == "zombieBoss") {
+							updateHealth(); //update boss health
+						}
 					}
 					
 					if (zombie.isDead()) { //Enemy has no health.
@@ -1136,7 +1183,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						if (currentMap == 7) {
 							numOfZombiesLevel3House--;
 						}
-						
+						updateHealth();
 						program.remove(zombie.getSprite()); //Remove enemy from the screen since he is dead.
 						System.out.println("Enemy is dead.");
 					}
@@ -1155,8 +1202,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
 		player.setAttackAvailable(false); // Initiate attack cool down.
 		
-		System.out.println("mouse x: " + e.getX());
-		System.out.println("mouse y: " + e.getY());
+		//System.out.println("mouse x: " + e.getX());
+		//System.out.println("mouse y: " + e.getY());
 
 	}
 	
@@ -1177,6 +1224,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		for (Z = 0; Z < zombies.size(); Z++) { // loop through all enemies
 			Zombie zombie = zombies.get(Z);
 			GImage zombieSprite = zombie.getSprite();
+			
 			if (zombie.canInteract(playerSprite.getX(), playerSprite.getY())) { //enemy detects player
 				zombieMoveDown = false;
 				zombieMoveUp = false;
@@ -1292,7 +1340,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 						playerHitUp = false; //Full cycle complete, stop from next cycle.
 						playerHitLeft = false; //Full cycle complete, stop from next cycle.
 						playerHitRight = false; //Full cycle complete, stop from next cycle.
-						zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame/
+						zombieAttackAnimationDownAcc = 0; //When next attack happens, start from beginning frame.
 						player.setDamaged(false);
 					}
 					
@@ -1466,6 +1514,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				
 			}
 			setInBounds(zombie); // set long range enemy in bounds
+			
+			
 			
 		}
 		
