@@ -15,10 +15,11 @@ public class HowToPlayPane extends GraphicsPane {
 	private GParagraph howToPlay;
 	private GButton menu;
 	private GButton play;
-	private GImage mainMenu; 
+	private GImage mainMenu;
+	private GImage forestPathPic;
 	private final int WIDTH = 200;
 	private final int HEIGHT = 88;
-	
+
 	public HowToPlayPane (MainApplication app) {
 		this.program = app;
 		
@@ -28,15 +29,19 @@ public class HowToPlayPane extends GraphicsPane {
 		
 		double X = app.getWidth()/2 - WIDTH/2 -7;
 		
-		play = new GButton("Play", X, 200, WIDTH, HEIGHT);
+		play = new GButton("Play", X, 150, WIDTH, HEIGHT);
 		play.setFillColor(Color.GREEN);
 		
-		menu = new GButton("Menu", X, 340, WIDTH, HEIGHT);
+		menu = new GButton("Menu", X, 290, WIDTH, HEIGHT);
 		menu.setFillColor(Color.GREEN);
 		
-		howToPlay = new GParagraph("Press w, a, s, d to move up, down, left, right, respectively\nPress SHIFT to dash in the direction of the mouse\nPress the Left-Click button on the mouse to attack in the direction of the mouse\nPress e to interact with objects\nPress r to use a heart item", 0, 0);
-		howToPlay.setLocation(program.getWidth() / 2 - howToPlay.getWidth() / 2, program.getHeight() * 4 / 5 - howToPlay.getHeight() / 2);
+		howToPlay = new GParagraph("Press w, a, s, d to move up, down, left, right, respectively\nPress SHIFT to dash\nPress the Left-Click button on the mouse to attack\nPress e to interact with items, houses\nWhen at or near the end of forest pathway, press e to further explore the forest", 0, 0);
+		howToPlay.setLocation(program.getWidth() / 2 - howToPlay.getWidth() / 2, (program.getHeight() * 4 / 5 - howToPlay.getHeight() / 2) - 50);
 		howToPlay.setColor(Color.WHITE);
+		
+		forestPathPic = new GImage("Forest-Pathway-Guide.png", 382, 492);
+		forestPathPic.setSize(100, 100);
+		
 	}
 	
 	@Override
@@ -45,6 +50,7 @@ public class HowToPlayPane extends GraphicsPane {
 		program.add(howToPlay);
 		program.add(menu);
 		program.add(play);
+		program.add(forestPathPic);
 	}
 
 	@Override
@@ -53,6 +59,7 @@ public class HowToPlayPane extends GraphicsPane {
 		program.remove(howToPlay);
 		program.remove(menu);
 		program.remove(play);
+		program.remove(forestPathPic);
 	}
 	
 	@Override

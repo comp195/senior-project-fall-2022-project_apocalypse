@@ -16,7 +16,8 @@ public class PlayerSelectionPane extends GraphicsPane {
 	public PlayerSelectionPane(MainApplication app) {
 		this.program = app;
 		//longRangeCharacter = new GImage(ImageFolder.get() + "PlayerWizardSprite.png", program.getWidth() * 2 / 3, 200);
-		closeRangeCharacter = new GImage("FI-short-ranged.png", program.getWidth() / 3, 200);
+		closeRangeCharacter = new GImage("FI-Char-Down.png", program.getWidth() / 3, 200);
+		closeRangeCharacter.setSize(50, 50);
 		chooseCharacterLabel = new GLabel("Choose Your Character", program.getWidth() / 3, 100);
 		chooseCharacterLabel.setFont("Arial-24");
 	}
