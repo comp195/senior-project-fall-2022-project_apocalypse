@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.Timer;
@@ -31,6 +32,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	int randMinYMainMap = 50;
 	int randMaxYMainMap = 450; 
 	private static final int ATTACK_ANIMATION_INTERVAL = 15;
+	private static final int DOOR_LABEL_INTERVAL = 50;
+
 	private static final int PLAYER_SPRITE_SIZE = 30;
 	private static final int HEART_SIZE = 50;
 	private static final int PLAYER_STARTING_HEALTH = 10;
@@ -66,6 +69,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private GImage mapHouse2;
 	private GImage mapHouse3;
 	private GImage inventory;
+	//private HashMap<String, String> doorLabel; // hash map to link items with labels
+	private GLabel doorLabel;
 	private int inventoryDisplayIndex;
 	private int inventoryIndex;
 	private int inventorySizeCount;
@@ -384,7 +389,11 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		if (mapNum == 1) {
 			newMap.setNumOfZombies(numOfZombiesMainMap);
+			//doorLabel = new HashMap<String, String>();
+			doorLabel = new GLabel("Press 'e' to open");
 		}
+		
+		
 		
 		if (mapNum == 2) {
 			newMap.setNumOfZombiesHouse1(numOfZombiesHouse1);
@@ -620,6 +629,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		setSpriteImageThirst(thirstDisplayImages, thirstDisplayIndex, thirstDisplayCurrentImage, newThirstDisplaySprite);
 		
 		updateHealth();
+		
+		//Add door label to the screen as invisible for now.
+		doorLabel.setLocation(0, 0);
+		doorLabel.setFont(new Font("Serif", Font.BOLD, 15));
+		doorLabel.setColor(Color.GREEN);
+		program.add(doorLabel);
+		doorLabel.setVisible(false);
 		
 	}
 	
@@ -878,7 +894,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			}
 			
 			if (currentMap == 1 && player.getSprite().getX() >= 500 && player.getSprite().getX() <= 607 && player.getSprite().getY() <= 23) {
-				currentMap = 10;
+				currentMap = 5;
 				createMap(currentMap);
 			}
 			
@@ -1202,8 +1218,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
 		player.setAttackAvailable(false); // Initiate attack cool down.
 		
-		//System.out.println("mouse x: " + e.getX());
-		//System.out.println("mouse y: " + e.getY());
+		System.out.println("mouse x: " + e.getX());
+		System.out.println("mouse y: " + e.getY());
 
 	}
 	
@@ -1516,7 +1532,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			setInBounds(zombie); // set long range enemy in bounds
 			
 			
-			
 		}
 		
 		//Slowly reduce hunger and thirst
@@ -1711,8 +1726,19 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			 //gameOver();
 		}
 		
+		for (House h : houses) {
+			double houseX = h.getSprite().getX() + (h.getSprite().getWidth()/2);
+			double houseY = h.getSprite().getY() + (h.getSprite().getHeight()/2);
+			if (player.canInteract(houseX, houseY)) {
+				doorLabel.setVisible(true);
+				doorLabel.setLocation(houseX-60, houseY);
+			}
+		}
 		
 		
+		if (timerCount % DOOR_LABEL_INTERVAL == 0) {
+			doorLabel.setVisible(false);
+		}
 		
 		
 	}
