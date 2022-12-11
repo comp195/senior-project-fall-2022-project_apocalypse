@@ -1217,9 +1217,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		removeAllDeadEnemies(); //Remove all zombie objects added to the dead list
 		player.setAttackAvailable(false); // Initiate attack cool down.
-		
-		System.out.println("mouse x: " + e.getX());
-		System.out.println("mouse y: " + e.getY());
 
 	}
 	
