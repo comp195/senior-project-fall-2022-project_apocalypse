@@ -714,6 +714,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 	}
 	
+	//Resolving branch 
 	private void addHeart(Zombie zombie, int xOffset, int yOffset) {
 		if (zombie.getEnemyType() == "zombieBoss") { //if enemy is a boss OR (50 + (2 * currentRoom)) % chance)
 			GImage heartSprite = new GImage ("HP.png", zombie.getSprite().getX() + xOffset, zombie.getSprite().getY() + yOffset); //Create a new sprite for heart.
