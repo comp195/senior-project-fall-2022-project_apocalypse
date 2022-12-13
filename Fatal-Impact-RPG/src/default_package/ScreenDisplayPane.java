@@ -47,17 +47,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private Timer timer;
 	private int timerCount; // to keep track of timer
 	private int Z = 0;
-	private ArrayList<GImage> background;
 	private ArrayList<GImage> playerHealth;
 	private ArrayList<GImage> bossHealth;
 	private ArrayList<Item> items; // items to display on the level.
 	private ArrayList<Zombie> zombies;
-	private ArrayList<House> houses;
-	private ArrayList<Zombie2> zombies2; 
+	private ArrayList<House> houses; 
 	private ArrayList<Integer> removeZombieIndex; // to keep track of enemy indexes to remove
 	private int currentMap; // to display current room
-	private static final int BACKGROUND_TILE_SIZE = 50;
-	private GImage attackArea; // to display player attack
 	private GImage map; 
 	private GImage mapTree;
 	private GImage mapTree2;
@@ -65,15 +61,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private GImage mapTree4;
 	private GImage mapTree5;
 	private GImage mapTree6;
-	private GImage mapHouse;
-	private GImage mapHouse2;
-	private GImage mapHouse3;
-	private GImage inventory;
 	//private HashMap<String, String> doorLabel; // hash map to link items with labels
 	private GLabel doorLabel;
-	private int inventoryDisplayIndex;
-	private int inventoryIndex;
-	private int inventorySizeCount;
 	private int populatingItemsIndex;
 	private int numOfZombiesMainMap;
 	private int numOfZombiesHouse1;
@@ -183,15 +172,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 
 	
 	/*Animation variables for Zombie 2 */
-	private int zombie2MovingDownFrame = 0;
-	private int zombie2MovingUpFrame = 0;
-	private int zombie2MovingLeftFrame = 0;
-	private int zombie2MovingRightFrame = 0;
-	
-	private int zombie2AttackDownFrame = 0;
-	private int zombie2AttackUpFrame = 0;
-	private int zombie2AttackLeftFrame = 0;
-	private int zombie2AttackRightFrame = 0;
 	
 	private String[] zombie2MovingDown = {"FI-Zombie2-Moving-Down.png", "FI-Zombie2-Arms-Down.png", "FI-Zombie2-Moving-Down2.png", "FI-Zombie2-Arms-Down.png"};
 	private String[] zombie2MovingUp = {"FI-Zombie2-Moving-Up.png", "FI-Zombie2-Standing-Up.png", "FI-Zombie2-Moving-Up2.png", "FI-Zombie2-Standing-Up.png"};
@@ -215,25 +195,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	
 	//main game objects
 	private Player player;
-	
-
-
-	//pause and resume
-	private GImage pauseImg;
-	public GButton pauseButton;
-	public boolean paused = false;
-	public GButton resume = new GButton("", 296, 180, 208, 95);
-	public GButton quit = new GButton("", 296, 420, 208, 95);
-	private GImage quitImg = new GImage("Quit.png",296, 420);
-	private GImage resumeImg = new GImage("Resume.png",296,180);
-
-	
-	private GParagraph healthPoints; 
-	private static final int heartRootX = 75, heartRootY = 610, heartWidth = 30;
 	ArrayList <GImage> playerHearts = new ArrayList <GImage>();
-	private Font customFont;
-	
-	
 	
 	public ScreenDisplayPane(MainApplication app) {
 		super();
@@ -271,23 +233,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
         double ymin = 0;
         double xMax = program.getWidth() - 45; // before it was - 1.75 * sprite.getWidth()
         double yMax = program.getHeight() - 70; // before it was - 2.25 * sprite.getHeight()
-        /* if (character instanceof Enemy) { // check if character is an enemy
-            yMax = program.getHeight() - 3 * sprite.getHeight();
-        } */
         sprite.setLocation(inRange(x, xmin, xMax), inRange(y, ymin, yMax)); // set location of sprite in bounds
     }
-	
-	/*
-	private void setBoundsFromHouse(Entity character) { // set character sprite in bounds on the screen
-		GImage sprite = character.getSprite();
-        double x = sprite.getX();
-        double y = sprite.getY();
-        
-        
-        if(mapHouse.getBounds() == sprite.getBounds()) {
-        	sprite.setLocation(x-5, y-5);
-        }
-	}*/
 	
 	private double angle(GImage enemySprite, GImage playerSprite) { // return angle between player and enemy
 		double x = (enemySprite.getX() + (enemySprite.getWidth() / 2)) - (playerSprite.getX() + (playerSprite.getWidth() / 2)); //x is set to horizontal distance between enemy and player
@@ -299,12 +246,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 	private void initializeGame() {
 		knifeEquipped = false;
 		equipOnAndOff = 0;
-		
 		currentMap = 1; // starting room number
-		
-		
-		
-		
 		playerHealth = new ArrayList<GImage>(); // initialize playerHealth
 		bossHealth = new ArrayList<GImage>(); //initialize bossHealth
 		GImage playerSprite = new GImage ("FI-Char-Down.PNG");
@@ -313,14 +255,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		zombies = new ArrayList<Zombie>(); // initialize enemy array list
 		items = new ArrayList<Item>(); // initialize items in items arrayList. 
 		houses = new ArrayList<House>(); // initialize enemy array list
-		zombies2 = new ArrayList<Zombie2>(); // initialized another enemy array list
 		player.randomizeXLocation(program.getWidth(), program.getHeight()); //Randomize player location at bottom of screen
 		player.setSpeed(PLAYER_STARTING_SPEED); // initialize speed
 		
-		//inventory = new GImage("HotBar.png", 300, 535);
-		inventoryDisplayIndex = 0;
-		inventoryIndex = 0;
-		inventorySizeCount = 0;
 		populatingItemsIndex = 0;
 		
 		hungerDisplayIndex = 0;
@@ -350,9 +287,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		numOfZombiesLevel3 = 3;
 		numOfZombiesLevel3House = 1;
-		
-		
-		
 
 
 	}
@@ -368,19 +302,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			
 	}
 	
-	/*
-	public void setBackground(String File) {
-		background = new ArrayList<GImage>();
-		background.add(new GImage(File, 800, 640));
-		//background.add(new GImage(File,BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE ));
-		//for (GImage b: background) { //Add all tiles to the screen.
-		//	program.add(b);
-		//}
-		
-		
-		
-		//program.add(backgroundImage)
-	}*/
 	
 	public void createMap(int mapNum) {
 		program.removeAll();
@@ -454,14 +375,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			zombies = newMap.getZombies();
 		}
 		
-		
-		
 		houses = newMap.getHouses();
 		items = newMap.getItems();
-		
-		
-		
-		//program.removeAll();
 		
 		
 		if (mapNum == 1) {
@@ -534,11 +449,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			player.getSprite().setLocation(286,582);
 		}
 		
-		
-		
-		
-		//hungerDisplay = new GImage(hungerString, 50, 300);
-		
 		//Add map and map stuff sprites to the screen
 		program.add(map);
 		if (mapNum == 1) {
@@ -551,7 +461,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 			for (House h : houses) {
 				program.add(h.getSprite()); //Add house sprite to screen.
 			}
-			//program.add(inventory);
 			 
 		}
 		if (mapNum == 6) {
@@ -567,24 +476,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 		
 		
-		
-		if (mapNum == 2) {
-			//program.add(inventory);
-		}
-		
-		
-		/*
-		GImage zombieImage2 = new GImage("zombie2.png", 650, 300);
-		zombieImage2.setSize(30, 70);
-		Zombie2 zombiesSecond = new Zombie2(zombieImage2, 5, "zombie2");
-		zombiesSecond.setSpeed(10);
-		zombies2.add(zombiesSecond);
-		for (Zombie2 z: zombies2) {
-			program.add(z.getSprite()); // Added another enemy sprite to the screen 
-		}*/
-		
-		
-		//setBackground(newMap.getImageName()); //Set background map
 		
 		/* If player exits houses */
 		if (playerExitsHouse1) {
@@ -639,41 +530,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 	}
 	
-	/* Pause and Resume
-	 * ----------------
-	 * pauseMenu(GObject obj)
-	 * pause()
-	 * resume()
-	 */
-	public void pauseMenu(GObject obj) {
-		if (obj == this.pauseButton) {
-			//this.monsterTimer.stop();
-			
-			//this.pause();
-		}
-		if (obj == this.resume) {
-			this.resume();
-			//this.monsterTimer.setInitialDelay(0);
-			//this.monsterTimer.restart();
-		}	
-		if (obj == this.quit) {System.exit(0);}
-	}
-	/*
-	public void pause() {
-		program.add(resumeImg);
-		program.add(quitImg);
-		program.add(resume);
-		program.add(quit);
-		paused = true;
-	}*/
-	public void resume() {
-		program.remove(resumeImg);
-		program.remove(resume);
-		program.remove(quit);
-		program.remove(quitImg);
-		paused = false;
-	}
-	
 	public void populatingItems(Item item) {
 		//items.add(item);
 		items.get(populatingItemsIndex).getSprite().setSize(30, 30);
@@ -714,7 +570,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		}
 	}
 	
-	//Resolving branch 
 	private void addHeart(Zombie zombie, int xOffset, int yOffset) {
 		if (zombie.getEnemyType() == "zombieBoss") { //if enemy is a boss OR (50 + (2 * currentRoom)) % chance)
 			GImage heartSprite = new GImage ("HP.png", zombie.getSprite().getX() + xOffset, zombie.getSprite().getY() + yOffset); //Create a new sprite for heart.
@@ -843,18 +698,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 				Item nearestItem = player.nearestItem(items); //check for item nearest to player
 				//If player can interact with closest item and presses "e"
 				if (player.canInteract(nearestItem.getSprite().getX(), nearestItem.getSprite().getY())) {
-					/*
-					if (inventorySizeCount < 5) {
-						player.addToInventory(nearestItem); // add item to player inventory
-						//Move item to inventory location
-						player.getInventory().get(inventoryIndex).getSprite().setLocation(inventory.getX() + inventoryDisplayIndex, inventory.getY() + 33);
-						player.getInventory().get(inventoryIndex).getSprite().sendToFront();
-						
-					}
-					inventoryDisplayIndex += 32;
-					inventoryIndex++;
-					inventorySizeCount++;
-					*/
 					if (nearestItem.getItemType() == "food") {
 						if (currentMap == 2) {
 							numOfFoodHouse1--;
@@ -929,8 +772,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					currentMap = 1; // increase current room number
 					//This is for if player exits house and re-enters it. Set item index back to 0 when re-populating house with it.
 					populatingItemsIndex = 0; 
-					inventoryIndex = 0;
-					inventorySizeCount = 0;
 					createMap(currentMap); // create next room
 				}
 			}
@@ -941,8 +782,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					currentMap = 1; // increase current room number
 					//This is for if player exits house and re-enters it. Set item index back to 0 when re-populating house with it.
 					populatingItemsIndex = 0; 
-					inventoryIndex = 0;
-					inventorySizeCount = 0;
 					createMap(currentMap); // create next room
 				}
 			}
@@ -953,8 +792,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					currentMap = 1; // increase current room number
 					//This is for if player exits house and re-enters it. Set item index back to 0 when re-populating house with it.
 					populatingItemsIndex = 0; 
-					inventoryIndex = 0;
-					inventorySizeCount = 0;
 					createMap(currentMap); // create next room
 				}
 			}
@@ -963,59 +800,13 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					playerExitsHouseLevel3 = true;
 					currentMap = 6;
 					populatingItemsIndex = 0; 
-					inventoryIndex = 0;
-					inventorySizeCount = 0;
 					createMap(currentMap); // create next room
 				}
 			}
 		}
 		
-		
-		if (keyCode == 82) { // r
-			//replenish thirst from inventory.
-			//int removeIndexWater = -1;
-			//if (player.getInventory().size() > 0) {
-				/*
-				removeIndexWater = player.searchItemIndex(player, removeIndexWater, "water");
-				*/
-				/*
-				if (removeIndexWater >= 0) { //check if the player has the heart to remove
-					//player.getInventory().get(removeIndex).getSprite().setLocation(0, 0);
-				*/
-					/*
-					program.remove(player.getInventory().get(removeIndexWater).getSprite());
-					player.removeFromInventory(removeIndexWater); //Remove the heart from the inventory.
-					
-					System.out.println("water consumed");
-					player.SetThirst(player.GetThirst() + 50);
-					
-					inventorySizeCount--;
-					inventoryIndex--;
-					inventoryDisplayIndex -= 32;
-					*/
-				//}
-			
-		} if (keyCode == 81) { // q
-			//Replenish hunger from inventory.
-			//int removeIndexFood = -1;
-			//if (player.getInventory().size() > 0) {
-				//removeIndexFood = player.searchItemIndex(player, removeIndexFood, "food");
-				//if (removeIndexFood >= 0) { //check if the player has the heart to remove
-					//player.getInventory().get(removeIndex).getSprite().setLocation(0, 0);
-					/*
-					program.remove(player.getInventory().get(removeIndexFood).getSprite());
-					player.removeFromInventory(removeIndexFood); //Remove the heart from the inventory.
-					
-					System.out.println("food consumed");
-					player.SetHunger(player.GetHunger() + 50);
-					
-					inventorySizeCount--;
-					inventoryIndex--;
-					inventoryDisplayIndex -= 32;
-				}
-			}
-			*/
-		} if (keyCode == KeyEvent.VK_ESCAPE) {
+	
+		if (keyCode == KeyEvent.VK_ESCAPE) {
 			//pause();
 		} if (keyCode == 88) { //User clicks x (equip knife)
 			if (equipOnAndOff % 2 == 0) { //Equips knife when x is entered every other time
@@ -1330,16 +1121,8 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 					}
 					
 					
-					/*
-					if (zombie.getEnemyType().contains("boss")) {
-						player.changeHealth(-2);
-					}
-					*/
-					//else {
 					player.changeHealth(-1);
-					//}
 					updateHealth();
-					//updateInventory(); ==> Should update player inventory based on player health.
 					System.out.println("Player hit by " + zombie.getEnemyType() + ". Player health: " + player.getHealth());
 					player.setDamaged(true); //player is damaged.
 					checkPlayerDeath();
@@ -1654,8 +1437,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		if (attackAnimationAcc == 4) {
 			enemyHitUp = false; //Full cycle complete, stop from next cycle.
-			//enemyHitLeft = false;
-			//enemyHitRight = false;
 			attackAnimationAcc = 0; //When next attack happens, start from beginning frame/
 		}
 		
@@ -1721,7 +1502,7 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 		//When hunger and thirst run out, game over.
 		if (player.GetHunger() == 0 || player.GetThirst() == 0) {
-			 //gameOver();
+			 gameOver();
 		}
 		
 		for (House h : houses) {
@@ -1741,27 +1522,9 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 		
 	}
 
-	//Adding another comment for test
-
 	@Override
 	public void showContents() {
-		
-		
 		createMap(currentMap); // currentMap is initially at 1
-		
-		//program.add(inventory);
-		
-		
-	
-		//program.add(new GImage("Fi-short-ranged.PNG",BACKGROUND_TILE_SIZE, BACKGROUND_TILE_SIZE));
-		
-		
-		//setBackground("city-map.jpg");
-		// TODO Auto-generated method stub
-		//program.player.getInventory();
-		//program.add(Inventory.INVENTORY_IMG, Inventory.INVENTORY_X, Inventory.INVENTORY_Y);
-		//program.add(healthPoints);
-		
 		
 	}
 
@@ -1769,11 +1532,6 @@ public class ScreenDisplayPane extends GraphicsPane implements ActionListener {
 
 	@Override
 	public void hideContents() {
-		// TODO Auto-generated method stub
-		//program.remove(map);
-		//program.remove(Inventory.INVENTORY_IMG);
-		//program.removeGUI();
-		//program.remove(healthPoints);
 		program.removeAll();
 		
 	}

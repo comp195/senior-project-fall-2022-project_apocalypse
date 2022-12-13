@@ -58,15 +58,6 @@ public class Zombie extends Entity {
 		this.detectionRange = detectionRange;
 	}
 	
-	
-	public void enemyInvincibility() {
-			setInvincibilityCounter(getInvincibilityCounter() + 1); //enemy is invincible for a time.
-			if (getInvincibilityCounter() > 100) { //enemy is not invincible.
-				setDamaged(false);
-				setInvincibilityCounter(0); 
-			}
-			System.out.println("invincibility counter: " + getInvincibilityCounter());
-	}
 
 	public static void main(String[] args) {
 

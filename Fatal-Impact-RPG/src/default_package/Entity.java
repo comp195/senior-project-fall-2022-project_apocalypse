@@ -11,7 +11,6 @@ public class Entity {
 	private double moveY;
 	private double speed;
 	private boolean isDamaged;
-	private int invincibilityCounter;
 	private int attackCooldown;
 	
 	public Entity(GImage image, int hp) {
@@ -83,14 +82,6 @@ public class Entity {
 
 	public void setDamaged(boolean isDamaged) {
 		this.isDamaged = isDamaged;
-	}
-
-	public int getInvincibilityCounter() {
-		return invincibilityCounter;
-	}
-
-	public void setInvincibilityCounter(int invincibilityCounter) {
-		this.invincibilityCounter = invincibilityCounter;
 	}
 
 	public int getAttackCooldown() {

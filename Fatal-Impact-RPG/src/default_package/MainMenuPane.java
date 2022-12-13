@@ -12,16 +12,13 @@ import acm.graphics.GObject;
 
 public class MainMenuPane extends GraphicsPane {
 	//Main menu Pane
-	private static final int BUTTON_SIZE = 100;
 	private static final int FONT_SIZE = 50;
 	
 	private MainApplication program; // you will use program to get access to
 										// all of the GraphicsProgram calls
 	private GLabel game;
 	private GButton play;
-	private GButton music;
 	private GButton howToPlay;
-	private String musicButtonText;
 	private GImage mainMenu; 
 	private final int WIDTH = 200;
 	private final int HEIGHT = 88;

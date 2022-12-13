@@ -8,8 +8,6 @@ import acm.graphics.GObject;
 
 public class HowToPlayPane extends GraphicsPane {
 	
-	private static final int BUTTON_SIZE = 100;
-	
 	private MainApplication program; // you will use program to get access to
 									// all of the GraphicsProgram calls
 	private GParagraph howToPlay;
