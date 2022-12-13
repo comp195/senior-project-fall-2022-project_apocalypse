@@ -29,15 +29,15 @@ public class HowToPlayPane extends GraphicsPane {
 		
 		double X = app.getWidth()/2 - WIDTH/2 -7;
 		
-		play = new GButton("Play", X, 150, WIDTH, HEIGHT);
+		play = new GButton("Play", X, 100, WIDTH, HEIGHT);
 		play.setFillColor(Color.GREEN);
 		
-		menu = new GButton("Menu", X, 290, WIDTH, HEIGHT);
+		menu = new GButton("Menu", X, 240, WIDTH, HEIGHT);
 		menu.setFillColor(Color.GREEN);
 		
-		howToPlay = new GParagraph("Press w, a, s, d to move up, down, left, right, respectively\nPress SHIFT to dash\nPress the Left-Click button on the mouse to attack\nPress e to interact with items, houses\nWhen at or near the end of forest pathway, press e to further explore the forest", 0, 0);
-		howToPlay.setLocation(program.getWidth() / 2 - howToPlay.getWidth() / 2, (program.getHeight() * 4 / 5 - howToPlay.getHeight() / 2) - 50);
-		howToPlay.setColor(Color.WHITE);
+		howToPlay = new GParagraph("Press w, a, s, d to move up, down, left, right, respectively\nPress SHIFT to dash\nPress x to equip/unequip knife\nPress the Left-Click button on the mouse to attack (must have knife equipped)\nPress e to interact with items, enter houses\nPress z to exit houses (when near a door)\nWhen at or near the end of forest pathway, press e to further explore the forest", 0, 0);
+		howToPlay.setLocation(program.getWidth() / 2 - howToPlay.getWidth() / 2, (program.getHeight() * 4 / 5 - howToPlay.getHeight() / 2) - 100);
+		howToPlay.setColor(Color.GREEN);
 		
 		forestPathPic = new GImage("Forest-Pathway-Guide.png", 382, 492);
 		forestPathPic.setSize(100, 100);

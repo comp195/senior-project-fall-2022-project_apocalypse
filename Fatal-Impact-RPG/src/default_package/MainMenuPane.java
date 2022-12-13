@@ -41,15 +41,12 @@ public class MainMenuPane extends GraphicsPane {
 		double X = app.getWidth()/2 - WIDTH/2 -7;
 		
 		
-		play = new GButton("Play", X, 290, WIDTH, HEIGHT);
+		play = new GButton("Play", X, 240, WIDTH, HEIGHT);
 		play.setFillColor(Color.GREEN);
 		
-		howToPlay = new GButton("How to play", X, 395, WIDTH, HEIGHT);
+		howToPlay = new GButton("How to play", X, 345, WIDTH, HEIGHT);
 		howToPlay.setFillColor(Color.GREEN);
 		
-		musicButtonText = "Audio ON";
-		music = new GButton("Audio", X, 500, WIDTH, HEIGHT);
-		music.setFillColor(Color.GREEN);
 	}
 
 	@Override
@@ -58,14 +55,12 @@ public class MainMenuPane extends GraphicsPane {
 		program.add(game);
 		program.add(play);
 		program.add(howToPlay);
-		program.add(music);
 	}
 
 	@Override
 	public void hideContents() {
 		program.remove(play);
 		program.remove(howToPlay);
-		program.remove(music);
 		program.remove(mainMenu);
 	}
 
@@ -79,19 +74,6 @@ public class MainMenuPane extends GraphicsPane {
 		else if (obj == howToPlay) {
 			program.remove(game);
 			program.switchTo(1); // switch to howToPlay pane
-		}
-		else if (obj == music){
-			program.remove(music);
-			if (program.isAudioOn()) { // toggle audio button from ON to OFF
-				music = new GButton("Audio OFF", music.getX(), music.getY(), music.getWidth(), music.getHeight());
-				music.setFillColor(Color.RED);
-			}
-			else { // toggle audio button from OFF to ON
-				music = new GButton("Audio ON", music.getX(), music.getY(), music.getWidth(), music.getHeight());
-				music.setFillColor(Color.GREEN);
-			}
-			program.setAudioOn(!program.isAudioOn()); // toggle audio
-			program.add(music);
 		}
 	}
 }
