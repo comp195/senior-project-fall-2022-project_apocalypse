@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
 Main-Class: default_package.MainApplication
-Class-Path: spl.jar App-Executable-Deployment.jar acm.jar
+Class-Path: spl.jar App-Exe.jar acm.jar
+
