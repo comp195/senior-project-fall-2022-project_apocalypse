@@ -14,3 +14,13 @@ The player also has an option to explore houses for the additional challenge of 
 3. Eclipse IDE
 4. ACM Packages
 
+# How to run the Fatal Impaact application
+1. Download the App-Exe.zip file from master branch.
+2. Ensure that a non-outdated JDK/JRE is installed on host machine.
+3. Ensure that post Java 1.8 (2014) is installed on host machine. There are reported bugs with running this particular jar file with this version.
+4. Ensure that no files or folders are moved from this deployment.
+
+Instructions to run the Fatal Impact Application:
+1. Double-click App-Executable-Deployment.jar to run the application
+2. Alternate Option: Run java -jar App-Executable-Deployment.jar on windows command line (This approach is not advised. Application not gauranteed to run).
+
